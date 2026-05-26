@@ -18,6 +18,7 @@ CSS_DIR = ROOT_DIR / "CSS"
 JS_DIR = ROOT_DIR / "JS"
 DATA_FILE = Path(__file__).resolve().parent / "presentes.json"
 DATA_FILE = Path(os.getenv("DATA_FILE_PATH", str(DATA_FILE)))
+FALLBACK_DATA_FILE = Path(__file__).resolve().parent / "presentes.json"
 ENV_FILE = Path(__file__).resolve().parent / ".env"
 DEFAULT_IMAGE_URL = "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80"
 
@@ -174,7 +175,7 @@ def get_admin_users():
 	users = {}
 	for index in (1, 2):
 		email = os.getenv(f"ADMIN_USER_{index}_EMAIL", "").strip().lower()
-		password = os.getenv(f"ADMIN_USER_{index}_PASSWORD", "")
+		password = os.getenv(f"ADMIN_USER_{index}_PASSWORD", "").strip()
 		if email and password:
 			users[email] = password
 
@@ -209,12 +210,16 @@ def require_admin_auth(request_obj):
 
 
 def load_presentes():
-	if not DATA_FILE.exists():
+	data_file = DATA_FILE
+	if not data_file.exists() and FALLBACK_DATA_FILE.exists():
+		data_file = FALLBACK_DATA_FILE
+
+	if not data_file.exists():
 		base = default_presentes()
 		save_presentes(base)
 		return base
 
-	with DATA_FILE.open("r", encoding="utf-8") as file:
+	with data_file.open("r", encoding="utf-8") as file:
 		loaded = json.load(file)
 
 	normalized = normalize_all_presentes(loaded)
@@ -225,9 +230,14 @@ def load_presentes():
 
 
 def save_presentes(presentes):
-	DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
-	with DATA_FILE.open("w", encoding="utf-8") as file:
-		json.dump(presentes, file, ensure_ascii=False, indent=2)
+	try:
+		DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
+		with DATA_FILE.open("w", encoding="utf-8") as file:
+			json.dump(presentes, file, ensure_ascii=False, indent=2)
+	except OSError:
+		FALLBACK_DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
+		with FALLBACK_DATA_FILE.open("w", encoding="utf-8") as file:
+			json.dump(presentes, file, ensure_ascii=False, indent=2)
 
 
 def send_notification_email(presente, nome_responsavel, email_responsavel):
@@ -314,7 +324,7 @@ def admin_login():
 
 	payload = request.get_json(silent=True) or {}
 	email = str(payload.get("email") or "").strip().lower()
-	password = str(payload.get("password") or "")
+	password = str(payload.get("password") or "").strip()
 	users = get_admin_users()
 
 	if not email or not password:
