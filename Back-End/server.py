@@ -16,6 +16,7 @@ HTML_DIR = ROOT_DIR / "HTML"
 CSS_DIR = ROOT_DIR / "CSS"
 JS_DIR = ROOT_DIR / "JS"
 DATA_FILE = Path(__file__).resolve().parent / "presentes.json"
+DATA_FILE = Path(os.getenv("DATA_FILE_PATH", str(DATA_FILE)))
 ENV_FILE = Path(__file__).resolve().parent / ".env"
 DEFAULT_IMAGE_URL = "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80"
 
@@ -376,4 +377,6 @@ def reservar_presente(presente_id):
 
 
 if __name__ == "__main__":
-	app.run(host="0.0.0.0", port=5000, debug=True)
+	port = int(os.getenv("PORT", "5000"))
+	debug = os.getenv("FLASK_DEBUG", "0") == "1"
+	app.run(host="0.0.0.0", port=port, debug=debug)
