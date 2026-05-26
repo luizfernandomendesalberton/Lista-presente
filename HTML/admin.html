@@ -27,48 +27,73 @@
 				<button id="btnAtualizar" type="button">Atualizar</button>
 			</div>
 
-			<form id="adminForm" class="admin-form">
-				<label>
-					Token de admin (opcional)
-					<input id="adminToken" type="text" placeholder="Só necessário se ADMIN_TOKEN estiver configurado no servidor">
-				</label>
-
-				<label>
-					Nome do presente
-					<input id="adminNome" type="text" minlength="3" required>
-				</label>
-
-				<div class="admin-grid-two">
+			<div id="adminAuthPanel">
+				<form id="adminLoginForm" class="admin-form">
 					<label>
-						Preço (R$)
-						<input id="adminPreco" type="number" min="0" step="0.01" required>
+						E-mail de administrador
+						<input id="adminEmail" type="email" placeholder="Ex.: seuemail@gmail.com" required>
 					</label>
 
 					<label>
-						Categoria
-						<input id="adminCategoria" type="text" placeholder="Ex.: Cozinha">
+						Senha
+						<input id="adminPassword" type="password" required>
 					</label>
+
+					<div class="admin-actions">
+						<button type="submit">Entrar</button>
+					</div>
+				</form>
+			</div>
+
+			<div id="adminManagerPanel" hidden>
+				<p class="admin-tip">Logado como <strong id="adminSessionEmail">-</strong></p>
+				<div class="admin-actions" style="margin-bottom: 1rem;">
+					<button id="adminLogoutBtn" type="button">Sair</button>
 				</div>
 
-				<label>
-					URL da foto
-					<input id="adminFoto" type="url" placeholder="https://...">
-				</label>
+				<form id="adminForm" class="admin-form">
+					<label>
+						Token de admin (opcional)
+						<input id="adminToken" type="text" placeholder="Só necessário se ADMIN_TOKEN estiver configurado no servidor">
+					</label>
 
-				<label>
-					Descrição
-					<textarea id="adminDescricao" rows="3" placeholder="Descreva o presente"></textarea>
-				</label>
+					<label>
+						Nome do presente
+						<input id="adminNome" type="text" minlength="3" required>
+					</label>
 
-				<label>
-					Especificações (uma por linha)
-					<textarea id="adminEspecificacoes" rows="4" placeholder="Ex.:\nAço inox\n110V\nGarantia de 12 meses"></textarea>
-				</label>
+					<div class="admin-grid-two">
+						<label>
+							Preço (R$)
+							<input id="adminPreco" type="number" min="0" step="0.01" required>
+						</label>
 
-				<div class="admin-actions">
-					<button type="submit">Adicionar Presente</button>
-				</div>
-			</form>
+						<label>
+							Categoria
+							<input id="adminCategoria" type="text" placeholder="Ex.: Cozinha">
+						</label>
+					</div>
+
+					<label>
+						URL da foto
+						<input id="adminFoto" type="url" placeholder="https://...">
+					</label>
+
+					<label>
+						Descrição
+						<textarea id="adminDescricao" rows="3" placeholder="Descreva o presente"></textarea>
+					</label>
+
+					<label>
+						Especificações (uma por linha)
+						<textarea id="adminEspecificacoes" rows="4" placeholder="Ex.:\nAço inox\n110V\nGarantia de 12 meses"></textarea>
+					</label>
+
+					<div class="admin-actions">
+						<button type="submit">Adicionar Presente</button>
+					</div>
+				</form>
+			</div>
 
 			<p id="adminStatus" class="status"></p>
 		</section>

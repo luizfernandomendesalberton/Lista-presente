@@ -13,6 +13,13 @@ const statReservado = document.getElementById("statReservado");
 const adminForm = document.getElementById("adminForm");
 const adminTokenInput = document.getElementById("adminToken");
 const adminStatus = document.getElementById("adminStatus");
+const adminLoginForm = document.getElementById("adminLoginForm");
+const adminAuthPanel = document.getElementById("adminAuthPanel");
+const adminManagerPanel = document.getElementById("adminManagerPanel");
+const adminEmailInput = document.getElementById("adminEmail");
+const adminPasswordInput = document.getElementById("adminPassword");
+const adminSessionEmail = document.getElementById("adminSessionEmail");
+const adminLogoutBtn = document.getElementById("adminLogoutBtn");
 
 const adminNome = document.getElementById("adminNome");
 const adminPreco = document.getElementById("adminPreco");
@@ -21,6 +28,7 @@ const adminFoto = document.getElementById("adminFoto");
 const adminDescricao = document.getElementById("adminDescricao");
 const adminEspecificacoes = document.getElementById("adminEspecificacoes");
 const isAdminPage = Boolean(adminForm);
+let adminAuthenticated = !isAdminPage;
 
 const BRL = new Intl.NumberFormat("pt-BR", {
 	style: "currency",
@@ -43,6 +51,50 @@ function getAdminHeaders() {
 	return {
 		"X-Admin-Token": token,
 	};
+}
+
+
+function setAdminMode(authenticated, email = "") {
+	adminAuthenticated = authenticated;
+
+	if (!isAdminPage) {
+		return;
+	}
+
+	if (adminAuthPanel) {
+		adminAuthPanel.hidden = authenticated;
+	}
+	if (adminManagerPanel) {
+		adminManagerPanel.hidden = !authenticated;
+	}
+	if (adminSessionEmail) {
+		adminSessionEmail.textContent = email || "-";
+	}
+}
+
+
+async function syncAdminSession() {
+	if (!isAdminPage) {
+		return;
+	}
+
+	try {
+		const response = await fetch("/api/admin/session", {
+			credentials: "same-origin",
+		});
+
+		if (!response.ok) {
+			throw new Error("Falha ao validar sessão.");
+		}
+
+		const result = await response.json();
+		setAdminMode(Boolean(result.authenticated), result.email || "");
+	} catch (error) {
+		setAdminMode(false);
+		if (adminStatus) {
+			adminStatus.textContent = "Não foi possível validar sua sessão de administrador.";
+		}
+	}
 }
 
 
@@ -158,6 +210,11 @@ async function removerPresente(presenteId) {
 		return;
 	}
 
+	if (!adminAuthenticated) {
+		adminStatus.textContent = "Faça login para remover presentes.";
+		return;
+	}
+
 	const confirmed = window.confirm("Deseja remover este presente da lista?");
 	if (!confirmed) {
 		return;
@@ -166,6 +223,7 @@ async function removerPresente(presenteId) {
 	try {
 		const response = await fetch(`/api/presentes/${presenteId}`, {
 			method: "DELETE",
+			credentials: "same-origin",
 			headers: {
 				...getAdminHeaders(),
 			},
@@ -266,6 +324,7 @@ function renderPresentes() {
 			if (!isAdminPage) {
 				btnRemover.remove();
 			} else {
+				btnRemover.disabled = !adminAuthenticated;
 				btnRemover.addEventListener("click", async () => {
 					await removerPresente(presente.id);
 				});
@@ -299,8 +358,69 @@ async function carregarPresentes() {
 
 
 if (isAdminPage) {
+	if (adminLoginForm) {
+		adminLoginForm.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			adminStatus.textContent = "Entrando...";
+
+			const payload = {
+				email: adminEmailInput.value.trim().toLowerCase(),
+				password: adminPasswordInput.value,
+			};
+
+			try {
+				const response = await fetch("/api/admin/login", {
+					method: "POST",
+					credentials: "same-origin",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(payload),
+				});
+
+				const result = await response.json();
+
+				if (!response.ok) {
+					throw new Error(result.erro || "Falha ao realizar login.");
+				}
+
+				setAdminMode(true, result.email || payload.email);
+				adminLoginForm.reset();
+				adminStatus.textContent = "Login realizado com sucesso.";
+				await carregarPresentes();
+			} catch (error) {
+				adminStatus.textContent = error.message;
+			}
+		});
+	}
+
+	if (adminLogoutBtn) {
+		adminLogoutBtn.addEventListener("click", async () => {
+			try {
+				const response = await fetch("/api/admin/logout", {
+					method: "POST",
+					credentials: "same-origin",
+				});
+				if (!response.ok) {
+					throw new Error("Falha ao sair da sessão.");
+				}
+
+				setAdminMode(false);
+				adminStatus.textContent = "Sessão encerrada.";
+				await carregarPresentes();
+			} catch (error) {
+				adminStatus.textContent = error.message;
+			}
+		});
+	}
+
 	adminForm.addEventListener("submit", async (event) => {
 		event.preventDefault();
+		if (!adminAuthenticated) {
+			adminStatus.textContent = "Faça login para adicionar presentes.";
+			return;
+		}
+
 		adminStatus.textContent = "Enviando...";
 
 		const payload = {
@@ -318,6 +438,7 @@ if (isAdminPage) {
 		try {
 			const response = await fetch("/api/presentes", {
 				method: "POST",
+				credentials: "same-origin",
 				headers: {
 					"Content-Type": "application/json",
 					...getAdminHeaders(),
@@ -354,4 +475,12 @@ if (btnAtualizar) {
 	btnAtualizar.addEventListener("click", carregarPresentes);
 }
 
-carregarPresentes();
+async function initPage() {
+	if (isAdminPage) {
+		await syncAdminSession();
+	}
+
+	await carregarPresentes();
+}
+
+initPage();

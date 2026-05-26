@@ -1,4 +1,5 @@
 import json
+import hmac
 import os
 import re
 import smtplib
@@ -8,7 +9,7 @@ from datetime import datetime
 from email.mime.text import MIMEText
 from pathlib import Path
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, session
 
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -45,6 +46,8 @@ def load_dotenv_file():
 
 
 load_dotenv_file()
+
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-change-me")
 
 
 def default_presentes():
@@ -167,16 +170,42 @@ def parse_email_list(raw_value):
 	return list(dict.fromkeys(emails))
 
 
-def require_admin_token(request_obj):
+def get_admin_users():
+	users = {}
+	for index in (1, 2):
+		email = os.getenv(f"ADMIN_USER_{index}_EMAIL", "").strip().lower()
+		password = os.getenv(f"ADMIN_USER_{index}_PASSWORD", "")
+		if email and password:
+			users[email] = password
+
+	return users
+
+
+def is_session_admin():
+	email = str(session.get("admin_email") or "").strip().lower()
+	if not email:
+		return False
+
+	return email in get_admin_users()
+
+
+def has_valid_admin_token(request_obj):
 	configured_token = os.getenv("ADMIN_TOKEN", "").strip()
 	if not configured_token:
-		return None
+		return False
 
 	sent_token = request_obj.headers.get("X-Admin-Token", "").strip()
-	if sent_token != configured_token:
-		return jsonify({"erro": "Token de administrador inválido."}), 401
+	if sent_token and hmac.compare_digest(sent_token, configured_token):
+		return True
 
-	return None
+	return False
+
+
+def require_admin_auth(request_obj):
+	if has_valid_admin_token(request_obj) or is_session_admin():
+		return None
+
+	return jsonify({"erro": "Acesso restrito. Faça login como administrador."}), 401
 
 
 def load_presentes():
@@ -196,6 +225,7 @@ def load_presentes():
 
 
 def save_presentes(presentes):
+	DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
 	with DATA_FILE.open("w", encoding="utf-8") as file:
 		json.dump(presentes, file, ensure_ascii=False, indent=2)
 
@@ -240,7 +270,7 @@ def send_notification_email(presente, nome_responsavel, email_responsavel):
 def add_cors_headers(response):
 	response.headers["Access-Control-Allow-Origin"] = "*"
 	response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
-	response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+	response.headers["Access-Control-Allow-Headers"] = "Content-Type,X-Admin-Token"
 	return response
 
 
@@ -269,12 +299,50 @@ def listar_presentes():
 	return jsonify(load_presentes())
 
 
+@app.route("/api/admin/session", methods=["GET"])
+def admin_session_status():
+	if is_session_admin():
+		return jsonify({"authenticated": True, "email": session.get("admin_email")})
+
+	return jsonify({"authenticated": False})
+
+
+@app.route("/api/admin/login", methods=["POST", "OPTIONS"])
+def admin_login():
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	payload = request.get_json(silent=True) or {}
+	email = str(payload.get("email") or "").strip().lower()
+	password = str(payload.get("password") or "")
+	users = get_admin_users()
+
+	if not email or not password:
+		return jsonify({"erro": "Informe e-mail e senha."}), 400
+
+	if email not in users or not hmac.compare_digest(password, users[email]):
+		return jsonify({"erro": "Credenciais inválidas."}), 401
+
+	session["admin_email"] = email
+
+	return jsonify({"mensagem": "Login realizado com sucesso.", "email": email})
+
+
+@app.route("/api/admin/logout", methods=["POST", "OPTIONS"])
+def admin_logout():
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	session.pop("admin_email", None)
+	return jsonify({"mensagem": "Logout realizado com sucesso."})
+
+
 @app.route("/api/presentes", methods=["POST", "OPTIONS"])
 def criar_presente():
 	if request.method == "OPTIONS":
 		return ("", 204)
 
-	admin_error = require_admin_token(request)
+	admin_error = require_admin_auth(request)
 	if admin_error:
 		return admin_error
 
@@ -313,7 +381,7 @@ def remover_presente(presente_id):
 	if request.method == "OPTIONS":
 		return ("", 204)
 
-	admin_error = require_admin_token(request)
+	admin_error = require_admin_auth(request)
 	if admin_error:
 		return admin_error
 
