@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Lista de Presentes de Casamento</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Prata&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/CSS/lista.css">
+</head>
+<body>
+	<div class="bg-shape bg-shape-one" aria-hidden="true"></div>
+	<div class="bg-shape bg-shape-two" aria-hidden="true"></div>
+
+	<main class="container reveal-up">
+		<header class="hero">
+			<p class="tag">Casamento 2026</p>
+			<h1>Lista de Presentes</h1>
+			<p class="subtitle">Escolha um presente especial, reserve com seu nome e avise os noivos automaticamente por e-mail.</p>
+
+			<div class="hero-stats">
+				<article>
+					<strong id="statTotal">0</strong>
+					<span>Total</span>
+				</article>
+				<article>
+					<strong id="statDisponivel">0</strong>
+					<span>Disponíveis</span>
+				</article>
+				<article>
+					<strong id="statReservado">0</strong>
+					<span>Reservados</span>
+				</article>
+			</div>
+		</header>
+
+		<section class="panel">
+			<div class="panel-head">
+				<h2>Catálogo de Presentes</h2>
+				<button id="btnAtualizar" type="button">Atualizar</button>
+			</div>
+
+			<div class="filters">
+				<input id="filtroBusca" type="search" placeholder="Buscar presente...">
+				<select id="filtroCategoria">
+					<option value="">Todas as categorias</option>
+				</select>
+				<select id="filtroOrdem">
+					<option value="disponivel">Disponíveis primeiro</option>
+					<option value="preco_asc">Menor preço</option>
+					<option value="preco_desc">Maior preço</option>
+					<option value="nome">Nome (A-Z)</option>
+				</select>
+			</div>
+
+			<p id="statusGeral" class="status"></p>
+			<div id="listaPresentes" class="lista"></div>
+		</section>
+	</main>
+
+	<template id="presenteTemplate">
+		<article class="card">
+			<div class="media-wrap">
+				<img class="presente-foto" src="" alt="">
+				<p class="badge-categoria"></p>
+			</div>
+
+			<div class="card-main">
+				<h3 class="presente-nome"></h3>
+				<p class="presente-preco"></p>
+				<p class="presente-descricao"></p>
+				<ul class="presente-especificacoes"></ul>
+				<p class="presente-status"></p>
+			</div>
+
+			<form class="reserve-form">
+				<label>
+					Seu nome
+					<input class="input-nome" type="text" placeholder="Ex.: Maria Silva" minlength="3" required>
+				</label>
+
+				<label>
+					Seu e-mail
+					<input class="input-email" type="email" placeholder="Ex.: maria@email.com" required>
+				</label>
+
+				<label class="check-wrap">
+					<input class="input-check" type="checkbox">
+					Vou ficar com este presente para entregar
+				</label>
+			</form>
+		</article>
+	</template>
+
+	<script src="/JS/lista.js"></script>
+</body>
+</html>

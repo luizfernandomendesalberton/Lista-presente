@@ -1,0 +1,78 @@
+[
+  {
+    "id": 1,
+    "nome": "Jogo de Jantar 30 Pecas",
+    "descricao": "Conjunto elegante para montar a mesa em momentos especiais.",
+    "categoria": "Cozinha",
+    "preco": 399.9,
+    "foto_url": "https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fit=crop&w=900&q=80",
+    "especificacoes": [
+      "30 pecas",
+      "Porcelana",
+      "Pode ir ao micro-ondas"
+    ],
+    "reservado": false
+  },
+  {
+    "id": 2,
+    "nome": "Liquidificador",
+    "descricao": "Ideal para sucos, vitaminas e receitas do dia a dia.",
+    "categoria": "Eletroportateis",
+    "preco": 279.9,
+    "foto_url": "https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=900&q=80",
+    "especificacoes": [
+      "5 velocidades",
+      "Copo de 2L",
+      "Trava de seguranca"
+    ],
+    "reservado": false
+  },
+  {
+    "id": 3,
+    "nome": "Fritadeira Eletrica",
+    "descricao": "Prepara receitas crocantes com pouco oleo.",
+    "categoria": "Eletroportateis",
+    "preco": 499.0,
+    "foto_url": "https://images.unsplash.com/photo-1585238342024-78d387f4a707?auto=format&fit=crop&w=900&q=80",
+    "especificacoes": [
+      "Capacidade 5L",
+      "Controle de temperatura",
+      "Timer automatico"
+    ],
+    "reservado": false
+  },
+  {
+    "id": 4,
+    "nome": "Conjunto de Toalhas",
+    "descricao": "Kit de banho com toque macio e alta absorcao.",
+    "categoria": "Cama, Mesa e Banho",
+    "preco": 189.5,
+    "foto_url": "https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?auto=format&fit=crop&w=900&q=80",
+    "especificacoes": [
+      "100% algodao",
+      "2 toalhas de banho",
+      "2 toalhas de rosto"
+    ],
+    "reservado": true,
+    "reservado_por_nome": "luiz",
+    "reservado_por_email": "luizfernandomendesalbertonx30@gmail.com",
+    "reservado_em": "2026-05-25T22:40:38.930048+00:00"
+  },
+  {
+    "id": 5,
+    "nome": "Panela de Pressao",
+    "descricao": "Panela reforcada para preparo rapido de receitas.",
+    "categoria": "Cozinha",
+    "preco": 169.9,
+    "foto_url": "https://images.unsplash.com/photo-1590794056466-7c8f6f4f7b5f?auto=format&fit=crop&w=900&q=80",
+    "especificacoes": [
+      "4,5 litros",
+      "Aluminio polido",
+      "Valvula de seguranca"
+    ],
+    "reservado": true,
+    "reservado_por_nome": "luiz",
+    "reservado_por_email": "luizfernandomendesalbertonx30@gmail.com",
+    "reservado_em": "2026-05-25T22:37:03.091970"
+  }
+]
