@@ -51,6 +51,11 @@ load_dotenv_file()
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-change-me")
 
 
+def clean_credential(value):
+	# Normalizes accidental spaces/newlines copied from dashboards.
+	return str(value or "").replace("\u200b", "").strip()
+
+
 def default_presentes():
 	return [
 		{
@@ -174,8 +179,8 @@ def parse_email_list(raw_value):
 def get_admin_users():
 	users = {}
 	for index in (1, 2):
-		email = os.getenv(f"ADMIN_USER_{index}_EMAIL", "").strip().lower()
-		password = os.getenv(f"ADMIN_USER_{index}_PASSWORD", "").strip()
+		email = clean_credential(os.getenv(f"ADMIN_USER_{index}_EMAIL", "")).lower()
+		password = clean_credential(os.getenv(f"ADMIN_USER_{index}_PASSWORD", ""))
 		if email and password:
 			users[email] = password
 
@@ -323,9 +328,12 @@ def admin_login():
 		return ("", 204)
 
 	payload = request.get_json(silent=True) or {}
-	email = str(payload.get("email") or "").strip().lower()
-	password = str(payload.get("password") or "").strip()
+	email = clean_credential(payload.get("email") or "").lower()
+	password = clean_credential(payload.get("password") or "")
 	users = get_admin_users()
+
+	if not users:
+		return jsonify({"erro": "Nenhum administrador configurado no servidor. Defina ADMIN_USER_1_EMAIL e ADMIN_USER_1_PASSWORD no Render."}), 503
 
 	if not email or not password:
 		return jsonify({"erro": "Informe e-mail e senha."}), 400

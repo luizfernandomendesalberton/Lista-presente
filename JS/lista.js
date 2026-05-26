@@ -99,6 +99,10 @@ async function syncAdminSession() {
 
 
 function updateStats(presentes) {
+	if (!statTotal || !statDisponivel || !statReservado) {
+		return;
+	}
+
 	const total = presentes.length;
 	const reservado = presentes.filter((item) => item.reservado).length;
 	const disponivel = total - reservado;
