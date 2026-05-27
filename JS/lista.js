@@ -21,6 +21,9 @@ const adminPasswordInput = document.getElementById("adminPassword");
 const adminSessionEmail = document.getElementById("adminSessionEmail");
 const adminLogoutBtn = document.getElementById("adminLogoutBtn");
 const adminExportBtn = document.getElementById("adminExportBtn");
+const adminSubmitBtn = document.getElementById("adminSubmitBtn");
+const adminCancelEditBtn = document.getElementById("adminCancelEditBtn");
+const adminFormTitle = document.getElementById("adminFormTitle");
 
 const adminNome = document.getElementById("adminNome");
 const adminPreco = document.getElementById("adminPreco");
@@ -30,6 +33,7 @@ const adminDescricao = document.getElementById("adminDescricao");
 const adminEspecificacoes = document.getElementById("adminEspecificacoes");
 const isAdminPage = Boolean(adminForm);
 let adminAuthenticated = !isAdminPage;
+let editingPresenteId = null;
 
 const BRL = new Intl.NumberFormat("pt-BR", {
 	style: "currency",
@@ -71,6 +75,51 @@ function setAdminMode(authenticated, email = "") {
 	if (adminSessionEmail) {
 		adminSessionEmail.textContent = email || "-";
 	}
+
+	if (!authenticated) {
+		setEditingMode(null);
+	}
+}
+
+
+function setEditingMode(presente) {
+	if (!isAdminPage || !adminForm) {
+		return;
+	}
+
+	if (!presente) {
+		editingPresenteId = null;
+		adminForm.reset();
+		if (adminFormTitle) {
+			adminFormTitle.textContent = "Cadastro de Presentes";
+		}
+		if (adminSubmitBtn) {
+			adminSubmitBtn.textContent = "Adicionar Presente";
+		}
+		if (adminCancelEditBtn) {
+			adminCancelEditBtn.hidden = true;
+		}
+		return;
+	}
+
+	editingPresenteId = Number(presente.id);
+	adminNome.value = presente.nome || "";
+	adminPreco.value = Number(presente.preco || 0);
+	adminCategoria.value = presente.categoria || "Geral";
+	adminFoto.value = presente.foto_url || "";
+	adminDescricao.value = presente.descricao || "";
+	adminEspecificacoes.value = (presente.especificacoes || []).join("\n");
+
+	if (adminFormTitle) {
+		adminFormTitle.textContent = `Editando: ${presente.nome || "Presente"}`;
+	}
+	if (adminSubmitBtn) {
+		adminSubmitBtn.textContent = "Salvar Alterações";
+	}
+	if (adminCancelEditBtn) {
+		adminCancelEditBtn.hidden = false;
+	}
+	adminStatus.textContent = "Modo edição ativo. Atualize os campos e clique em salvar.";
 }
 
 
@@ -282,6 +331,7 @@ function renderPresentes() {
 		const inputCheck = node.querySelector(".input-check");
 		const form = node.querySelector(".reserve-form");
 		const btnRemover = node.querySelector(".btn-remover");
+		const btnEditar = node.querySelector(".btn-editar");
 
 		card.style.animationDelay = `${Math.min(index * 40, 300)}ms`;
 
@@ -340,6 +390,22 @@ function renderPresentes() {
 				btnRemover.disabled = !adminAuthenticated;
 				btnRemover.addEventListener("click", async () => {
 					await removerPresente(presente.id);
+				});
+			}
+		}
+
+		if (btnEditar) {
+			if (!isAdminPage) {
+				btnEditar.remove();
+			} else {
+				btnEditar.disabled = !adminAuthenticated;
+				btnEditar.addEventListener("click", () => {
+					if (!adminAuthenticated) {
+						adminStatus.textContent = "Faça login para editar presentes.";
+						return;
+					}
+					setEditingMode(presente);
+					window.scrollTo({ top: 0, behavior: "smooth" });
 				});
 			}
 		}
@@ -475,6 +541,13 @@ if (isAdminPage) {
 		});
 	}
 
+	if (adminCancelEditBtn) {
+		adminCancelEditBtn.addEventListener("click", () => {
+			setEditingMode(null);
+			adminStatus.textContent = "Edição cancelada.";
+		});
+	}
+
 	adminForm.addEventListener("submit", async (event) => {
 		event.preventDefault();
 		if (!adminAuthenticated) {
@@ -497,8 +570,12 @@ if (isAdminPage) {
 		};
 
 		try {
-			const response = await fetch("/api/presentes", {
-				method: "POST",
+			const isEditing = Number.isInteger(editingPresenteId);
+			const endpoint = isEditing ? `/api/presentes/${editingPresenteId}` : "/api/presentes";
+			const method = isEditing ? "PUT" : "POST";
+
+			const response = await fetch(endpoint, {
+				method,
 				credentials: "same-origin",
 				headers: {
 					"Content-Type": "application/json",
@@ -513,8 +590,8 @@ if (isAdminPage) {
 				throw new Error(result.erro || "Falha ao criar presente.");
 			}
 
-			adminStatus.textContent = "Presente adicionado com sucesso.";
-			adminForm.reset();
+			adminStatus.textContent = isEditing ? "Presente atualizado com sucesso." : "Presente adicionado com sucesso.";
+			setEditingMode(null);
 			await carregarPresentes();
 		} catch (error) {
 			adminStatus.textContent = error.message;

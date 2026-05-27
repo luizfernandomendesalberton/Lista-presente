@@ -413,6 +413,43 @@ def criar_presente():
 	return jsonify({"mensagem": "Presente adicionado com sucesso.", "presente": novo}), 201
 
 
+@app.route("/api/presentes/<int:presente_id>", methods=["PUT", "OPTIONS"])
+def atualizar_presente(presente_id):
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	payload = request.get_json(silent=True) or {}
+	nome = str(payload.get("nome") or "").strip()
+	preco = normalize_preco(payload.get("preco"))
+
+	if len(nome) < 3:
+		return jsonify({"erro": "Informe um nome de presente com pelo menos 3 caracteres."}), 400
+
+	if preco is None or preco < 0:
+		return jsonify({"erro": "Informe um preço válido."}), 400
+
+	presentes = load_presentes()
+	presente = next((item for item in presentes if int(item.get("id", 0)) == presente_id), None)
+
+	if not presente:
+		return jsonify({"erro": "Presente não encontrado."}), 404
+
+	presente["nome"] = nome
+	presente["descricao"] = str(payload.get("descricao") or "").strip()
+	presente["categoria"] = str(payload.get("categoria") or "Geral").strip() or "Geral"
+	presente["preco"] = round(preco, 2)
+	presente["foto_url"] = str(payload.get("foto_url") or DEFAULT_IMAGE_URL).strip() or DEFAULT_IMAGE_URL
+	presente["especificacoes"] = normalize_especificacoes(payload.get("especificacoes") or [])
+
+	save_presentes(presentes)
+
+	return jsonify({"mensagem": "Presente atualizado com sucesso.", "presente": presente})
+
+
 @app.route("/api/presentes/<int:presente_id>", methods=["DELETE", "OPTIONS"])
 def remover_presente(presente_id):
 	if request.method == "OPTIONS":

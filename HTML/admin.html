@@ -23,7 +23,7 @@
 
 		<section class="panel admin-panel">
 			<div class="panel-head">
-				<h2>Cadastro de Presentes</h2>
+				<h2 id="adminFormTitle">Cadastro de Presentes</h2>
 				<button id="btnAtualizar" type="button">Atualizar</button>
 			</div>
 
@@ -91,7 +91,8 @@
 					</label>
 
 					<div class="admin-actions">
-						<button type="submit">Adicionar Presente</button>
+						<button id="adminCancelEditBtn" type="button" hidden>Cancelar edição</button>
+						<button id="adminSubmitBtn" type="submit">Adicionar Presente</button>
 					</div>
 				</form>
 			</div>
@@ -155,6 +156,7 @@
 			</form>
 
 			<button class="btn-remover" type="button">Remover presente</button>
+			<button class="btn-editar" type="button">Editar presente</button>
 		</article>
 	</template>
 
