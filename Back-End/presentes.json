@@ -14,5 +14,20 @@
       "Estampa: lisa."
     ],
     "reservado": false
+  },
+  {
+    "id": 2,
+    "nome": "Jogo de faca",
+    "descricao": "Jogo de Facas Tramontina Plenus 10 peças, lâminas em aço inox.",
+    "categoria": "Cozinha",
+    "preco": 110.0,
+    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_790612-MLB53299366450_012023-F.webp",
+    "produto_url": "https://www.mercadolivre.com.br/jogo-de-facas-tramontina-plenus-10pcs-laminas-em-aco-inox/up/MLBU1437327666?pdp_filters=item_id%3AMLB3130408727&from=gshop&matt_tool=13891073&matt_word=&matt_source=google&matt_campaign_id=22090193717&matt_ad_group_id=174661962444&matt_match_type=&matt_network=g&matt_device=c&matt_creative=727914179500&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=109561419&matt_product_id=MLBU1437327666&matt_product_partition_id=2388010494946&matt_target_id=pla-2388010494946&cq_src=google_ads&cq_cmp=22090193717&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=22090193717&gbraid=0AAAAAD93qcDA8ppnE2H9NnF01v49bixmc&gclid=CjwKCAjwrNrQBhBjEiwAoR4VOwz-Kp9-dRVA_Ags3Av8ZXSQmSDnDWU1_erfnc3516GqbxoV1OU_UxoC0R8QAvD_BwE",
+    "especificacoes": [
+      "Lâmina de aço inoxidável.",
+      "Punho de polipropileno.",
+      "Comprimento da lâmina de 17,8 cm."
+    ],
+    "reservado": false
   }
 ]
