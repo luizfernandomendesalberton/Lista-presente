@@ -196,9 +196,17 @@ async function reservarPresente(presente, card, statusPresenteEl, inputNome, inp
 		}
 
 		card.classList.add("reservado");
-		statusPresenteEl.textContent = `Reservado por ${nome}`;
+		if (result.email_status === "notificacao_enviada") {
+			statusPresenteEl.textContent = `Reservado por ${nome} (notificação enviada)`;
+		} else {
+			statusPresenteEl.textContent = `Reservado por ${nome} (notificação pendente)`;
+		}
 		inputNome.disabled = true;
 		inputEmail.disabled = true;
+
+		if (result.email_status && result.email_status !== "notificacao_enviada") {
+			alert(`Reserva feita, mas houve falha no e-mail: ${result.email_status}`);
+		}
 
 		await carregarPresentes();
 	} catch (error) {

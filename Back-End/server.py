@@ -473,6 +473,7 @@ def reservar_presente(presente_id):
 		send_notification_email(presente, nome, email)
 		email_status = "notificacao_enviada"
 	except Exception as exc:
+		app.logger.exception("Falha ao enviar e-mail de notificacao da reserva")
 		email_status = f"notificacao_falhou: {exc}"
 
 	return jsonify(
