@@ -163,7 +163,7 @@ function getFilteredPresentes() {
 
 async function reservarPresente(presente, card, statusPresenteEl, inputNome, inputEmail, inputCheck) {
 	const nome = inputNome.value.trim();
-	const email = inputEmail.value.trim();
+	const email = inputEmail.value.trim().toLowerCase();
 
 	if (nome.length < 3) {
 		alert("Informe um nome válido com pelo menos 3 caracteres.");
@@ -171,8 +171,8 @@ async function reservarPresente(presente, card, statusPresenteEl, inputNome, inp
 		return;
 	}
 
-	if (!email) {
-		alert("Informe um e-mail válido.");
+	if (email && !inputEmail.checkValidity()) {
+		alert("Se informar e-mail, ele precisa ser válido.");
 		inputCheck.checked = false;
 		return;
 	}

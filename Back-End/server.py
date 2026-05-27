@@ -448,8 +448,8 @@ def reservar_presente(presente_id):
 	if len(nome) < 3:
 		return jsonify({"erro": "Informe um nome válido."}), 400
 
-	if not EMAIL_REGEX.match(email):
-		return jsonify({"erro": "Informe um e-mail válido."}), 400
+	if email and not EMAIL_REGEX.match(email):
+		return jsonify({"erro": "Se informado, o e-mail deve ser válido."}), 400
 
 	presentes = load_presentes()
 	presente = next((p for p in presentes if p.get("id") == presente_id), None)
@@ -462,7 +462,10 @@ def reservar_presente(presente_id):
 
 	presente["reservado"] = True
 	presente["reservado_por_nome"] = nome
-	presente["reservado_por_email"] = email
+	if email:
+		presente["reservado_por_email"] = email
+	else:
+		presente.pop("reservado_por_email", None)
 	presente["reservado_em"] = datetime.now(UTC).isoformat()
 	save_presentes(presentes)
 
