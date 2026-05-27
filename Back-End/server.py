@@ -296,6 +296,7 @@ def index():
 
 @app.route("/admin", methods=["GET"])
 def admin_page():
+	session.pop("admin_email", None)
 	return send_from_directory(HTML_DIR, "admin.html")
 
 
