@@ -29,6 +29,7 @@ const adminNome = document.getElementById("adminNome");
 const adminPreco = document.getElementById("adminPreco");
 const adminCategoria = document.getElementById("adminCategoria");
 const adminFoto = document.getElementById("adminFoto");
+const adminProdutoUrl = document.getElementById("adminProdutoUrl");
 const adminDescricao = document.getElementById("adminDescricao");
 const adminEspecificacoes = document.getElementById("adminEspecificacoes");
 const isAdminPage = Boolean(adminForm);
@@ -107,6 +108,7 @@ function setEditingMode(presente) {
 	adminPreco.value = Number(presente.preco || 0);
 	adminCategoria.value = presente.categoria || "Geral";
 	adminFoto.value = presente.foto_url || "";
+	adminProdutoUrl.value = presente.produto_url || "";
 	adminDescricao.value = presente.descricao || "";
 	adminEspecificacoes.value = (presente.especificacoes || []).join("\n");
 
@@ -342,6 +344,16 @@ function renderPresentes() {
 
 		fotoEl.src = presente.foto_url;
 		fotoEl.alt = `Foto do presente ${presente.nome}`;
+		if (presente.produto_url) {
+			fotoEl.style.cursor = "pointer";
+			fotoEl.title = "Abrir página do produto";
+			fotoEl.addEventListener("click", () => {
+				window.open(presente.produto_url, "_blank", "noopener,noreferrer");
+			});
+		} else {
+			fotoEl.style.cursor = "default";
+			fotoEl.title = "";
+		}
 		fotoEl.addEventListener("error", () => {
 			fotoEl.src = "https://images.unsplash.com/photo-1513883049090-d0b7439799bf?auto=format&fit=crop&w=900&q=80";
 		});
@@ -562,6 +574,7 @@ if (isAdminPage) {
 			preco: Number(adminPreco.value),
 			categoria: adminCategoria.value.trim() || "Geral",
 			foto_url: adminFoto.value.trim(),
+			produto_url: adminProdutoUrl.value.trim(),
 			descricao: adminDescricao.value.trim(),
 			especificacoes: adminEspecificacoes.value
 				.split("\n")

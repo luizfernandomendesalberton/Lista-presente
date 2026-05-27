@@ -135,6 +135,7 @@ def normalize_presente(raw, forced_id=None):
 		"categoria": str(raw.get("categoria") or "Geral").strip(),
 		"preco": round(preco, 2),
 		"foto_url": str(raw.get("foto_url") or DEFAULT_IMAGE_URL).strip() or DEFAULT_IMAGE_URL,
+		"produto_url": str(raw.get("produto_url") or "").strip(),
 		"especificacoes": normalize_especificacoes(raw.get("especificacoes")),
 		"reservado": bool(raw.get("reservado", False)),
 	}
@@ -410,6 +411,7 @@ def criar_presente():
 			"categoria": payload.get("categoria") or "Geral",
 			"preco": preco,
 			"foto_url": payload.get("foto_url") or DEFAULT_IMAGE_URL,
+			"produto_url": payload.get("produto_url") or "",
 			"especificacoes": payload.get("especificacoes") or [],
 			"reservado": False,
 		}
@@ -451,6 +453,7 @@ def atualizar_presente(presente_id):
 	presente["categoria"] = str(payload.get("categoria") or "Geral").strip() or "Geral"
 	presente["preco"] = round(preco, 2)
 	presente["foto_url"] = str(payload.get("foto_url") or DEFAULT_IMAGE_URL).strip() or DEFAULT_IMAGE_URL
+	presente["produto_url"] = str(payload.get("produto_url") or "").strip()
 	presente["especificacoes"] = normalize_especificacoes(payload.get("especificacoes") or [])
 
 	save_presentes(presentes)
