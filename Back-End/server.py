@@ -291,23 +291,31 @@ def add_cors_headers(response):
 
 @app.route("/", methods=["GET"])
 def index():
-	return send_from_directory(HTML_DIR, "lista.html")
+	response = send_from_directory(HTML_DIR, "lista.html")
+	response.headers["Cache-Control"] = "no-store, max-age=0"
+	return response
 
 
 @app.route("/admin", methods=["GET"])
 def admin_page():
 	session.pop("admin_email", None)
-	return send_from_directory(HTML_DIR, "admin.html")
+	response = send_from_directory(HTML_DIR, "admin.html")
+	response.headers["Cache-Control"] = "no-store, max-age=0"
+	return response
 
 
 @app.route("/CSS/<path:filename>", methods=["GET"])
 def css_files(filename):
-	return send_from_directory(CSS_DIR, filename)
+	response = send_from_directory(CSS_DIR, filename)
+	response.headers["Cache-Control"] = "no-store, max-age=0"
+	return response
 
 
 @app.route("/JS/<path:filename>", methods=["GET"])
 def js_files(filename):
-	return send_from_directory(JS_DIR, filename)
+	response = send_from_directory(JS_DIR, filename)
+	response.headers["Cache-Control"] = "no-store, max-age=0"
+	return response
 
 
 @app.route("/api/presentes", methods=["GET"])
