@@ -9,7 +9,7 @@ from datetime import datetime
 from email.mime.text import MIMEText
 from pathlib import Path
 
-from flask import Flask, jsonify, request, send_from_directory, session
+from flask import Flask, Response, jsonify, request, send_from_directory, session
 
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -312,6 +312,24 @@ def js_files(filename):
 @app.route("/api/presentes", methods=["GET"])
 def listar_presentes():
 	return jsonify(load_presentes())
+
+
+@app.route("/api/admin/export", methods=["GET"])
+def exportar_presentes():
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	presentes = load_presentes()
+	content = json.dumps(presentes, ensure_ascii=False, indent=2)
+	filename = f"presentes-export-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
+
+	return Response(
+		content,
+		status=200,
+		mimetype="application/json",
+		headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+	)
 
 
 @app.route("/api/admin/session", methods=["GET"])

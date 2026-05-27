@@ -20,6 +20,7 @@ const adminEmailInput = document.getElementById("adminEmail");
 const adminPasswordInput = document.getElementById("adminPassword");
 const adminSessionEmail = document.getElementById("adminSessionEmail");
 const adminLogoutBtn = document.getElementById("adminLogoutBtn");
+const adminExportBtn = document.getElementById("adminExportBtn");
 
 const adminNome = document.getElementById("adminNome");
 const adminPreco = document.getElementById("adminPreco");
@@ -362,6 +363,54 @@ async function carregarPresentes() {
 
 
 if (isAdminPage) {
+	if (adminExportBtn) {
+		adminExportBtn.addEventListener("click", async () => {
+			if (!adminAuthenticated) {
+				adminStatus.textContent = "Faça login para baixar o JSON.";
+				return;
+			}
+
+			try {
+				const response = await fetch("/api/admin/export", {
+					method: "GET",
+					credentials: "same-origin",
+					headers: {
+						...getAdminHeaders(),
+					},
+				});
+
+				if (!response.ok) {
+					let message = "Falha ao exportar JSON.";
+					try {
+						const body = await response.json();
+						message = body.erro || message;
+					} catch (_error) {
+						// Keep fallback message when response body is not JSON.
+					}
+					throw new Error(message);
+				}
+
+				const blob = await response.blob();
+				const contentDisposition = response.headers.get("Content-Disposition") || "";
+				const match = contentDisposition.match(/filename=\"?([^\";]+)\"?/i);
+				const fileName = match ? match[1] : "presentes-export.json";
+
+				const fileUrl = window.URL.createObjectURL(blob);
+				const link = document.createElement("a");
+				link.href = fileUrl;
+				link.download = fileName;
+				document.body.appendChild(link);
+				link.click();
+				link.remove();
+				window.URL.revokeObjectURL(fileUrl);
+
+				adminStatus.textContent = "Arquivo JSON exportado com sucesso.";
+			} catch (error) {
+				adminStatus.textContent = error.message;
+			}
+		});
+	}
+
 	if (adminLoginForm) {
 		adminLoginForm.addEventListener("submit", async (event) => {
 			event.preventDefault();
