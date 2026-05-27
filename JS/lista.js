@@ -44,6 +44,28 @@ const BRL = new Intl.NumberFormat("pt-BR", {
 let presentesState = [];
 
 
+function ensureAdminCategoryOption(category) {
+	if (!adminCategoria) {
+		return;
+	}
+
+	const value = String(category || "").trim();
+	if (!value) {
+		return;
+	}
+
+	const hasOption = Array.from(adminCategoria.options).some((option) => option.value === value);
+	if (hasOption) {
+		return;
+	}
+
+	const option = document.createElement("option");
+	option.value = value;
+	option.textContent = value;
+	adminCategoria.appendChild(option);
+}
+
+
 function getAdminHeaders() {
 	if (!isAdminPage) {
 		return {};
@@ -106,6 +128,7 @@ function setEditingMode(presente) {
 	editingPresenteId = Number(presente.id);
 	adminNome.value = presente.nome || "";
 	adminPreco.value = Number(presente.preco || 0);
+	ensureAdminCategoryOption(presente.categoria || "Geral");
 	adminCategoria.value = presente.categoria || "Geral";
 	adminFoto.value = presente.foto_url || "";
 	adminProdutoUrl.value = presente.produto_url || "";

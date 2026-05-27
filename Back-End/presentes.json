@@ -1,78 +1,18 @@
 [
   {
     "id": 1,
-    "nome": "Jogo de Jantar 30 Pecas",
-    "descricao": "Conjunto elegante para montar a mesa em momentos especiais.",
+    "nome": "Jogo de Prato",
+    "descricao": "Jogo de prato de cerâmica.",
     "categoria": "Cozinha",
-    "preco": 399.9,
-    "foto_url": "https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fit=crop&w=900&q=80",
+    "preco": 485.0,
+    "foto_url": "https://m.media-amazon.com/images/I/51HjUseflNS._AC_SX679_.jpg",
+    "produto_url": "https://www.amazon.com.br/Aparelho-Jantar-Ch%C3%A1-Oxford-Maresia/dp/B0BZ53C13F/ref=asc_df_B0BZ53C13F?mcid=0200538440583032975f41541f092bb9&tag=googleshopp00-20&linkCode=df0&hvadid=709964506244&hvpos=&hvnetw=g&hvrand=13823897477161928690&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9047782&hvtargid=pla-2201406492938&hvocijid=13823897477161928690-B0BZ53C13F-&hvexpln=0&language=pt_BR&th=1",
     "especificacoes": [
-      "30 pecas",
-      "Porcelana",
-      "Pode ir ao micro-ondas"
+      "30 peças",
+      "Cor: areia.",
+      "Marca: Oxford.",
+      "Estampa: lisa."
     ],
     "reservado": false
-  },
-  {
-    "id": 2,
-    "nome": "Liquidificador",
-    "descricao": "Ideal para sucos, vitaminas e receitas do dia a dia.",
-    "categoria": "Eletroportateis",
-    "preco": 279.9,
-    "foto_url": "https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=900&q=80",
-    "especificacoes": [
-      "5 velocidades",
-      "Copo de 2L",
-      "Trava de seguranca"
-    ],
-    "reservado": false
-  },
-  {
-    "id": 3,
-    "nome": "Fritadeira Eletrica",
-    "descricao": "Prepara receitas crocantes com pouco oleo.",
-    "categoria": "Eletroportateis",
-    "preco": 499.0,
-    "foto_url": "https://images.unsplash.com/photo-1585238342024-78d387f4a707?auto=format&fit=crop&w=900&q=80",
-    "especificacoes": [
-      "Capacidade 5L",
-      "Controle de temperatura",
-      "Timer automatico"
-    ],
-    "reservado": false
-  },
-  {
-    "id": 4,
-    "nome": "Conjunto de Toalhas",
-    "descricao": "Kit de banho com toque macio e alta absorcao.",
-    "categoria": "Cama, Mesa e Banho",
-    "preco": 189.5,
-    "foto_url": "https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?auto=format&fit=crop&w=900&q=80",
-    "especificacoes": [
-      "100% algodao",
-      "2 toalhas de banho",
-      "2 toalhas de rosto"
-    ],
-    "reservado": true,
-    "reservado_por_nome": "luiz",
-    "reservado_por_email": "luizfernandomendesalbertonx30@gmail.com",
-    "reservado_em": "2026-05-25T22:40:38.930048+00:00"
-  },
-  {
-    "id": 5,
-    "nome": "Panela de Pressao",
-    "descricao": "Panela reforcada para preparo rapido de receitas.",
-    "categoria": "Cozinha",
-    "preco": 169.9,
-    "foto_url": "https://images.unsplash.com/photo-1590794056466-7c8f6f4f7b5f?auto=format&fit=crop&w=900&q=80",
-    "especificacoes": [
-      "4,5 litros",
-      "Aluminio polido",
-      "Valvula de seguranca"
-    ],
-    "reservado": true,
-    "reservado_por_nome": "luiz",
-    "reservado_por_email": "luizfernandomendesalbertonx30@gmail.com",
-    "reservado_em": "2026-05-25T22:37:03.091970"
   }
 ]
