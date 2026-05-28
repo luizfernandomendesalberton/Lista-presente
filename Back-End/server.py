@@ -26,6 +26,9 @@ FALLBACK_DATA_FILE = Path(__file__).resolve().parent / "presentes.json"
 PIX_CONTRIB_FILE = Path(__file__).resolve().parent / "pix_contribuicoes.json"
 PIX_CONTRIB_FILE = Path(os.getenv("PIX_CONTRIB_FILE_PATH", str(PIX_CONTRIB_FILE)))
 PIX_CONTRIB_FALLBACK_FILE = Path(__file__).resolve().parent / "pix_contribuicoes.json"
+UNRESERVE_LOG_FILE = Path(__file__).resolve().parent / "desmarcacoes_reserva.json"
+UNRESERVE_LOG_FILE = Path(os.getenv("UNRESERVE_LOG_FILE_PATH", str(UNRESERVE_LOG_FILE)))
+UNRESERVE_LOG_FALLBACK_FILE = Path(__file__).resolve().parent / "desmarcacoes_reserva.json"
 ENV_FILE = Path(__file__).resolve().parent / ".env"
 DEFAULT_IMAGE_URL = "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80"
 
@@ -38,6 +41,9 @@ PRESENTES_FILE_LOCK = FileLock(str(DATA_LOCK_FILE), timeout=15)
 PIX_CONTRIB_LOCK = threading.Lock()
 PIX_CONTRIB_LOCK_FILE = Path(os.getenv("PIX_CONTRIB_LOCK_PATH", str(PIX_CONTRIB_FILE) + ".lock"))
 PIX_CONTRIB_FILE_LOCK = FileLock(str(PIX_CONTRIB_LOCK_FILE), timeout=15)
+UNRESERVE_LOG_LOCK = threading.Lock()
+UNRESERVE_LOG_LOCK_FILE = Path(os.getenv("UNRESERVE_LOG_LOCK_PATH", str(UNRESERVE_LOG_FILE) + ".lock"))
+UNRESERVE_LOG_FILE_LOCK = FileLock(str(UNRESERVE_LOG_LOCK_FILE), timeout=15)
 ACTIVE_ADMIN_SESSIONS = {}
 ACTIVE_ADMIN_SESSIONS_LOCK = threading.Lock()
 ADMIN_ACTIVITY_TTL_SECONDS = int(os.getenv("ADMIN_ACTIVITY_TTL_SECONDS", "900"))
@@ -427,6 +433,74 @@ def append_pix_contribution(contribution):
 	return normalized
 
 
+def normalize_unreserve_entry(raw, forced_id=None):
+	entry_id = forced_id if forced_id is not None else raw.get("id")
+
+	return {
+		"id": int(entry_id),
+		"presente_id": int(raw.get("presente_id") or 0),
+		"presente_nome": str(raw.get("presente_nome") or "Presente").strip(),
+		"reservado_por_nome": str(raw.get("reservado_por_nome") or "Não informado").strip(),
+		"reservado_por_email": str(raw.get("reservado_por_email") or "").strip().lower(),
+		"desmarcado_por": str(raw.get("desmarcado_por") or "admin").strip(),
+		"desmarcado_em": str(raw.get("desmarcado_em") or "").strip(),
+	}
+
+
+def normalize_all_unreserve_entries(entries):
+	normalized = []
+	for index, entry in enumerate(entries, start=1):
+		normalized.append(normalize_unreserve_entry(entry, forced_id=index))
+	return normalized
+
+
+def save_unreserve_entries(entries):
+	def _atomic_dump(target_file):
+		target_file.parent.mkdir(parents=True, exist_ok=True)
+		with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=target_file.parent, delete=False) as tmp_file:
+			json.dump(entries, tmp_file, ensure_ascii=False, indent=2)
+			tmp_path = Path(tmp_file.name)
+
+		os.replace(tmp_path, target_file)
+
+	try:
+		_atomic_dump(UNRESERVE_LOG_FILE)
+	except OSError:
+		_atomic_dump(UNRESERVE_LOG_FALLBACK_FILE)
+
+
+def load_unreserve_entries():
+	data_file = UNRESERVE_LOG_FILE
+	if not data_file.exists() and UNRESERVE_LOG_FALLBACK_FILE.exists():
+		data_file = UNRESERVE_LOG_FALLBACK_FILE
+
+	if not data_file.exists():
+		return []
+
+	with data_file.open("r", encoding="utf-8") as file:
+		loaded = json.load(file)
+
+	if not isinstance(loaded, list):
+		return []
+
+	normalized = normalize_all_unreserve_entries(loaded)
+	if normalized != loaded:
+		save_unreserve_entries(normalized)
+
+	return normalized
+
+
+def append_unreserve_entry(entry):
+	with UNRESERVE_LOG_LOCK:
+		with UNRESERVE_LOG_FILE_LOCK:
+			all_entries = load_unreserve_entries()
+			normalized = normalize_unreserve_entry(entry, forced_id=len(all_entries) + 1)
+			all_entries.append(normalized)
+			save_unreserve_entries(all_entries)
+
+	return normalized
+
+
 def load_presentes():
 	data_file = DATA_FILE
 	if not data_file.exists() and FALLBACK_DATA_FILE.exists():
@@ -705,6 +779,24 @@ def admin_metrics():
 		for item in ultimas_pix
 	]
 
+	unreserve_entries = load_unreserve_entries()
+	ultimas_desmarcacoes = sorted(
+		unreserve_entries,
+		key=lambda item: item.get("desmarcado_em", ""),
+		reverse=True,
+	)[:8]
+	ultimas_desmarcacoes_payload = [
+		{
+			"id": item.get("id"),
+			"presente_id": int(item.get("presente_id") or 0),
+			"presente_nome": item.get("presente_nome") or "Presente",
+			"reservado_por_nome": item.get("reservado_por_nome") or "Não informado",
+			"desmarcado_por": item.get("desmarcado_por") or "admin",
+			"desmarcado_em": item.get("desmarcado_em") or "",
+		}
+		for item in ultimas_desmarcacoes
+	]
+
 	return jsonify(
 		{
 			"total": total,
@@ -717,6 +809,7 @@ def admin_metrics():
 			"pix_contribuicoes_total": pix_total,
 			"pix_contribuicoes_valor_total": pix_valor_total,
 			"ultimas_contribuicoes_pix": ultimas_pix_payload,
+			"ultimas_desmarcacoes_reserva": ultimas_desmarcacoes_payload,
 			"admins_ativos_total": presence["total"],
 			"admins_ativos": presence["sessions"],
 			"admins_ativos_ttl_segundos": presence["ttl_segundos"],
@@ -936,6 +1029,50 @@ def reservar_presente(presente_id):
 			"presente": presente,
 		}
 	)
+
+
+@app.route("/api/presentes/<int:presente_id>/desreservar", methods=["POST", "OPTIONS"])
+def desreservar_presente(presente_id):
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	with PRESENTES_LOCK:
+		with PRESENTES_FILE_LOCK:
+			presentes = load_presentes()
+			presente = next((p for p in presentes if p.get("id") == presente_id), None)
+
+			if not presente:
+				return jsonify({"erro": "Presente não encontrado."}), 404
+
+			if not presente.get("reservado"):
+				return jsonify({"erro": "Esse presente já está disponível."}), 409
+
+			previous_nome = str(presente.get("reservado_por_nome") or "Não informado").strip()
+			previous_email = str(presente.get("reservado_por_email") or "").strip().lower()
+			admin_actor = str(session.get("admin_email") or "").strip().lower() or "admin-token"
+
+			presente["reservado"] = False
+			presente.pop("reservado_por_nome", None)
+			presente.pop("reservado_por_email", None)
+			presente.pop("reservado_em", None)
+			save_presentes(presentes)
+
+	append_unreserve_entry(
+		{
+			"presente_id": presente_id,
+			"presente_nome": presente.get("nome") or "Presente",
+			"reservado_por_nome": previous_nome,
+			"reservado_por_email": previous_email,
+			"desmarcado_por": admin_actor,
+			"desmarcado_em": utc_now().isoformat(),
+		}
+	)
+
+	return jsonify({"mensagem": "Reserva removida com sucesso.", "presente": presente})
 
 
 if __name__ == "__main__":

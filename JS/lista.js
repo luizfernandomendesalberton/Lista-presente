@@ -33,6 +33,7 @@ const adminMetricPixTotal = document.getElementById("adminMetricPixTotal");
 const adminMetricPixValorTotal = document.getElementById("adminMetricPixValorTotal");
 const adminRecentList = document.getElementById("adminRecentList");
 const adminPixRecentList = document.getElementById("adminPixRecentList");
+const adminUnreserveRecentList = document.getElementById("adminUnreserveRecentList");
 const adminPresenceHint = document.getElementById("adminPresenceHint");
 
 const adminForm = document.getElementById("adminForm");
@@ -357,6 +358,9 @@ function renderAdminMetrics(metrics) {
 		if (adminPixRecentList) {
 			adminPixRecentList.innerHTML = "<li>Nenhuma contribuição PIX registrada.</li>";
 		}
+		if (adminUnreserveRecentList) {
+			adminUnreserveRecentList.innerHTML = "<li>Nenhuma desmarcação registrada.</li>";
+		}
 		return;
 	}
 
@@ -401,32 +405,43 @@ function renderAdminMetrics(metrics) {
 
 	if (!ultimas.length) {
 		adminRecentList.innerHTML = "<li>Nenhuma reserva recente.</li>";
-		return;
+	} else {
+		ultimas.forEach((reserva) => {
+			const li = document.createElement("li");
+			li.textContent = `${reserva.nome} - ${BRL.format(Number(reserva.preco || 0))} - ${reserva.reservado_por_nome} (${formatReservationTime(reserva.reservado_em)})`;
+			adminRecentList.appendChild(li);
+		});
 	}
 
-	ultimas.forEach((reserva) => {
-		const li = document.createElement("li");
-		li.textContent = `${reserva.nome} - ${BRL.format(Number(reserva.preco || 0))} - ${reserva.reservado_por_nome} (${formatReservationTime(reserva.reservado_em)})`;
-		adminRecentList.appendChild(li);
-	});
+	if (adminPixRecentList) {
+		const ultimasPix = Array.isArray(metrics.ultimas_contribuicoes_pix) ? metrics.ultimas_contribuicoes_pix : [];
+		adminPixRecentList.innerHTML = "";
 
-	if (!adminPixRecentList) {
-		return;
+		if (!ultimasPix.length) {
+			adminPixRecentList.innerHTML = "<li>Nenhuma contribuição PIX registrada.</li>";
+		} else {
+			ultimasPix.forEach((contribuicao) => {
+				const li = document.createElement("li");
+				li.textContent = `${contribuicao.nome} - ${BRL.format(Number(contribuicao.valor || 0))} - ${contribuicao.referencia} (${formatReservationTime(contribuicao.criado_em)})`;
+				adminPixRecentList.appendChild(li);
+			});
+		}
 	}
 
-	const ultimasPix = Array.isArray(metrics.ultimas_contribuicoes_pix) ? metrics.ultimas_contribuicoes_pix : [];
-	adminPixRecentList.innerHTML = "";
+	if (adminUnreserveRecentList) {
+		const ultimasDesmarcacoes = Array.isArray(metrics.ultimas_desmarcacoes_reserva) ? metrics.ultimas_desmarcacoes_reserva : [];
+		adminUnreserveRecentList.innerHTML = "";
 
-	if (!ultimasPix.length) {
-		adminPixRecentList.innerHTML = "<li>Nenhuma contribuição PIX registrada.</li>";
-		return;
+		if (!ultimasDesmarcacoes.length) {
+			adminUnreserveRecentList.innerHTML = "<li>Nenhuma desmarcação registrada.</li>";
+		} else {
+			ultimasDesmarcacoes.forEach((item) => {
+				const li = document.createElement("li");
+				li.textContent = `${item.presente_nome} - reservado por ${item.reservado_por_nome} - desmarcado por ${item.desmarcado_por} (${formatReservationTime(item.desmarcado_em)})`;
+				adminUnreserveRecentList.appendChild(li);
+			});
+		}
 	}
-
-	ultimasPix.forEach((contribuicao) => {
-		const li = document.createElement("li");
-		li.textContent = `${contribuicao.nome} - ${BRL.format(Number(contribuicao.valor || 0))} - ${contribuicao.referencia} (${formatReservationTime(contribuicao.criado_em)})`;
-		adminPixRecentList.appendChild(li);
-	});
 }
 
 
@@ -706,6 +721,44 @@ async function removerPresente(presenteId) {
 }
 
 
+async function desreservarPresente(presenteId) {
+	if (!isAdminPage) {
+		return;
+	}
+
+	if (!adminAuthenticated) {
+		adminStatus.textContent = "Faça login para desmarcar reservas.";
+		return;
+	}
+
+	const confirmed = window.confirm("Deseja desmarcar essa reserva e deixar o presente disponível novamente?");
+	if (!confirmed) {
+		return;
+	}
+
+	try {
+		const response = await fetch(`/api/presentes/${presenteId}/desreservar`, {
+			method: "POST",
+			credentials: "same-origin",
+			headers: {
+				...getAdminHeaders(),
+			},
+		});
+
+		const result = await response.json();
+
+		if (!response.ok) {
+			throw new Error(result.erro || "Nao foi possivel desmarcar a reserva.");
+		}
+
+		adminStatus.textContent = "Reserva removida com sucesso.";
+		await carregarPresentes();
+	} catch (error) {
+		adminStatus.textContent = error.message;
+	}
+}
+
+
 function renderPresentes() {
 	const presentes = getFilteredPresentes();
 	listaEl.innerHTML = "";
@@ -733,6 +786,7 @@ function renderPresentes() {
 		const form = node.querySelector(".reserve-form");
 		const btnRemover = node.querySelector(".btn-remover");
 		const btnEditar = node.querySelector(".btn-editar");
+		const btnDesreservar = node.querySelector(".btn-desreservar");
 		const btnPixPresente = node.querySelector(".btn-pix-presente");
 
 		card.style.animationDelay = `${Math.min(index * 40, 300)}ms`;
@@ -818,6 +872,19 @@ function renderPresentes() {
 					}
 					setEditingMode(presente);
 					window.scrollTo({ top: 0, behavior: "smooth" });
+				});
+			}
+		}
+
+		if (btnDesreservar) {
+			if (!isAdminPage) {
+				btnDesreservar.remove();
+			} else if (!presente.reservado) {
+				btnDesreservar.remove();
+			} else {
+				btnDesreservar.disabled = !adminAuthenticated;
+				btnDesreservar.addEventListener("click", async () => {
+					await desreservarPresente(presente.id);
 				});
 			}
 		}

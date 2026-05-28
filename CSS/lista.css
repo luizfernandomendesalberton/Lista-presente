@@ -335,6 +335,13 @@ button:hover {
 	font-size: 0.88rem;
 }
 
+.btn-desreservar {
+	margin: 0 14px 14px;
+	border-color: #3d69b5;
+	background: linear-gradient(140deg, #4d84d8, #3f67b0);
+	font-size: 0.88rem;
+}
+
 .btn-pix-presente {
 	margin: 0 14px 14px;
 	border-color: #2f7a66;
