@@ -39,7 +39,10 @@
 		<section class="panel">
 			<div class="panel-head">
 				<h2>Catálogo de Presentes</h2>
-				<button id="btnAtualizar" type="button">Atualizar</button>
+				<div class="panel-head-actions">
+					<button id="btnPixDonation" type="button">Dar Em Dinheiro (PIX)</button>
+					<button id="btnAtualizar" type="button">Atualizar</button>
+				</div>
 			</div>
 
 			<div class="filters">
@@ -91,9 +94,48 @@
 					Vou ficar com este presente para entregar
 				</label>
 			</form>
+
+			<button class="btn-pix-presente" type="button">Dar Este Valor Em Dinheiro (PIX)</button>
 		</article>
 	</template>
 
+	<div id="pixModal" class="pix-modal" hidden>
+		<div class="pix-modal-backdrop" data-close-pix-modal="true"></div>
+		<section class="pix-modal-card" role="dialog" aria-modal="true" aria-labelledby="pixModalTitle">
+			<button id="pixModalClose" class="pix-close" type="button" aria-label="Fechar">x</button>
+			<h2 id="pixModalTitle">Contribuir Em Dinheiro (PIX)</h2>
+			<p id="pixModalSubtitle" class="pix-subtitle">Informe seu nome e valor para gerar o QR Code.</p>
+
+			<form id="pixForm" class="pix-form">
+				<label>
+					Seu nome
+					<input id="pixNome" type="text" minlength="3" placeholder="Ex.: Maria Silva" required>
+				</label>
+
+				<label>
+					Valor (R$)
+					<input id="pixValor" type="number" min="1" step="0.01" required>
+				</label>
+
+				<p id="pixStatus" class="status"></p>
+				<button id="pixGenerateBtn" type="submit">Gerar QR Code PIX</button>
+			</form>
+
+			<div id="pixResult" class="pix-result" hidden>
+				<canvas id="pixQrCanvas" width="280" height="280" aria-label="QR Code PIX"></canvas>
+				<p id="pixResumo" class="pix-resumo"></p>
+				<label>
+					Código PIX copia e cola
+					<textarea id="pixPayload" rows="4" readonly></textarea>
+				</label>
+				<div class="pix-actions">
+					<button id="pixCopyBtn" type="button">Copiar Código PIX</button>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 	<script src="/JS/lista.js"></script>
 </body>
 </html>

@@ -23,6 +23,9 @@ JS_DIR = ROOT_DIR / "JS"
 DATA_FILE = Path(__file__).resolve().parent / "presentes.json"
 DATA_FILE = Path(os.getenv("DATA_FILE_PATH", str(DATA_FILE)))
 FALLBACK_DATA_FILE = Path(__file__).resolve().parent / "presentes.json"
+PIX_CONTRIB_FILE = Path(__file__).resolve().parent / "pix_contribuicoes.json"
+PIX_CONTRIB_FILE = Path(os.getenv("PIX_CONTRIB_FILE_PATH", str(PIX_CONTRIB_FILE)))
+PIX_CONTRIB_FALLBACK_FILE = Path(__file__).resolve().parent / "pix_contribuicoes.json"
 ENV_FILE = Path(__file__).resolve().parent / ".env"
 DEFAULT_IMAGE_URL = "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80"
 
@@ -32,6 +35,9 @@ app = Flask(__name__)
 PRESENTES_LOCK = threading.Lock()
 DATA_LOCK_FILE = Path(os.getenv("DATA_FILE_LOCK_PATH", str(DATA_FILE) + ".lock"))
 PRESENTES_FILE_LOCK = FileLock(str(DATA_LOCK_FILE), timeout=15)
+PIX_CONTRIB_LOCK = threading.Lock()
+PIX_CONTRIB_LOCK_FILE = Path(os.getenv("PIX_CONTRIB_LOCK_PATH", str(PIX_CONTRIB_FILE) + ".lock"))
+PIX_CONTRIB_FILE_LOCK = FileLock(str(PIX_CONTRIB_LOCK_FILE), timeout=15)
 ACTIVE_ADMIN_SESSIONS = {}
 ACTIVE_ADMIN_SESSIONS_LOCK = threading.Lock()
 ADMIN_ACTIVITY_TTL_SECONDS = int(os.getenv("ADMIN_ACTIVITY_TTL_SECONDS", "900"))
@@ -187,6 +193,66 @@ def parse_email_list(raw_value):
 	return list(dict.fromkeys(emails))
 
 
+def normalize_pix_text(value, max_len):
+	clean = re.sub(r"[^A-Za-z0-9 ]+", "", str(value or "").strip().upper())
+	clean = re.sub(r"\s+", " ", clean).strip()
+	if not clean:
+		return "NAO INFORMADO"
+	return clean[:max_len]
+
+
+def emv_field(field_id, value):
+	text = str(value)
+	return f"{field_id}{len(text):02d}{text}"
+
+
+def crc16_ccitt(payload):
+	crc = 0xFFFF
+	for char in payload:
+		crc ^= ord(char) << 8
+		for _ in range(8):
+			if crc & 0x8000:
+				crc = (crc << 1) ^ 0x1021
+			else:
+				crc <<= 1
+			crc &= 0xFFFF
+
+	return f"{crc:04X}"
+
+
+def build_pix_payload(pix_key, amount, txid):
+	gui = emv_field("00", "BR.GOV.BCB.PIX")
+	key_field = emv_field("01", pix_key)
+	merchant_account = emv_field("26", f"{gui}{key_field}")
+
+	receiver_name = normalize_pix_text(os.getenv("PIX_RECEIVER_NAME", "CASAMENTO"), 25)
+	receiver_city = normalize_pix_text(os.getenv("PIX_RECEIVER_CITY", "SAO PAULO"), 15)
+
+	parts = [
+		emv_field("00", "01"),
+		merchant_account,
+		emv_field("52", "0000"),
+		emv_field("53", "986"),
+	]
+
+	if amount and amount > 0:
+		parts.append(emv_field("54", f"{amount:.2f}"))
+
+	parts.extend(
+		[
+			emv_field("58", "BR"),
+			emv_field("59", receiver_name),
+			emv_field("60", receiver_city),
+			emv_field("62", emv_field("05", txid)),
+		]
+	)
+
+	base_payload = "".join(parts)
+	payload_for_crc = f"{base_payload}6304"
+	crc = crc16_ccitt(payload_for_crc)
+	return f"{payload_for_crc}{crc}"
+
+
 def get_admin_users():
 	users = {}
 	for index in (1, 2):
@@ -290,6 +356,77 @@ def get_active_admin_sessions_payload():
 	}
 
 
+def normalize_pix_contribution(raw, forced_id=None):
+	contrib_id = forced_id if forced_id is not None else raw.get("id")
+	valor = normalize_preco(raw.get("valor"))
+	if valor is None:
+		valor = 0.0
+
+	return {
+		"id": int(contrib_id),
+		"nome": str(raw.get("nome") or "Não informado").strip(),
+		"valor": round(float(valor), 2),
+		"referencia": str(raw.get("referencia") or "Contribuicao em dinheiro").strip() or "Contribuicao em dinheiro",
+		"txid": str(raw.get("txid") or "").strip(),
+		"criado_em": str(raw.get("criado_em") or "").strip(),
+		"email_status": str(raw.get("email_status") or "").strip(),
+	}
+
+
+def normalize_all_pix_contributions(contributions):
+	normalized = []
+	for index, contribution in enumerate(contributions, start=1):
+		normalized.append(normalize_pix_contribution(contribution, forced_id=index))
+	return normalized
+
+
+def save_pix_contributions(contributions):
+	def _atomic_dump(target_file):
+		target_file.parent.mkdir(parents=True, exist_ok=True)
+		with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=target_file.parent, delete=False) as tmp_file:
+			json.dump(contributions, tmp_file, ensure_ascii=False, indent=2)
+			tmp_path = Path(tmp_file.name)
+
+		os.replace(tmp_path, target_file)
+
+	try:
+		_atomic_dump(PIX_CONTRIB_FILE)
+	except OSError:
+		_atomic_dump(PIX_CONTRIB_FALLBACK_FILE)
+
+
+def load_pix_contributions():
+	data_file = PIX_CONTRIB_FILE
+	if not data_file.exists() and PIX_CONTRIB_FALLBACK_FILE.exists():
+		data_file = PIX_CONTRIB_FALLBACK_FILE
+
+	if not data_file.exists():
+		return []
+
+	with data_file.open("r", encoding="utf-8") as file:
+		loaded = json.load(file)
+
+	if not isinstance(loaded, list):
+		return []
+
+	normalized = normalize_all_pix_contributions(loaded)
+	if normalized != loaded:
+		save_pix_contributions(normalized)
+
+	return normalized
+
+
+def append_pix_contribution(contribution):
+	with PIX_CONTRIB_LOCK:
+		with PIX_CONTRIB_FILE_LOCK:
+			all_contributions = load_pix_contributions()
+			normalized = normalize_pix_contribution(contribution, forced_id=len(all_contributions) + 1)
+			all_contributions.append(normalized)
+			save_pix_contributions(all_contributions)
+
+	return normalized
+
+
 def load_presentes():
 	data_file = DATA_FILE
 	if not data_file.exists() and FALLBACK_DATA_FILE.exists():
@@ -361,6 +498,42 @@ def send_notification_email(presente, nome_responsavel, email_responsavel):
 		server.sendmail(from_email, notify_to_emails, message.as_string())
 
 
+def send_pix_notification_email(nome_responsavel, valor, referencia):
+	smtp_host = os.getenv("SMTP_HOST")
+	smtp_port = int(os.getenv("SMTP_PORT", "587"))
+	smtp_user = os.getenv("SMTP_USER")
+	smtp_password = os.getenv("SMTP_PASSWORD")
+	smtp_use_tls = os.getenv("SMTP_USE_TLS", "1") == "1"
+
+	pix_notify_to = os.getenv("PIX_NOTIFY_TO_EMAIL") or os.getenv("NOTIFY_TO_EMAIL")
+	notify_to_emails = parse_email_list(pix_notify_to)
+	from_email = os.getenv("FROM_EMAIL", smtp_user or "")
+
+	if not all([smtp_host, smtp_user, smtp_password, notify_to_emails]):
+		raise ValueError(
+			"Configuração SMTP incompleta para PIX. Defina SMTP_HOST, SMTP_USER, SMTP_PASSWORD e PIX_NOTIFY_TO_EMAIL (ou NOTIFY_TO_EMAIL)."
+		)
+
+	body = (
+		"Nova intenção de contribuição via PIX na lista de casamento.\n\n"
+		f"Nome: {nome_responsavel}\n"
+		f"Valor informado: R$ {valor:.2f}\n"
+		f"Referência: {referencia}\n"
+		f"Data/Hora: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n"
+	)
+
+	message = MIMEText(body, "plain", "utf-8")
+	message["Subject"] = f"PIX recebido de {nome_responsavel}"
+	message["From"] = from_email
+	message["To"] = ", ".join(notify_to_emails)
+
+	with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as server:
+		if smtp_use_tls:
+			server.starttls()
+		server.login(smtp_user, smtp_password)
+		server.sendmail(from_email, notify_to_emails, message.as_string())
+
+
 @app.after_request
 def add_cors_headers(response):
 	response.headers["Access-Control-Allow-Origin"] = "*"
@@ -401,6 +574,65 @@ def js_files(filename):
 @app.route("/api/presentes", methods=["GET"])
 def listar_presentes():
 	return jsonify(load_presentes())
+
+
+@app.route("/api/pix/gerar", methods=["POST", "OPTIONS"])
+def gerar_pix():
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	payload = request.get_json(silent=True) or {}
+	nome = str(payload.get("nome") or "").strip()
+	valor = normalize_preco(payload.get("valor"))
+	referencia = str(payload.get("referencia") or "Contribuicao em dinheiro").strip() or "Contribuicao em dinheiro"
+
+	if len(nome) < 3:
+		return jsonify({"erro": "Informe seu nome com pelo menos 3 caracteres."}), 400
+
+	if valor is None or valor <= 0:
+		return jsonify({"erro": "Informe um valor válido maior que zero."}), 400
+
+	pix_key = clean_credential(os.getenv("PIX_KEY", ""))
+	if not pix_key:
+		return jsonify({"erro": "PIX indisponível no momento. Configure PIX_KEY no servidor."}), 503
+
+	txid_prefix = normalize_pix_text(os.getenv("PIX_TXID_PREFIX", "CASAMENTO"), 18)
+	txid_seed = f"{int(datetime.now(UTC).timestamp()) % 1000000:06d}"
+	txid = f"{txid_prefix[:18]}{txid_seed}"[:25]
+
+	pix_payload = build_pix_payload(pix_key, round(float(valor), 2), txid)
+
+	try:
+		send_pix_notification_email(nome, round(float(valor), 2), referencia)
+		email_status = "notificacao_enviada"
+	except Exception as exc:
+		app.logger.exception("Falha ao enviar e-mail da contribuição PIX")
+		email_status = f"notificacao_falhou: {exc}"
+
+	contribution = append_pix_contribution(
+		{
+			"nome": nome,
+			"valor": round(float(valor), 2),
+			"referencia": referencia,
+			"txid": txid,
+			"criado_em": utc_now().isoformat(),
+			"email_status": email_status,
+		}
+	)
+
+	return jsonify(
+		{
+			"mensagem": "PIX gerado com sucesso.",
+			"nome": nome,
+			"valor": round(float(valor), 2),
+			"referencia": referencia,
+			"pix_key": pix_key,
+			"pix_payload": pix_payload,
+			"txid": txid,
+			"email_status": email_status,
+			"contribuicao": contribution,
+		}
+	)
 
 
 @app.route("/api/admin/export", methods=["GET"])
@@ -452,6 +684,26 @@ def admin_metrics():
 	]
 
 	presence = get_active_admin_sessions_payload()
+	pix_contributions = load_pix_contributions()
+	pix_total = len(pix_contributions)
+	pix_valor_total = round(sum(float(item.get("valor", 0) or 0) for item in pix_contributions), 2)
+	ultimas_pix = sorted(
+		pix_contributions,
+		key=lambda item: item.get("criado_em", ""),
+		reverse=True,
+	)[:8]
+	ultimas_pix_payload = [
+		{
+			"id": item.get("id"),
+			"nome": item.get("nome") or "Não informado",
+			"valor": float(item.get("valor", 0) or 0),
+			"referencia": item.get("referencia") or "Contribuicao em dinheiro",
+			"txid": item.get("txid") or "",
+			"criado_em": item.get("criado_em") or "",
+			"email_status": item.get("email_status") or "",
+		}
+		for item in ultimas_pix
+	]
 
 	return jsonify(
 		{
@@ -462,6 +714,9 @@ def admin_metrics():
 			"valor_total": round(valor_total, 2),
 			"valor_reservado": round(valor_reservado, 2),
 			"ultimas_reservas": ultimas_reservas_payload,
+			"pix_contribuicoes_total": pix_total,
+			"pix_contribuicoes_valor_total": pix_valor_total,
+			"ultimas_contribuicoes_pix": ultimas_pix_payload,
 			"admins_ativos_total": presence["total"],
 			"admins_ativos": presence["sessions"],
 			"admins_ativos_ttl_segundos": presence["ttl_segundos"],

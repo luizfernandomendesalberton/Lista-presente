@@ -2,9 +2,22 @@ const listaEl = document.getElementById("listaPresentes");
 const statusEl = document.getElementById("statusGeral");
 const template = document.getElementById("presenteTemplate");
 const btnAtualizar = document.getElementById("btnAtualizar");
+const btnPixDonation = document.getElementById("btnPixDonation");
 const filtroBusca = document.getElementById("filtroBusca");
 const filtroCategoria = document.getElementById("filtroCategoria");
 const filtroOrdem = document.getElementById("filtroOrdem");
+const pixModal = document.getElementById("pixModal");
+const pixModalClose = document.getElementById("pixModalClose");
+const pixModalSubtitle = document.getElementById("pixModalSubtitle");
+const pixForm = document.getElementById("pixForm");
+const pixNomeInput = document.getElementById("pixNome");
+const pixValorInput = document.getElementById("pixValor");
+const pixStatus = document.getElementById("pixStatus");
+const pixResult = document.getElementById("pixResult");
+const pixQrCanvas = document.getElementById("pixQrCanvas");
+const pixResumo = document.getElementById("pixResumo");
+const pixPayload = document.getElementById("pixPayload");
+const pixCopyBtn = document.getElementById("pixCopyBtn");
 
 const statTotal = document.getElementById("statTotal");
 const statDisponivel = document.getElementById("statDisponivel");
@@ -16,7 +29,10 @@ const adminMetricPercentual = document.getElementById("adminMetricPercentual");
 const adminMetricValorTotal = document.getElementById("adminMetricValorTotal");
 const adminMetricValorReservado = document.getElementById("adminMetricValorReservado");
 const adminMetricAdminsAtivos = document.getElementById("adminMetricAdminsAtivos");
+const adminMetricPixTotal = document.getElementById("adminMetricPixTotal");
+const adminMetricPixValorTotal = document.getElementById("adminMetricPixValorTotal");
 const adminRecentList = document.getElementById("adminRecentList");
+const adminPixRecentList = document.getElementById("adminPixRecentList");
 const adminPresenceHint = document.getElementById("adminPresenceHint");
 
 const adminForm = document.getElementById("adminForm");
@@ -46,6 +62,8 @@ let adminAuthenticated = !isAdminPage;
 let editingPresenteId = null;
 let autoRefreshTimerId = null;
 const AUTO_REFRESH_INTERVAL_MS = 15000;
+let pixReferenciaAtual = "Contribuicao em dinheiro";
+let pixNomePresenteAtual = "";
 
 const BRL = new Intl.NumberFormat("pt-BR", {
 	style: "currency",
@@ -53,6 +71,163 @@ const BRL = new Intl.NumberFormat("pt-BR", {
 });
 
 let presentesState = [];
+
+
+function formatPixValue(value) {
+	return BRL.format(Number(value || 0));
+}
+
+
+function closePixModal() {
+	if (!pixModal) {
+		return;
+	}
+
+	pixModal.hidden = true;
+	if (pixResult) {
+		pixResult.hidden = true;
+	}
+	if (pixStatus) {
+		pixStatus.textContent = "";
+	}
+}
+
+
+function openPixModal(referenceName = "") {
+	if (!pixModal || !pixForm || !pixValorInput || !pixNomeInput) {
+		return;
+	}
+
+	pixNomePresenteAtual = String(referenceName || "").trim();
+	pixReferenciaAtual = pixNomePresenteAtual
+		? `Contribuição para: ${pixNomePresenteAtual}`
+		: "Contribuicao em dinheiro";
+
+	if (pixModalSubtitle) {
+		pixModalSubtitle.textContent = pixNomePresenteAtual
+			? `Você está contribuindo para "${pixNomePresenteAtual}".`
+			: "Informe seu nome e valor para gerar o QR Code.";
+	}
+
+	if (pixStatus) {
+		pixStatus.textContent = "";
+	}
+	if (pixResult) {
+		pixResult.hidden = true;
+	}
+	if (pixPayload) {
+		pixPayload.value = "";
+	}
+
+	pixModal.hidden = false;
+	pixNomeInput.focus();
+}
+
+
+async function renderPixQrCode(payload) {
+	if (!pixQrCanvas || !payload) {
+		return;
+	}
+
+	const qrLib = window.QRCode;
+	if (!qrLib || typeof qrLib.toCanvas !== "function") {
+		throw new Error("Biblioteca de QR Code indisponível no navegador.");
+	}
+
+	await qrLib.toCanvas(pixQrCanvas, payload, {
+		width: 280,
+		margin: 1,
+		color: {
+			dark: "#1b2a34",
+			light: "#ffffff",
+		},
+	});
+}
+
+
+async function gerarPix(event) {
+	event.preventDefault();
+
+	if (!pixNomeInput || !pixValorInput || !pixStatus) {
+		return;
+	}
+
+	const nome = pixNomeInput.value.trim();
+	const valor = Number(pixValorInput.value);
+
+	if (nome.length < 3) {
+		pixStatus.textContent = "Informe seu nome com pelo menos 3 caracteres.";
+		return;
+	}
+
+	if (!Number.isFinite(valor) || valor <= 0) {
+		pixStatus.textContent = "Informe um valor maior que zero.";
+		return;
+	}
+
+	pixStatus.textContent = "Gerando PIX...";
+
+	try {
+		const response = await fetch("/api/pix/gerar", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				nome,
+				valor,
+				referencia: pixReferenciaAtual,
+			}),
+		});
+
+		const result = await response.json();
+		if (!response.ok) {
+			throw new Error(result.erro || "Não foi possível gerar o PIX agora.");
+		}
+
+		await renderPixQrCode(result.pix_payload);
+
+		if (pixPayload) {
+			pixPayload.value = result.pix_payload || "";
+		}
+		if (pixResumo) {
+			pixResumo.textContent = `${nome}, use o QR Code para pagar ${formatPixValue(result.valor)}.`;
+		}
+		if (pixResult) {
+			pixResult.hidden = false;
+		}
+
+		if (result.email_status && result.email_status !== "notificacao_enviada") {
+			pixStatus.textContent = `PIX gerado. Aviso: ${result.email_status}`;
+		} else {
+			pixStatus.textContent = "PIX gerado e notificação enviada aos noivos.";
+		}
+	} catch (error) {
+		pixStatus.textContent = error.message;
+	}
+}
+
+
+async function copyPixCode() {
+	if (!pixPayload || !pixStatus) {
+		return;
+	}
+
+	const text = pixPayload.value.trim();
+	if (!text) {
+		pixStatus.textContent = "Gere o código PIX antes de copiar.";
+		return;
+	}
+
+	try {
+		await navigator.clipboard.writeText(text);
+		pixStatus.textContent = "Código PIX copiado para a área de transferência.";
+	} catch (_error) {
+		pixPayload.select();
+		document.execCommand("copy");
+		pixStatus.textContent = "Código PIX copiado.";
+	}
+}
 
 
 function hasPresentesChanged(nextPresentes) {
@@ -167,11 +342,20 @@ function renderAdminMetrics(metrics) {
 		if (adminMetricAdminsAtivos) {
 			adminMetricAdminsAtivos.textContent = "0";
 		}
+		if (adminMetricPixTotal) {
+			adminMetricPixTotal.textContent = "0";
+		}
+		if (adminMetricPixValorTotal) {
+			adminMetricPixValorTotal.textContent = BRL.format(0);
+		}
 		if (adminPresenceHint) {
 			adminPresenceHint.textContent = "Nenhum admin online no momento.";
 		}
 		if (adminRecentList) {
 			adminRecentList.innerHTML = "<li>Nenhuma reserva recente.</li>";
+		}
+		if (adminPixRecentList) {
+			adminPixRecentList.innerHTML = "<li>Nenhuma contribuição PIX registrada.</li>";
 		}
 		return;
 	}
@@ -184,6 +368,12 @@ function renderAdminMetrics(metrics) {
 	adminMetricValorReservado.textContent = BRL.format(Number(metrics.valor_reservado || 0));
 	if (adminMetricAdminsAtivos) {
 		adminMetricAdminsAtivos.textContent = String(metrics.admins_ativos_total || 0);
+	}
+	if (adminMetricPixTotal) {
+		adminMetricPixTotal.textContent = String(metrics.pix_contribuicoes_total || 0);
+	}
+	if (adminMetricPixValorTotal) {
+		adminMetricPixValorTotal.textContent = BRL.format(Number(metrics.pix_contribuicoes_valor_total || 0));
 	}
 
 	if (adminPresenceHint) {
@@ -218,6 +408,24 @@ function renderAdminMetrics(metrics) {
 		const li = document.createElement("li");
 		li.textContent = `${reserva.nome} - ${BRL.format(Number(reserva.preco || 0))} - ${reserva.reservado_por_nome} (${formatReservationTime(reserva.reservado_em)})`;
 		adminRecentList.appendChild(li);
+	});
+
+	if (!adminPixRecentList) {
+		return;
+	}
+
+	const ultimasPix = Array.isArray(metrics.ultimas_contribuicoes_pix) ? metrics.ultimas_contribuicoes_pix : [];
+	adminPixRecentList.innerHTML = "";
+
+	if (!ultimasPix.length) {
+		adminPixRecentList.innerHTML = "<li>Nenhuma contribuição PIX registrada.</li>";
+		return;
+	}
+
+	ultimasPix.forEach((contribuicao) => {
+		const li = document.createElement("li");
+		li.textContent = `${contribuicao.nome} - ${BRL.format(Number(contribuicao.valor || 0))} - ${contribuicao.referencia} (${formatReservationTime(contribuicao.criado_em)})`;
+		adminPixRecentList.appendChild(li);
 	});
 }
 
@@ -525,6 +733,7 @@ function renderPresentes() {
 		const form = node.querySelector(".reserve-form");
 		const btnRemover = node.querySelector(".btn-remover");
 		const btnEditar = node.querySelector(".btn-editar");
+		const btnPixPresente = node.querySelector(".btn-pix-presente");
 
 		card.style.animationDelay = `${Math.min(index * 40, 300)}ms`;
 
@@ -609,6 +818,19 @@ function renderPresentes() {
 					}
 					setEditingMode(presente);
 					window.scrollTo({ top: 0, behavior: "smooth" });
+				});
+			}
+		}
+
+		if (btnPixPresente) {
+			if (isAdminPage) {
+				btnPixPresente.remove();
+			} else {
+				btnPixPresente.addEventListener("click", () => {
+					openPixModal(presente.nome || "");
+					if (pixValorInput) {
+						pixValorInput.value = Number(presente.preco || 0).toFixed(2);
+					}
 				});
 			}
 		}
@@ -836,6 +1058,36 @@ if (filtroOrdem) {
 if (btnAtualizar) {
 	btnAtualizar.addEventListener("click", carregarPresentes);
 }
+if (btnPixDonation) {
+	btnPixDonation.addEventListener("click", () => {
+		openPixModal();
+		if (pixValorInput) {
+			pixValorInput.value = "100.00";
+		}
+	});
+}
+if (pixForm) {
+	pixForm.addEventListener("submit", gerarPix);
+}
+if (pixCopyBtn) {
+	pixCopyBtn.addEventListener("click", copyPixCode);
+}
+if (pixModalClose) {
+	pixModalClose.addEventListener("click", closePixModal);
+}
+if (pixModal) {
+	pixModal.addEventListener("click", (event) => {
+		const target = event.target;
+		if (target instanceof HTMLElement && target.dataset.closePixModal === "true") {
+			closePixModal();
+		}
+	});
+}
+document.addEventListener("keydown", (event) => {
+	if (event.key === "Escape" && pixModal && !pixModal.hidden) {
+		closePixModal();
+	}
+});
 
 async function initPage() {
 	if (isAdminPage) {
