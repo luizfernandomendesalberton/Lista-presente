@@ -15,7 +15,9 @@ const adminMetricDisponiveis = document.getElementById("adminMetricDisponiveis")
 const adminMetricPercentual = document.getElementById("adminMetricPercentual");
 const adminMetricValorTotal = document.getElementById("adminMetricValorTotal");
 const adminMetricValorReservado = document.getElementById("adminMetricValorReservado");
+const adminMetricAdminsAtivos = document.getElementById("adminMetricAdminsAtivos");
 const adminRecentList = document.getElementById("adminRecentList");
+const adminPresenceHint = document.getElementById("adminPresenceHint");
 
 const adminForm = document.getElementById("adminForm");
 const adminTokenInput = document.getElementById("adminToken");
@@ -162,6 +164,12 @@ function renderAdminMetrics(metrics) {
 		adminMetricPercentual.textContent = "0%";
 		adminMetricValorTotal.textContent = BRL.format(0);
 		adminMetricValorReservado.textContent = BRL.format(0);
+		if (adminMetricAdminsAtivos) {
+			adminMetricAdminsAtivos.textContent = "0";
+		}
+		if (adminPresenceHint) {
+			adminPresenceHint.textContent = "Nenhum admin online no momento.";
+		}
 		if (adminRecentList) {
 			adminRecentList.innerHTML = "<li>Nenhuma reserva recente.</li>";
 		}
@@ -174,6 +182,25 @@ function renderAdminMetrics(metrics) {
 	adminMetricPercentual.textContent = `${Number(metrics.percentual_reservado || 0).toFixed(1)}%`;
 	adminMetricValorTotal.textContent = BRL.format(Number(metrics.valor_total || 0));
 	adminMetricValorReservado.textContent = BRL.format(Number(metrics.valor_reservado || 0));
+	if (adminMetricAdminsAtivos) {
+		adminMetricAdminsAtivos.textContent = String(metrics.admins_ativos_total || 0);
+	}
+
+	if (adminPresenceHint) {
+		const ttlSegundos = Number(metrics.admins_ativos_ttl_segundos || 0);
+		const ttlMinutos = ttlSegundos > 0 ? Math.ceil(ttlSegundos / 60) : 0;
+		const adminsAtivos = Array.isArray(metrics.admins_ativos) ? metrics.admins_ativos : [];
+
+		if (!adminsAtivos.length) {
+			adminPresenceHint.textContent = "Nenhum admin online no momento.";
+		} else {
+			const emails = adminsAtivos
+				.map((item) => item.email)
+				.filter(Boolean)
+				.join(", ");
+			adminPresenceHint.textContent = `Online: ${emails}${ttlMinutos ? ` (atividade nos últimos ${ttlMinutos} min)` : ""}`;
+		}
+	}
 
 	if (!adminRecentList) {
 		return;

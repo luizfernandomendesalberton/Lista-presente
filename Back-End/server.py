@@ -5,6 +5,7 @@ import re
 import smtplib
 import threading
 import tempfile
+import uuid
 from datetime import UTC
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
@@ -31,6 +32,9 @@ app = Flask(__name__)
 PRESENTES_LOCK = threading.Lock()
 DATA_LOCK_FILE = Path(os.getenv("DATA_FILE_LOCK_PATH", str(DATA_FILE) + ".lock"))
 PRESENTES_FILE_LOCK = FileLock(str(DATA_LOCK_FILE), timeout=15)
+ACTIVE_ADMIN_SESSIONS = {}
+ACTIVE_ADMIN_SESSIONS_LOCK = threading.Lock()
+ADMIN_ACTIVITY_TTL_SECONDS = int(os.getenv("ADMIN_ACTIVITY_TTL_SECONDS", "900"))
 
 
 def load_dotenv_file():
@@ -215,10 +219,75 @@ def has_valid_admin_token(request_obj):
 
 
 def require_admin_auth(request_obj):
-	if has_valid_admin_token(request_obj) or is_session_admin():
+	if has_valid_admin_token(request_obj):
+		return None
+
+	if is_session_admin():
+		touch_admin_session(str(session.get("admin_email") or ""), str(session.get("admin_session_id") or ""))
 		return None
 
 	return jsonify({"erro": "Acesso restrito. Faça login como administrador."}), 401
+
+
+def utc_now():
+	return datetime.now(UTC)
+
+
+def cleanup_admin_sessions_locked(now_utc):
+	deadline = now_utc.timestamp() - max(ADMIN_ACTIVITY_TTL_SECONDS, 30)
+	stale_ids = [
+		session_id
+		for session_id, data in ACTIVE_ADMIN_SESSIONS.items()
+		if float(data.get("last_seen_ts", 0)) < deadline
+	]
+
+	for session_id in stale_ids:
+		ACTIVE_ADMIN_SESSIONS.pop(session_id, None)
+
+
+def touch_admin_session(email, session_id):
+	clean_email = str(email or "").strip().lower()
+	clean_session_id = str(session_id or "").strip()
+	if not clean_email or not clean_session_id:
+		return
+
+	now_utc = utc_now()
+	with ACTIVE_ADMIN_SESSIONS_LOCK:
+		cleanup_admin_sessions_locked(now_utc)
+		ACTIVE_ADMIN_SESSIONS[clean_session_id] = {
+			"email": clean_email,
+			"last_seen": now_utc.isoformat(),
+			"last_seen_ts": now_utc.timestamp(),
+		}
+
+
+def remove_admin_session(session_id):
+	clean_session_id = str(session_id or "").strip()
+	if not clean_session_id:
+		return
+
+	with ACTIVE_ADMIN_SESSIONS_LOCK:
+		ACTIVE_ADMIN_SESSIONS.pop(clean_session_id, None)
+
+
+def get_active_admin_sessions_payload():
+	now_utc = utc_now()
+	with ACTIVE_ADMIN_SESSIONS_LOCK:
+		cleanup_admin_sessions_locked(now_utc)
+		sessions_payload = [
+			{
+				"email": data.get("email", ""),
+				"last_seen": data.get("last_seen", ""),
+			}
+			for data in ACTIVE_ADMIN_SESSIONS.values()
+		]
+
+	sessions_payload.sort(key=lambda item: item.get("last_seen", ""), reverse=True)
+	return {
+		"total": len(sessions_payload),
+		"ttl_segundos": max(ADMIN_ACTIVITY_TTL_SECONDS, 30),
+		"sessions": sessions_payload,
+	}
 
 
 def load_presentes():
@@ -382,6 +451,8 @@ def admin_metrics():
 		for item in ultimas_reservas
 	]
 
+	presence = get_active_admin_sessions_payload()
+
 	return jsonify(
 		{
 			"total": total,
@@ -391,13 +462,26 @@ def admin_metrics():
 			"valor_total": round(valor_total, 2),
 			"valor_reservado": round(valor_reservado, 2),
 			"ultimas_reservas": ultimas_reservas_payload,
+			"admins_ativos_total": presence["total"],
+			"admins_ativos": presence["sessions"],
+			"admins_ativos_ttl_segundos": presence["ttl_segundos"],
 		}
 	)
+
+
+@app.route("/api/admin/presence", methods=["GET"])
+def admin_presence():
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	return jsonify(get_active_admin_sessions_payload())
 
 
 @app.route("/api/admin/session", methods=["GET"])
 def admin_session_status():
 	if is_session_admin():
+		touch_admin_session(str(session.get("admin_email") or ""), str(session.get("admin_session_id") or ""))
 		return jsonify({"authenticated": True, "email": session.get("admin_email")})
 
 	return jsonify({"authenticated": False})
@@ -422,7 +506,10 @@ def admin_login():
 	if email not in users or not hmac.compare_digest(password, users[email]):
 		return jsonify({"erro": "Credenciais inválidas."}), 401
 
+	session_id = uuid.uuid4().hex
 	session["admin_email"] = email
+	session["admin_session_id"] = session_id
+	touch_admin_session(email, session_id)
 
 	return jsonify({"mensagem": "Login realizado com sucesso.", "email": email})
 
@@ -432,7 +519,9 @@ def admin_logout():
 	if request.method == "OPTIONS":
 		return ("", 204)
 
+	remove_admin_session(session.get("admin_session_id"))
 	session.pop("admin_email", None)
+	session.pop("admin_session_id", None)
 	return jsonify({"mensagem": "Logout realizado com sucesso."})
 
 
