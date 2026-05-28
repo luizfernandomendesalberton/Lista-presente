@@ -53,6 +53,27 @@ const BRL = new Intl.NumberFormat("pt-BR", {
 let presentesState = [];
 
 
+function hasPresentesChanged(nextPresentes) {
+	if (!Array.isArray(nextPresentes)) {
+		return true;
+	}
+
+	if (nextPresentes.length !== presentesState.length) {
+		return true;
+	}
+
+	for (let index = 0; index < nextPresentes.length; index += 1) {
+		const current = presentesState[index];
+		const next = nextPresentes[index];
+		if (JSON.stringify(current) !== JSON.stringify(next)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
 function formatReservationTime(isoDate) {
 	if (!isoDate) {
 		return "data não informada";
@@ -583,7 +604,17 @@ async function carregarPresentes(options = {}) {
 			throw new Error("Falha ao buscar presentes");
 		}
 
-		presentesState = await response.json();
+		const nextPresentes = await response.json();
+		const changed = hasPresentesChanged(nextPresentes);
+
+		if (silent && !changed) {
+			if (isAdminPage && adminAuthenticated) {
+				await carregarMetricasAdmin();
+			}
+			return;
+		}
+
+		presentesState = nextPresentes;
 
 		updateStats(presentesState);
 		updateCategorias(presentesState);
