@@ -430,6 +430,10 @@ button:hover {
 	padding: 16px;
 }
 
+.pix-modal[hidden] {
+	display: none !important;
+}
+
 .pix-modal-backdrop {
 	position: absolute;
 	inset: 0;
