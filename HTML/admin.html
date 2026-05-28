@@ -52,6 +52,40 @@
 					<button id="adminLogoutBtn" type="button">Sair</button>
 				</div>
 
+				<section class="admin-metrics" aria-label="Métricas da lista">
+					<article>
+						<strong id="adminMetricTotal">0</strong>
+						<span>Total de presentes</span>
+					</article>
+					<article>
+						<strong id="adminMetricReservados">0</strong>
+						<span>Reservados</span>
+					</article>
+					<article>
+						<strong id="adminMetricDisponiveis">0</strong>
+						<span>Disponíveis</span>
+					</article>
+					<article>
+						<strong id="adminMetricPercentual">0%</strong>
+						<span>Percentual reservado</span>
+					</article>
+					<article>
+						<strong id="adminMetricValorTotal">R$ 0,00</strong>
+						<span>Valor total da lista</span>
+					</article>
+					<article>
+						<strong id="adminMetricValorReservado">R$ 0,00</strong>
+						<span>Valor já reservado</span>
+					</article>
+				</section>
+
+				<div class="admin-recent-wrap">
+					<h3>Últimas reservas</h3>
+					<ul id="adminRecentList" class="admin-recent-list">
+						<li>Nenhuma reserva recente.</li>
+					</ul>
+				</div>
+
 				<form id="adminForm" class="admin-form">
 					<label>
 						Token de admin (opcional)

@@ -9,6 +9,13 @@ const filtroOrdem = document.getElementById("filtroOrdem");
 const statTotal = document.getElementById("statTotal");
 const statDisponivel = document.getElementById("statDisponivel");
 const statReservado = document.getElementById("statReservado");
+const adminMetricTotal = document.getElementById("adminMetricTotal");
+const adminMetricReservados = document.getElementById("adminMetricReservados");
+const adminMetricDisponiveis = document.getElementById("adminMetricDisponiveis");
+const adminMetricPercentual = document.getElementById("adminMetricPercentual");
+const adminMetricValorTotal = document.getElementById("adminMetricValorTotal");
+const adminMetricValorReservado = document.getElementById("adminMetricValorReservado");
+const adminRecentList = document.getElementById("adminRecentList");
 
 const adminForm = document.getElementById("adminForm");
 const adminTokenInput = document.getElementById("adminToken");
@@ -35,6 +42,8 @@ const adminEspecificacoes = document.getElementById("adminEspecificacoes");
 const isAdminPage = Boolean(adminForm);
 let adminAuthenticated = !isAdminPage;
 let editingPresenteId = null;
+let autoRefreshTimerId = null;
+const AUTO_REFRESH_INTERVAL_MS = 15000;
 
 const BRL = new Intl.NumberFormat("pt-BR", {
 	style: "currency",
@@ -42,6 +51,20 @@ const BRL = new Intl.NumberFormat("pt-BR", {
 });
 
 let presentesState = [];
+
+
+function formatReservationTime(isoDate) {
+	if (!isoDate) {
+		return "data não informada";
+	}
+
+	const date = new Date(isoDate);
+	if (Number.isNaN(date.getTime())) {
+		return "data inválida";
+	}
+
+	return date.toLocaleString("pt-BR");
+}
 
 
 function ensureAdminCategoryOption(category) {
@@ -101,7 +124,104 @@ function setAdminMode(authenticated, email = "") {
 
 	if (!authenticated) {
 		setEditingMode(null);
+		renderAdminMetrics(null);
 	}
+}
+
+
+function renderAdminMetrics(metrics) {
+	if (!adminMetricTotal) {
+		return;
+	}
+
+	if (!metrics) {
+		adminMetricTotal.textContent = "0";
+		adminMetricReservados.textContent = "0";
+		adminMetricDisponiveis.textContent = "0";
+		adminMetricPercentual.textContent = "0%";
+		adminMetricValorTotal.textContent = BRL.format(0);
+		adminMetricValorReservado.textContent = BRL.format(0);
+		if (adminRecentList) {
+			adminRecentList.innerHTML = "<li>Nenhuma reserva recente.</li>";
+		}
+		return;
+	}
+
+	adminMetricTotal.textContent = String(metrics.total || 0);
+	adminMetricReservados.textContent = String(metrics.reservados || 0);
+	adminMetricDisponiveis.textContent = String(metrics.disponiveis || 0);
+	adminMetricPercentual.textContent = `${Number(metrics.percentual_reservado || 0).toFixed(1)}%`;
+	adminMetricValorTotal.textContent = BRL.format(Number(metrics.valor_total || 0));
+	adminMetricValorReservado.textContent = BRL.format(Number(metrics.valor_reservado || 0));
+
+	if (!adminRecentList) {
+		return;
+	}
+
+	const ultimas = Array.isArray(metrics.ultimas_reservas) ? metrics.ultimas_reservas : [];
+	adminRecentList.innerHTML = "";
+
+	if (!ultimas.length) {
+		adminRecentList.innerHTML = "<li>Nenhuma reserva recente.</li>";
+		return;
+	}
+
+	ultimas.forEach((reserva) => {
+		const li = document.createElement("li");
+		li.textContent = `${reserva.nome} - ${BRL.format(Number(reserva.preco || 0))} - ${reserva.reservado_por_nome} (${formatReservationTime(reserva.reservado_em)})`;
+		adminRecentList.appendChild(li);
+	});
+}
+
+
+async function carregarMetricasAdmin() {
+	if (!isAdminPage || !adminAuthenticated) {
+		renderAdminMetrics(null);
+		return;
+	}
+
+	try {
+		const response = await fetch("/api/admin/metrics", {
+			method: "GET",
+			credentials: "same-origin",
+			headers: {
+				...getAdminHeaders(),
+			},
+		});
+
+		if (!response.ok) {
+			let message = "Falha ao carregar métricas do painel.";
+			try {
+				const body = await response.json();
+				message = body.erro || message;
+			} catch (_error) {
+				// Keep fallback message when response body is not JSON.
+			}
+			throw new Error(message);
+		}
+
+		const metrics = await response.json();
+		renderAdminMetrics(metrics);
+	} catch (error) {
+		if (adminStatus) {
+			adminStatus.textContent = error.message;
+		}
+	}
+}
+
+
+function startAutoRefresh() {
+	if (autoRefreshTimerId) {
+		clearInterval(autoRefreshTimerId);
+	}
+
+	autoRefreshTimerId = window.setInterval(async () => {
+		if (document.visibilityState !== "visible") {
+			return;
+		}
+
+		await carregarPresentes({ silent: true });
+	}, AUTO_REFRESH_INTERVAL_MS);
 }
 
 
@@ -275,6 +395,13 @@ async function reservarPresente(presente, card, statusPresenteEl, inputNome, inp
 		} else {
 			statusPresenteEl.textContent = `Reservado por ${nome} (notificação pendente)`;
 		}
+
+		if (result.whatsapp_url) {
+			const whatsappTab = window.open(result.whatsapp_url, "_blank", "noopener,noreferrer");
+			if (!whatsappTab) {
+				alert("Reserva concluída. Não foi possível abrir o WhatsApp automaticamente; libere pop-ups e tente novamente.");
+			}
+		}
 		inputNome.disabled = true;
 		inputEmail.disabled = true;
 
@@ -282,7 +409,7 @@ async function reservarPresente(presente, card, statusPresenteEl, inputNome, inp
 			alert(`Reserva feita, mas houve falha no e-mail: ${result.email_status}`);
 		}
 
-		await carregarPresentes();
+		await carregarPresentes({ silent: true });
 	} catch (error) {
 		statusPresenteEl.textContent = "Falha ao reservar.";
 		alert(error.message);
@@ -450,8 +577,12 @@ function renderPresentes() {
 }
 
 
-async function carregarPresentes() {
-	statusEl.textContent = "Carregando presentes...";
+async function carregarPresentes(options = {}) {
+	const { silent = false } = options;
+
+	if (!silent) {
+		statusEl.textContent = "Carregando presentes...";
+	}
 
 	try {
 		const response = await fetch("/api/presentes");
@@ -464,8 +595,14 @@ async function carregarPresentes() {
 		updateStats(presentesState);
 		updateCategorias(presentesState);
 		renderPresentes();
+
+		if (isAdminPage && adminAuthenticated) {
+			await carregarMetricasAdmin();
+		}
 	} catch (error) {
-		statusEl.textContent = "Erro ao carregar a lista de presentes.";
+		if (!silent) {
+			statusEl.textContent = "Erro ao carregar a lista de presentes.";
+		}
 		console.error(error);
 	}
 }
@@ -655,6 +792,7 @@ async function initPage() {
 	}
 
 	await carregarPresentes();
+	startAutoRefresh();
 }
 
 initPage();

@@ -343,6 +343,56 @@ button:hover {
 	gap: 10px;
 }
 
+.admin-metrics {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+	gap: 10px;
+	margin-bottom: 12px;
+}
+
+.admin-metrics article {
+	border: 1px solid var(--line);
+	background: rgba(255, 255, 255, 0.78);
+	border-radius: 14px;
+	padding: 10px;
+	display: grid;
+	gap: 4px;
+}
+
+.admin-metrics strong {
+	font-size: 1.2rem;
+	line-height: 1.1;
+}
+
+.admin-metrics span {
+	font-size: 0.84rem;
+	color: var(--muted);
+}
+
+.admin-recent-wrap {
+	border: 1px solid var(--line);
+	border-radius: 14px;
+	padding: 10px 12px;
+	background: rgba(255, 255, 255, 0.72);
+	margin-bottom: 12px;
+}
+
+.admin-recent-wrap h3 {
+	margin: 0 0 8px;
+	font-size: 1rem;
+	font-family: "Prata", serif;
+	font-weight: 400;
+}
+
+.admin-recent-list {
+	margin: 0;
+	padding-left: 16px;
+	display: grid;
+	gap: 6px;
+	font-size: 0.9rem;
+	color: #4f4863;
+}
+
 .admin-grid-two {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
@@ -375,6 +425,10 @@ button:hover {
 	}
 
 	.admin-grid-two {
+		grid-template-columns: 1fr;
+	}
+
+	.admin-metrics {
 		grid-template-columns: 1fr;
 	}
 }
