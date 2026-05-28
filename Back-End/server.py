@@ -9,8 +9,8 @@ from datetime import UTC
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
 from email.mime.text import MIMEText
+from filelock import FileLock
 from pathlib import Path
-from urllib.parse import quote_plus
 
 from flask import Flask, Response, jsonify, request, send_from_directory, session
 
@@ -29,6 +29,8 @@ EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 app = Flask(__name__)
 PRESENTES_LOCK = threading.Lock()
+DATA_LOCK_FILE = Path(os.getenv("DATA_FILE_LOCK_PATH", str(DATA_FILE) + ".lock"))
+PRESENTES_FILE_LOCK = FileLock(str(DATA_LOCK_FILE), timeout=15)
 
 
 def load_dotenv_file():
@@ -254,38 +256,6 @@ def save_presentes(presentes):
 		_atomic_dump(FALLBACK_DATA_FILE)
 
 
-def build_whatsapp_confirmation_url(presente, nome_responsavel, email_responsavel):
-	raw_phone = clean_credential(os.getenv("WHATSAPP_NOTIFY_PHONE", ""))
-	phone_digits = re.sub(r"\D", "", raw_phone)
-	if not phone_digits:
-		return None, "numero_nao_configurado"
-
-	now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-	message_template = os.getenv(
-		"WHATSAPP_MESSAGE_TEMPLATE",
-		"Olá! O presente '{presente_nome}' foi reservado por {nome_responsavel}. "
-		"Valor: R$ {preco:.2f}. E-mail: {email_responsavel}. Data/Hora: {data_hora}.",
-	)
-
-	try:
-		message = message_template.format(
-			presente_nome=presente.get("nome", "Presente"),
-			preco=float(presente.get("preco", 0) or 0),
-			nome_responsavel=nome_responsavel,
-			email_responsavel=email_responsavel or "não informado",
-			data_hora=now_str,
-		)
-	except (KeyError, ValueError):
-		message = (
-			f"Olá! O presente '{presente.get('nome', 'Presente')}' foi reservado por {nome_responsavel}. "
-			f"Valor: R$ {float(presente.get('preco', 0) or 0):.2f}. "
-			f"E-mail: {email_responsavel or 'não informado'}. Data/Hora: {now_str}."
-		)
-
-	url = f"https://wa.me/{phone_digits}?text={quote_plus(message)}"
-	return url, "link_pronto"
-
-
 def send_notification_email(presente, nome_responsavel, email_responsavel):
 	smtp_host = os.getenv("SMTP_HOST")
 	smtp_port = int(os.getenv("SMTP_PORT", "587"))
@@ -486,23 +456,24 @@ def criar_presente():
 		return jsonify({"erro": "Informe um preço válido."}), 400
 
 	with PRESENTES_LOCK:
-		presentes = load_presentes()
-		novo = normalize_presente(
-			{
-				"id": next_presente_id(presentes),
-				"nome": nome,
-				"descricao": payload.get("descricao"),
-				"categoria": payload.get("categoria") or "Geral",
-				"preco": preco,
-				"foto_url": payload.get("foto_url") or DEFAULT_IMAGE_URL,
-				"produto_url": payload.get("produto_url") or "",
-				"especificacoes": payload.get("especificacoes") or [],
-				"reservado": False,
-			}
-		)
+		with PRESENTES_FILE_LOCK:
+			presentes = load_presentes()
+			novo = normalize_presente(
+				{
+					"id": next_presente_id(presentes),
+					"nome": nome,
+					"descricao": payload.get("descricao"),
+					"categoria": payload.get("categoria") or "Geral",
+					"preco": preco,
+					"foto_url": payload.get("foto_url") or DEFAULT_IMAGE_URL,
+					"produto_url": payload.get("produto_url") or "",
+					"especificacoes": payload.get("especificacoes") or [],
+					"reservado": False,
+				}
+			)
 
-		presentes.append(novo)
-		save_presentes(presentes)
+			presentes.append(novo)
+			save_presentes(presentes)
 
 	return jsonify({"mensagem": "Presente adicionado com sucesso.", "presente": novo}), 201
 
@@ -527,21 +498,22 @@ def atualizar_presente(presente_id):
 		return jsonify({"erro": "Informe um preço válido."}), 400
 
 	with PRESENTES_LOCK:
-		presentes = load_presentes()
-		presente = next((item for item in presentes if int(item.get("id", 0)) == presente_id), None)
+		with PRESENTES_FILE_LOCK:
+			presentes = load_presentes()
+			presente = next((item for item in presentes if int(item.get("id", 0)) == presente_id), None)
 
-		if not presente:
-			return jsonify({"erro": "Presente não encontrado."}), 404
+			if not presente:
+				return jsonify({"erro": "Presente não encontrado."}), 404
 
-		presente["nome"] = nome
-		presente["descricao"] = str(payload.get("descricao") or "").strip()
-		presente["categoria"] = str(payload.get("categoria") or "Geral").strip() or "Geral"
-		presente["preco"] = round(preco, 2)
-		presente["foto_url"] = str(payload.get("foto_url") or DEFAULT_IMAGE_URL).strip() or DEFAULT_IMAGE_URL
-		presente["produto_url"] = str(payload.get("produto_url") or "").strip()
-		presente["especificacoes"] = normalize_especificacoes(payload.get("especificacoes") or [])
+			presente["nome"] = nome
+			presente["descricao"] = str(payload.get("descricao") or "").strip()
+			presente["categoria"] = str(payload.get("categoria") or "Geral").strip() or "Geral"
+			presente["preco"] = round(preco, 2)
+			presente["foto_url"] = str(payload.get("foto_url") or DEFAULT_IMAGE_URL).strip() or DEFAULT_IMAGE_URL
+			presente["produto_url"] = str(payload.get("produto_url") or "").strip()
+			presente["especificacoes"] = normalize_especificacoes(payload.get("especificacoes") or [])
 
-		save_presentes(presentes)
+			save_presentes(presentes)
 
 	return jsonify({"mensagem": "Presente atualizado com sucesso.", "presente": presente})
 
@@ -556,16 +528,17 @@ def remover_presente(presente_id):
 		return admin_error
 
 	with PRESENTES_LOCK:
-		presentes = load_presentes()
-		before_count = len(presentes)
-		presentes = [item for item in presentes if int(item.get("id")) != presente_id]
+		with PRESENTES_FILE_LOCK:
+			presentes = load_presentes()
+			before_count = len(presentes)
+			presentes = [item for item in presentes if int(item.get("id")) != presente_id]
 
-		if len(presentes) == before_count:
-			return jsonify({"erro": "Presente não encontrado."}), 404
+			if len(presentes) == before_count:
+				return jsonify({"erro": "Presente não encontrado."}), 404
 
-		# Reindex to keep ids sequential in a file-based storage.
-		presentes = normalize_all_presentes(presentes)
-		save_presentes(presentes)
+			# Reindex to keep ids sequential in a file-based storage.
+			presentes = normalize_all_presentes(presentes)
+			save_presentes(presentes)
 
 	return jsonify({"mensagem": "Presente removido com sucesso."})
 
@@ -586,23 +559,24 @@ def reservar_presente(presente_id):
 		return jsonify({"erro": "Se informado, o e-mail deve ser válido."}), 400
 
 	with PRESENTES_LOCK:
-		presentes = load_presentes()
-		presente = next((p for p in presentes if p.get("id") == presente_id), None)
+		with PRESENTES_FILE_LOCK:
+			presentes = load_presentes()
+			presente = next((p for p in presentes if p.get("id") == presente_id), None)
 
-		if not presente:
-			return jsonify({"erro": "Presente não encontrado."}), 404
+			if not presente:
+				return jsonify({"erro": "Presente não encontrado."}), 404
 
-		if presente.get("reservado"):
-			return jsonify({"erro": "Esse presente já foi reservado."}), 409
+			if presente.get("reservado"):
+				return jsonify({"erro": "Esse presente já foi reservado."}), 409
 
-		presente["reservado"] = True
-		presente["reservado_por_nome"] = nome
-		if email:
-			presente["reservado_por_email"] = email
-		else:
-			presente.pop("reservado_por_email", None)
-		presente["reservado_em"] = datetime.now(UTC).isoformat()
-		save_presentes(presentes)
+			presente["reservado"] = True
+			presente["reservado_por_nome"] = nome
+			if email:
+				presente["reservado_por_email"] = email
+			else:
+				presente.pop("reservado_por_email", None)
+			presente["reservado_em"] = datetime.now(UTC).isoformat()
+			save_presentes(presentes)
 
 	try:
 		send_notification_email(presente, nome, email)
@@ -611,38 +585,13 @@ def reservar_presente(presente_id):
 		app.logger.exception("Falha ao enviar e-mail de notificacao da reserva")
 		email_status = f"notificacao_falhou: {exc}"
 
-	whatsapp_url, whatsapp_status = build_whatsapp_confirmation_url(presente, nome, email)
-
 	return jsonify(
 		{
 			"mensagem": "Presente reservado com sucesso.",
 			"email_status": email_status,
-			"whatsapp_status": whatsapp_status,
-			"whatsapp_url": whatsapp_url,
 			"presente": presente,
 		}
 	)
-
-
-@app.route("/api/presentes/<int:presente_id>/whatsapp-link", methods=["GET"])
-def gerar_link_whatsapp_presente(presente_id):
-	presentes = load_presentes()
-	presente = next((p for p in presentes if p.get("id") == presente_id), None)
-
-	if not presente:
-		return jsonify({"erro": "Presente não encontrado."}), 404
-
-	if not presente.get("reservado"):
-		return jsonify({"erro": "Esse presente ainda não foi reservado."}), 409
-
-	nome_responsavel = str(presente.get("reservado_por_nome") or "Convidado").strip()
-	email_responsavel = str(presente.get("reservado_por_email") or "").strip().lower()
-	whatsapp_url, whatsapp_status = build_whatsapp_confirmation_url(presente, nome_responsavel, email_responsavel)
-
-	if not whatsapp_url:
-		return jsonify({"erro": "WhatsApp não configurado no servidor.", "whatsapp_status": whatsapp_status}), 503
-
-	return jsonify({"whatsapp_url": whatsapp_url, "whatsapp_status": whatsapp_status})
 
 
 if __name__ == "__main__":
