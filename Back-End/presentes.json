@@ -169,7 +169,7 @@
     "nome": "Secadora de Roupas",
     "descricao": "Secadora de Roupa Mueller Solaris 8Kg 220V",
     "categoria": "Utilidades Domésticas",
-    "preco": 236.0,
+    "preco": 536.0,
     "foto_url": "https://m.media-amazon.com/images/I/513006cv6ZL._AC_SX679_.jpg",
     "produto_url": "https://www.amazon.com.br/Secadora-Roupa-Mueller-Solaris-220V/dp/B07Q6LVF9J/ref=asc_df_B07Q6LVF9J?mcid=40ade3256a5b375daba3cb906cbb91ec&tag=googleshopp00-20&linkCode=df0&hvadid=709968341272&hvpos=&hvnetw=g&hvrand=2974936540309335959&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=1031774&hvtargid=pla-1653816786703&hvocijid=2974936540309335959-B07Q6LVF9J-&hvexpln=0&language=pt_BR&th=1",
     "especificacoes": [
@@ -204,19 +204,6 @@
   },
   {
     "id": 13,
-    "nome": "Geladeira",
-    "descricao": "Geladeira Inteligente B= Smart Brastemp Frost Free Inverse 500 Litros Cor Inox - BRE66AK",
-    "categoria": "Cozinha",
-    "preco": 4250.0,
-    "foto_url": "https://brastemp.vtexassets.com/arquivos/ids/286712-1600-auto?v=639148130011170000&width=1600&height=auto&aspect=true",
-    "produto_url": "https://www.brastemp.com.br/geladeira-inteligente-b--smart-brastemp-frost-free-inverse-500-litros-cor-inox-bre66ak/p?idsku=326199091&utmi_campaign=pla&utmi_cp=pla&gad_source=1&gad_campaignid=23854533255&gbraid=0AAAAADJ0BqqJPQfZJb-QocDSPGxEybw7F&gclid=CjwKCAjwrNrQBhBjEiwAoR4VOyIoaGY1-9c7Ao29WKJJVPKYNWLacX-sREo-Yik19bxsiwdj9px0tBoClaoQAvD_BwE",
-    "especificacoes": [
-      "Safe Power, Geladeira Inteligente B= Smart, Fresh Space com Smart Sensor, Fresh Protein com IA, Tecnologia Xpert Inverter, O maior freezer do segmento, B= Design, Bivolt, Qualidade Brastemp, Super Capacidade, Prateleiras Infinity, Carbon AirFilter, Tecnologia Bvox, Iluminação em LED, Twist Ice, Smart Flow"
-    ],
-    "reservado": false
-  },
-  {
-    "id": 14,
     "nome": "Forno elétrico",
     "descricao": "Forno Elétrico de Bancada Fischer Gourmet Grill 44 litros",
     "categoria": "Cozinha",
@@ -230,7 +217,7 @@
     "reservado": false
   },
   {
-    "id": 15,
+    "id": 14,
     "nome": "Micro-ondas",
     "descricao": "Micro-ondas Electrolux 36L cor Inox Efficient com Descongelamento Assistido ME36S",
     "categoria": "Cozinha",
@@ -249,7 +236,7 @@
     "reservado": false
   },
   {
-    "id": 16,
+    "id": 15,
     "nome": "Fritadeira elétrica",
     "descricao": "Fritadeira Elétrica Wap Air Fryer Oven Digital Black Inox 12 Litros com Revestimento Antiaderente",
     "categoria": "Cozinha",
@@ -263,7 +250,7 @@
     "reservado": false
   },
   {
-    "id": 17,
+    "id": 16,
     "nome": "Mixer",
     "descricao": "Mixer Power Oster Black Inox 3 em 1 - 220V",
     "categoria": "Cozinha",
@@ -277,7 +264,7 @@
     "reservado": false
   },
   {
-    "id": 18,
+    "id": 17,
     "nome": "Chaleira elétrica",
     "descricao": "Chaleira Elétrica Oster Inox 2L Ultra - 220V",
     "categoria": "Cozinha",
@@ -292,7 +279,7 @@
     "reservado": false
   },
   {
-    "id": 19,
+    "id": 18,
     "nome": "Panela de pressão",
     "descricao": "Panela de Pressão Tramontina Vancouver Effect em Alumínio com Revestimento Interno e Externo em Antiaderente Starflon Max Preto 20 cm 4,5 L",
     "categoria": "Cozinha",
@@ -306,7 +293,7 @@
     "reservado": false
   },
   {
-    "id": 20,
+    "id": 19,
     "nome": "Máquina de Lavar Roupas",
     "descricao": "Máquina de Lavar Electrolux 15kg Branca Essential Care com Cesto Inox e Jet&Clean (LED15) - 220V",
     "categoria": "Utilidades Domésticas",
@@ -318,6 +305,65 @@
       "Função Reutilização de Água",
       "Electrolux Jet&Clean",
       "Cesto inox"
+    ],
+    "reservado": false
+  },
+  {
+    "id": 20,
+    "nome": "Geladeira",
+    "descricao": "Geladeira Electrolux Frost Free com AutoSense 432L Efficient Duplex Inox Look (TF70S)",
+    "categoria": "Cozinha",
+    "preco": 3134.98,
+    "foto_url": "https://electrolux.vtexassets.com/arquivos/ids/288219-540-540?v=639102206258470000&width=540&height=540&aspect=true&format=auto",
+    "produto_url": "https://loja.electrolux.com.br/geladeira-electrolux-frost-free-432l-efficient-autosense-duplex-inox-look--tf70s-/p",
+    "especificacoes": [
+      "Freezer 128L para conservar alimentos de diferentes tamanhos",
+      "Capacidade total de armazenamento 432 L"
+    ],
+    "reservado": false
+  },
+  {
+    "id": 21,
+    "nome": "Guarda-Roupa",
+    "descricao": "Guarda-Roupa Casal 8 Portas Batentes Rustic/Crema/Rustic Venus Madesa",
+    "categoria": "Móveis",
+    "preco": 1760.0,
+    "foto_url": "https://www.madesa.com/cdn/shop/files/02-1107K94GL1-perspectiva-fundo-infinito.png?v=1771668739&width=1000",
+    "produto_url": "https://www.madesa.com/products/guarda-roupa-casal-8-portas-batentes-rustic-crema-rustic-venus-madesa",
+    "especificacoes": [
+      "216 cm de largura",
+      "47 cm de profundidade",
+      "217 cm de altura"
+    ],
+    "reservado": false
+  },
+  {
+    "id": 22,
+    "nome": "Mesa de Cabeceira",
+    "descricao": "Kit 2 Mesinhas De Cabeceiras Verona Retrô Moderno Acabamento Brilhante C/2 Gavetas - Mega Móveis Cor Off/nature",
+    "categoria": "Móveis",
+    "preco": 258.0,
+    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_777135-MLA99989798255_112025-F.webp",
+    "produto_url": "https://www.mercadolivre.com.br/kit-2-mesinhas-de-cabeceiras-verona-retr-moderno-acabamento-brilhante-c2-gavetas-mega-moveis-cor-offnature/p/MLB50495953?product_trigger_id=MLB50496652&pdp_filters=item_id%3AMLB4046245899&applied_product_filters=MLB50495953&from=gshop&picker=true&matt_tool=57455671&matt_word=&matt_source=google&matt_campaign_id=23440873626&matt_ad_group_id=194474619354&matt_match_type=&matt_network=g&matt_device=c&matt_creative=792396421438&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735128761&matt_product_id=MLB50495953-product&matt_product_partition_id=2392713156421&matt_target_id=pla-2392713156421&cq_src=google_ads&cq_cmp=23440873626&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=23440873626&gbraid=0AAAAAD93qcDhJOtlB4dqRwHJMdWc5vA6h&gclid=Cj0KCQjwz9_QBhD_ARIsADnSCfAHDCjHGT6cnIdQD7Gpd_y8EjIarbtKa7FL07z5He-zHSkS57InklYaArajEALw_wcB&quantity=1#reviews",
+    "especificacoes": [
+      "Mesa de cabeceira com altura de 67 cm, largura de 38,5 cm e profundidade de 31 cm.",
+      "Fabricada em madeira para maior durabilidade.",
+      "Possui 2 gavetas com corrediças de plástico."
+    ],
+    "reservado": false
+  },
+  {
+    "id": 23,
+    "nome": "Cômoda",
+    "descricao": "Cômoda 4 Gavetas C/ Sapateira Cor Off White Web Home Móveis",
+    "categoria": "Móveis",
+    "preco": 490.0,
+    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_875411-MLA95636644326_102025-F.webp",
+    "produto_url": "https://www.mercadolivre.com.br/web-home-moveis-organizador-sapateira-quarto-cmoda-off-white-uv/p/MLB51400397?product_trigger_id=MLB51385986&pdp_filters=item_id%3AMLB4361049269&applied_product_filters=MLB51400397&picker=true&quantity=1",
+    "especificacoes": [
+      "Chiffonier com 4 gavetas para amplo espaço de armazenamento.",
+      "Dimensões de 44 cm de profundidade.",
+      "Inclui 1 porta para organização adicional."
     ],
     "reservado": false
   }
