@@ -624,6 +624,27 @@ def reservar_presente(presente_id):
 	)
 
 
+@app.route("/api/presentes/<int:presente_id>/whatsapp-link", methods=["GET"])
+def gerar_link_whatsapp_presente(presente_id):
+	presentes = load_presentes()
+	presente = next((p for p in presentes if p.get("id") == presente_id), None)
+
+	if not presente:
+		return jsonify({"erro": "Presente não encontrado."}), 404
+
+	if not presente.get("reservado"):
+		return jsonify({"erro": "Esse presente ainda não foi reservado."}), 409
+
+	nome_responsavel = str(presente.get("reservado_por_nome") or "Convidado").strip()
+	email_responsavel = str(presente.get("reservado_por_email") or "").strip().lower()
+	whatsapp_url, whatsapp_status = build_whatsapp_confirmation_url(presente, nome_responsavel, email_responsavel)
+
+	if not whatsapp_url:
+		return jsonify({"erro": "WhatsApp não configurado no servidor.", "whatsapp_status": whatsapp_status}), 503
+
+	return jsonify({"whatsapp_url": whatsapp_url, "whatsapp_status": whatsapp_status})
+
+
 if __name__ == "__main__":
 	port = int(os.getenv("PORT", "5000"))
 	debug = os.getenv("FLASK_DEBUG", "0") == "1"

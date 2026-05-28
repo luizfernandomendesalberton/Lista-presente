@@ -401,6 +401,8 @@ async function reservarPresente(presente, card, statusPresenteEl, inputNome, inp
 			if (!whatsappTab) {
 				alert("Reserva concluída. Não foi possível abrir o WhatsApp automaticamente; libere pop-ups e tente novamente.");
 			}
+		} else if (result.whatsapp_status && result.whatsapp_status !== "link_pronto") {
+			alert("Reserva concluída. O envio por WhatsApp não está configurado no servidor.");
 		}
 		inputNome.disabled = true;
 		inputEmail.disabled = true;
@@ -415,6 +417,32 @@ async function reservarPresente(presente, card, statusPresenteEl, inputNome, inp
 		alert(error.message);
 		inputCheck.checked = false;
 		inputCheck.disabled = false;
+	}
+}
+
+
+async function buscarLinkWhatsapp(presenteId) {
+	const response = await fetch(`/api/presentes/${presenteId}/whatsapp-link`);
+	const result = await response.json();
+
+	if (!response.ok) {
+		throw new Error(result.erro || "Não foi possível gerar o link do WhatsApp.");
+	}
+
+	if (!result.whatsapp_url) {
+		throw new Error("O servidor não retornou um link de WhatsApp válido.");
+	}
+
+	return result.whatsapp_url;
+}
+
+
+async function abrirConfirmacaoWhatsapp(presenteId) {
+	const whatsappUrl = await buscarLinkWhatsapp(presenteId);
+	const whatsappTab = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+
+	if (!whatsappTab) {
+		throw new Error("Não foi possível abrir o WhatsApp. Libere pop-ups no navegador e tente novamente.");
 	}
 }
 
@@ -482,6 +510,8 @@ function renderPresentes() {
 		const inputEmail = node.querySelector(".input-email");
 		const inputCheck = node.querySelector(".input-check");
 		const form = node.querySelector(".reserve-form");
+		const whatsappHint = node.querySelector(".whatsapp-hint");
+		const btnWhatsapp = node.querySelector(".btn-whatsapp");
 		const btnRemover = node.querySelector(".btn-remover");
 		const btnEditar = node.querySelector(".btn-editar");
 
@@ -530,8 +560,37 @@ function renderPresentes() {
 			inputCheck.disabled = true;
 			inputNome.disabled = true;
 			inputEmail.disabled = true;
+
+			if (btnWhatsapp) {
+				btnWhatsapp.hidden = false;
+				btnWhatsapp.disabled = false;
+				btnWhatsapp.addEventListener("click", async () => {
+					btnWhatsapp.disabled = true;
+					const originalText = btnWhatsapp.textContent;
+					btnWhatsapp.textContent = "Abrindo WhatsApp...";
+
+					try {
+						await abrirConfirmacaoWhatsapp(presente.id);
+					} catch (error) {
+						alert(error.message);
+					} finally {
+						btnWhatsapp.textContent = originalText;
+						btnWhatsapp.disabled = false;
+					}
+				});
+			}
+
+			if (whatsappHint) {
+				whatsappHint.hidden = false;
+			}
 		} else {
 			statusPresenteEl.textContent = "Disponivel";
+			if (btnWhatsapp) {
+				btnWhatsapp.hidden = true;
+			}
+			if (whatsappHint) {
+				whatsappHint.hidden = true;
+			}
 
 			inputCheck.addEventListener("change", async () => {
 				if (!inputCheck.checked) {
