@@ -1,13 +1,13 @@
 :root {
-	--ink: #221c35;
-	--muted: #5a5370;
+	--ink: #2f2a23;
+	--muted: #6d655a;
 	--paper: #fffaf4;
 	--panel: rgba(255, 255, 255, 0.82);
 	--line: #e8dbc8;
-	--wine: #a43a52;
-	--wine-dark: #81243d;
-	--gold: #c98f44;
-	--ok: #1b7c5f;
+	--wine: #5a765f;
+	--wine-dark: #3f5b49;
+	--gold: #bb9155;
+	--ok: #3f6f5d;
 	--shadow: 0 22px 64px rgba(33, 19, 13, 0.14);
 }
 
@@ -21,18 +21,18 @@ body {
 	color: var(--ink);
 	min-height: 100vh;
 	background:
-		radial-gradient(circle at 20% 20%, rgba(249, 216, 184, 0.75) 0%, transparent 34%),
-		radial-gradient(circle at 80% 10%, rgba(219, 198, 255, 0.58) 0%, transparent 36%),
-		linear-gradient(150deg, #fff7ef 0%, #f7f1ea 44%, #f3f4ff 100%);
+		radial-gradient(circle at 20% 20%, rgba(241, 217, 183, 0.72) 0%, transparent 36%),
+		radial-gradient(circle at 80% 10%, rgba(210, 224, 208, 0.48) 0%, transparent 38%),
+		linear-gradient(150deg, #f6ecdf 0%, #efe3d3 52%, #e9dece 100%);
 	padding: 22px 0 50px;
 	overflow-x: hidden;
 }
 
 body.metrics-page {
 	background:
-		radial-gradient(circle at 18% 18%, rgba(244, 206, 166, 0.85) 0%, transparent 35%),
-		radial-gradient(circle at 82% 8%, rgba(207, 180, 245, 0.42) 0%, transparent 34%),
-		linear-gradient(152deg, #fff8f1 0%, #f8f0e8 48%, #f5efff 100%);
+		radial-gradient(circle at 18% 18%, rgba(235, 205, 166, 0.8) 0%, transparent 36%),
+		radial-gradient(circle at 82% 8%, rgba(198, 215, 198, 0.42) 0%, transparent 36%),
+		linear-gradient(152deg, #f6ebde 0%, #efe2d1 50%, #e8dcc9 100%);
 }
 
 body.metrics-page .bg-shape {
@@ -58,7 +58,7 @@ body.metrics-page .bg-shape {
 .bg-shape-two {
 	width: 320px;
 	height: 320px;
-	background: conic-gradient(from 0deg, #c89ef2, #f0c1d1, #c89ef2);
+	background: conic-gradient(from 0deg, #a8bea8, #e6d9bf, #a8bea8);
 	border-radius: 73% 27% 37% 63% / 57% 63% 37% 43%;
 	bottom: -100px;
 	right: -80px;
@@ -85,7 +85,7 @@ body.metrics-page .bg-shape {
 	display: inline-flex;
 	padding: 8px 14px;
 	border-radius: 999px;
-	background: linear-gradient(130deg, #f6dfbe, #ebb1b0);
+	background: linear-gradient(130deg, #ecd2a8, #c8d8be);
 	font-weight: 700;
 	font-size: 0.75rem;
 	letter-spacing: 0.14em;
@@ -153,7 +153,7 @@ h1 {
 	left: 0;
 	right: 0;
 	height: 4px;
-	background: linear-gradient(90deg, #d7a35f, #b44b62, #547fd1);
+	background: linear-gradient(90deg, #c89b5f, #6e896d, #5b748c);
 	opacity: 0.9;
 }
 
@@ -186,7 +186,7 @@ h1 {
 	height: 3px;
 	margin-top: 0.4rem;
 	border-radius: 999px;
-	background: linear-gradient(90deg, #d7a35f, #b44b62, #547fd1);
+	background: linear-gradient(90deg, #c89b5f, #6e896d, #5b748c);
 	opacity: 0.75;
 }
 
@@ -407,20 +407,20 @@ textarea:focus {
 
 button {
 	border: 1px solid var(--wine);
-	background: linear-gradient(140deg, #ac3953, #81243d);
+	background: linear-gradient(140deg, #6f8d72, #4f6f58);
 	color: #fff;
 	font-weight: 600;
 	border-radius: 14px;
 	padding: 10px 16px;
 	cursor: pointer;
 	transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
-	box-shadow: 0 12px 24px rgba(159, 47, 69, 0.2);
+	box-shadow: 0 12px 24px rgba(63, 91, 73, 0.24);
 }
 
 button:hover {
 	transform: translateY(-1px);
 	filter: brightness(1.04);
-	box-shadow: 0 14px 28px rgba(159, 47, 69, 0.24);
+	box-shadow: 0 14px 28px rgba(63, 91, 73, 0.3);
 }
 
 .check-wrap {
@@ -431,29 +431,29 @@ button:hover {
 
 .btn-remover {
 	margin: 0 12px 12px;
-	border-color: #c95e61;
-	background: linear-gradient(140deg, #df7c79, #bb4b55);
+	border-color: #b37356;
+	background: linear-gradient(140deg, #cb8f72, #a06d56);
 	font-size: 0.88rem;
 }
 
 .btn-editar {
 	margin: 0 12px 12px;
-	border-color: #a07f40;
-	background: linear-gradient(140deg, #d0b06c, #9a7840);
+	border-color: #9c8352;
+	background: linear-gradient(140deg, #c7ab74, #977b4c);
 	font-size: 0.88rem;
 }
 
 .btn-desreservar {
 	margin: 0 12px 12px;
-	border-color: #4b72b2;
-	background: linear-gradient(140deg, #5a84d5, #4168ae);
+	border-color: #5a768f;
+	background: linear-gradient(140deg, #7591a9, #536f86);
 	font-size: 0.88rem;
 }
 
 .btn-pix-presente {
 	margin: 0 12px 12px;
-	border-color: #2f7a66;
-	background: linear-gradient(140deg, #36987d, #246a61);
+	border-color: #4f7f66;
+	background: linear-gradient(140deg, #6a9b82, #466c57);
 	font-size: 0.88rem;
 }
 
@@ -471,25 +471,35 @@ button:hover {
 	gap: 8px;
 }
 
+.admin-new-products-hint {
+	padding: 10px 14px;
+	border-radius: 999px;
+	border: 1px solid rgba(215, 163, 95, 0.5);
+	background: linear-gradient(145deg, rgba(255, 252, 245, 0.92), rgba(255, 243, 223, 0.86));
+	box-shadow: 0 8px 18px rgba(112, 85, 45, 0.1);
+	font-weight: 600;
+	text-align: center;
+}
+
 .btn-link {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	border: 1px solid rgba(164, 58, 82, 0.22);
-	background: rgba(255, 255, 255, 0.78);
+	border: 1px solid rgba(90, 118, 95, 0.24);
+	background: linear-gradient(145deg, rgba(253, 248, 240, 0.96), rgba(243, 236, 225, 0.96));
 	color: var(--wine);
 	font-weight: 700;
 	border-radius: 999px;
 	padding: 9px 14px;
 	text-decoration: none;
 	transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-	box-shadow: 0 8px 20px rgba(77, 40, 52, 0.08);
+	box-shadow: 0 8px 20px rgba(71, 58, 37, 0.1);
 }
 
 .btn-link:hover {
 	transform: translateY(-1px);
-	background: rgba(255, 255, 255, 0.95);
-	box-shadow: 0 12px 24px rgba(77, 40, 52, 0.12);
+	background: linear-gradient(145deg, rgba(255, 251, 244, 1), rgba(247, 240, 230, 1));
+	box-shadow: 0 12px 24px rgba(71, 58, 37, 0.14);
 }
 
 .admin-form {
@@ -558,7 +568,7 @@ button:hover {
 	height: 3px;
 	margin-top: 0.35rem;
 	border-radius: 999px;
-	background: linear-gradient(90deg, #d7a35f, #b44b62);
+	background: linear-gradient(90deg, #c89b5f, #6e896d);
 	opacity: 0.7;
 }
 
@@ -589,12 +599,12 @@ button:hover {
 }
 
 #adminMetricsOnlyPage .hero h1 {
-	color: #5a4052;
+	color: #544a3f;
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
 }
 
 #adminMetricsOnlyPage .subtitle {
-	color: #6a6079;
+	color: #6a6459;
 	font-weight: 500;
 }
 
@@ -605,30 +615,30 @@ button:hover {
 }
 
 #adminMetricsOnlyPage .panel-head h2 {
-	color: #624859;
+	color: #5f5549;
 }
 
 #adminMetricsOnlyPage .panel-head button,
 #adminMetricsOnlyPage #adminLogoutBtn {
-	background: linear-gradient(140deg, #b4506e, #8b2f4a);
-	border-color: #8b2f4a;
-	box-shadow: 0 14px 28px rgba(154, 61, 88, 0.24);
+	background: linear-gradient(140deg, #6f8d72, #4f6f58);
+	border-color: #4f6f58;
+	box-shadow: 0 14px 28px rgba(63, 91, 73, 0.26);
 }
 
 #adminMetricsOnlyPage .btn-secondary {
-	border-color: rgba(174, 75, 101, 0.28);
-	background: linear-gradient(145deg, rgba(255, 247, 244, 0.98), rgba(250, 232, 238, 0.95));
-	color: #8b3450;
-	box-shadow: 0 10px 20px rgba(152, 61, 88, 0.12);
+	border-color: rgba(124, 102, 67, 0.32);
+	background: linear-gradient(145deg, rgba(252, 246, 236, 0.98), rgba(241, 230, 211, 0.95));
+	color: #5b4d39;
+	box-shadow: 0 10px 20px rgba(99, 79, 50, 0.16);
 }
 
 #adminMetricsOnlyPage .admin-tip {
-	color: #685f75;
+	color: #6d655a;
 	font-weight: 500;
 }
 
 #adminMetricsOnlyPage .admin-tip strong {
-	color: #7f2d46;
+	color: #486451;
 }
 
 #adminMetricsOnlyPage #adminPresenceHint {
@@ -660,7 +670,7 @@ button:hover {
 	top: 0;
 	width: 100%;
 	height: 4px;
-	background: linear-gradient(90deg, #d7a35f, #b44b62, #547fd1);
+	background: linear-gradient(90deg, #c89b5f, #6e896d, #5b748c);
 	opacity: 0.75;
 }
 
@@ -668,14 +678,14 @@ button:hover {
 	font-size: 2rem;
 	font-weight: 700;
 	line-height: 1;
-	color: #4e3548;
+	color: #4d4338;
 	letter-spacing: -0.02em;
 }
 
 #adminMetricsOnlyPage .admin-metrics span {
 	font-size: 0.95rem;
 	font-weight: 500;
-	color: #6f667f;
+	color: #6d655a;
 }
 
 #adminMetricsOnlyPage .admin-recent-wrap {
@@ -713,21 +723,21 @@ button:hover {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	border: 1px solid rgba(159, 47, 69, 0.2);
-	background: linear-gradient(140deg, rgba(175, 65, 90, 0.12), rgba(255, 233, 239, 0.9));
+	border: 1px solid rgba(124, 102, 67, 0.28);
+	background: linear-gradient(140deg, rgba(199, 173, 128, 0.2), rgba(249, 240, 225, 0.94));
 	color: var(--wine-dark);
 	font-weight: 600;
 	border-radius: 14px;
 	padding: 10px 14px;
 	text-decoration: none;
 	transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
-	box-shadow: 0 8px 18px rgba(159, 47, 69, 0.08);
+	box-shadow: 0 8px 18px rgba(99, 79, 50, 0.14);
 }
 
 .btn-secondary:hover {
 	transform: translateY(-1px);
 	filter: brightness(1.01);
-	box-shadow: 0 12px 22px rgba(159, 47, 69, 0.12);
+	box-shadow: 0 12px 22px rgba(99, 79, 50, 0.18);
 }
 
 .panel-head button,

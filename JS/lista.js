@@ -31,10 +31,12 @@ const adminMetricValorReservado = document.getElementById("adminMetricValorReser
 const adminMetricAdminsAtivos = document.getElementById("adminMetricAdminsAtivos");
 const adminMetricPixTotal = document.getElementById("adminMetricPixTotal");
 const adminMetricPixValorTotal = document.getElementById("adminMetricPixValorTotal");
+const adminMetricNovosPendentes = document.getElementById("adminMetricNovosPendentes");
 const adminRecentList = document.getElementById("adminRecentList");
 const adminPixRecentList = document.getElementById("adminPixRecentList");
 const adminUnreserveRecentList = document.getElementById("adminUnreserveRecentList");
 const adminPresenceHint = document.getElementById("adminPresenceHint");
+const adminNewProductsHint = document.getElementById("adminNewProductsHint");
 
 const adminForm = document.getElementById("adminForm");
 const adminTokenInput = document.getElementById("adminToken");
@@ -355,6 +357,12 @@ function renderAdminMetrics(metrics) {
 		if (adminMetricPixValorTotal) {
 			adminMetricPixValorTotal.textContent = BRL.format(0);
 		}
+		if (adminMetricNovosPendentes) {
+			adminMetricNovosPendentes.textContent = "0";
+		}
+		if (adminNewProductsHint) {
+			adminNewProductsHint.textContent = "Nenhum novo produto pendente de conferência.";
+		}
 		if (adminPresenceHint) {
 			adminPresenceHint.textContent = "Nenhum admin online no momento.";
 		}
@@ -384,6 +392,20 @@ function renderAdminMetrics(metrics) {
 	}
 	if (adminMetricPixValorTotal) {
 		adminMetricPixValorTotal.textContent = BRL.format(Number(metrics.pix_contribuicoes_valor_total || 0));
+	}
+	if (adminMetricNovosPendentes) {
+		adminMetricNovosPendentes.textContent = String(metrics.novos_produtos_pendentes_total || 0);
+	}
+
+	if (adminNewProductsHint) {
+		const novosPendentes = Number(metrics.novos_produtos_pendentes_total || 0);
+		if (novosPendentes > 0) {
+			adminNewProductsHint.textContent = `${novosPendentes} novo(s) produto(s) adicionado(s) desde o último backup JSON.`;
+		} else if (metrics.novos_produtos_ack_em) {
+			adminNewProductsHint.textContent = `Sem pendências. Última conferência: ${formatReservationTime(metrics.novos_produtos_ack_em)}.`;
+		} else {
+			adminNewProductsHint.textContent = "Nenhum novo produto pendente de conferência.";
+		}
 	}
 
 	if (adminPresenceHint) {
@@ -1026,7 +1048,8 @@ if (isAdminPage) {
 				link.remove();
 				window.URL.revokeObjectURL(fileUrl);
 
-				adminStatus.textContent = "Arquivo JSON exportado com sucesso.";
+				adminStatus.textContent = "Arquivo JSON exportado e status de novos produtos resetado.";
+				await carregarMetricasAdmin();
 			} catch (error) {
 				adminStatus.textContent = error.message;
 			}

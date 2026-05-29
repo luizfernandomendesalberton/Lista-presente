@@ -29,6 +29,9 @@ PIX_CONTRIB_FALLBACK_FILE = Path(__file__).resolve().parent / "pix_contribuicoes
 UNRESERVE_LOG_FILE = Path(__file__).resolve().parent / "desmarcacoes_reserva.json"
 UNRESERVE_LOG_FILE = Path(os.getenv("UNRESERVE_LOG_FILE_PATH", str(UNRESERVE_LOG_FILE)))
 UNRESERVE_LOG_FALLBACK_FILE = Path(__file__).resolve().parent / "desmarcacoes_reserva.json"
+ADMIN_SYNC_FILE = Path(__file__).resolve().parent / "admin_sync_state.json"
+ADMIN_SYNC_FILE = Path(os.getenv("ADMIN_SYNC_FILE_PATH", str(ADMIN_SYNC_FILE)))
+ADMIN_SYNC_FALLBACK_FILE = Path(__file__).resolve().parent / "admin_sync_state.json"
 ENV_FILE = Path(__file__).resolve().parent / ".env"
 DEFAULT_IMAGE_URL = "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80"
 
@@ -44,6 +47,9 @@ PIX_CONTRIB_FILE_LOCK = FileLock(str(PIX_CONTRIB_LOCK_FILE), timeout=15)
 UNRESERVE_LOG_LOCK = threading.Lock()
 UNRESERVE_LOG_LOCK_FILE = Path(os.getenv("UNRESERVE_LOG_LOCK_PATH", str(UNRESERVE_LOG_FILE) + ".lock"))
 UNRESERVE_LOG_FILE_LOCK = FileLock(str(UNRESERVE_LOG_LOCK_FILE), timeout=15)
+ADMIN_SYNC_LOCK = threading.Lock()
+ADMIN_SYNC_LOCK_FILE = Path(os.getenv("ADMIN_SYNC_LOCK_PATH", str(ADMIN_SYNC_FILE) + ".lock"))
+ADMIN_SYNC_FILE_LOCK = FileLock(str(ADMIN_SYNC_LOCK_FILE), timeout=15)
 ACTIVE_ADMIN_SESSIONS = {}
 ACTIVE_ADMIN_SESSIONS_LOCK = threading.Lock()
 ADMIN_ACTIVITY_TTL_SECONDS = int(os.getenv("ADMIN_ACTIVITY_TTL_SECONDS", "900"))
@@ -168,6 +174,8 @@ def normalize_presente(raw, forced_id=None):
 		normalized["reservado_por_email"] = str(raw.get("reservado_por_email")).strip().lower()
 	if raw.get("reservado_em"):
 		normalized["reservado_em"] = str(raw.get("reservado_em")).strip()
+	if raw.get("criado_em"):
+		normalized["criado_em"] = str(raw.get("criado_em")).strip()
 
 	return normalized
 
@@ -454,6 +462,109 @@ def normalize_all_unreserve_entries(entries):
 	return normalized
 
 
+def default_admin_sync_state():
+	return {
+		"novos_produtos_ack_em": "",
+		"ultimo_export_em": "",
+	}
+
+
+def normalize_admin_sync_state(raw):
+	if not isinstance(raw, dict):
+		return default_admin_sync_state()
+
+	return {
+		"novos_produtos_ack_em": str(raw.get("novos_produtos_ack_em") or "").strip(),
+		"ultimo_export_em": str(raw.get("ultimo_export_em") or "").strip(),
+	}
+
+
+def save_admin_sync_state(state):
+	def _atomic_dump(target_file):
+		target_file.parent.mkdir(parents=True, exist_ok=True)
+		with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=target_file.parent, delete=False) as tmp_file:
+			json.dump(state, tmp_file, ensure_ascii=False, indent=2)
+			tmp_path = Path(tmp_file.name)
+
+		os.replace(tmp_path, target_file)
+
+	try:
+		_atomic_dump(ADMIN_SYNC_FILE)
+	except OSError:
+		_atomic_dump(ADMIN_SYNC_FALLBACK_FILE)
+
+
+def load_admin_sync_state():
+	data_file = ADMIN_SYNC_FILE
+	if not data_file.exists() and ADMIN_SYNC_FALLBACK_FILE.exists():
+		data_file = ADMIN_SYNC_FALLBACK_FILE
+
+	if not data_file.exists():
+		state = default_admin_sync_state()
+		save_admin_sync_state(state)
+		return state
+
+	with data_file.open("r", encoding="utf-8") as file:
+		loaded = json.load(file)
+
+	normalized = normalize_admin_sync_state(loaded)
+	if normalized != loaded:
+		save_admin_sync_state(normalized)
+
+	return normalized
+
+
+def parse_iso_utc(value):
+	text = str(value or "").strip()
+	if not text:
+		return None
+
+	try:
+		parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+	except ValueError:
+		return None
+
+	if parsed.tzinfo is None:
+		return parsed.replace(tzinfo=UTC)
+
+	return parsed.astimezone(UTC)
+
+
+def get_pending_new_products(presentes, ack_timestamp):
+	ack_dt = parse_iso_utc(ack_timestamp)
+	pending = []
+
+	for item in presentes:
+		created_dt = parse_iso_utc(item.get("criado_em"))
+		if not created_dt:
+			continue
+
+		if ack_dt and created_dt <= ack_dt:
+			continue
+
+		pending.append(
+			{
+				"id": int(item.get("id") or 0),
+				"nome": str(item.get("nome") or "Presente").strip(),
+				"criado_em": created_dt.isoformat(),
+			}
+		)
+
+	pending.sort(key=lambda item: item.get("criado_em", ""), reverse=True)
+	return pending
+
+
+def acknowledge_new_products():
+	with ADMIN_SYNC_LOCK:
+		with ADMIN_SYNC_FILE_LOCK:
+			state = load_admin_sync_state()
+			now_iso = utc_now().isoformat()
+			state["novos_produtos_ack_em"] = now_iso
+			state["ultimo_export_em"] = now_iso
+			save_admin_sync_state(state)
+			return state
+
+
 def save_unreserve_entries(entries):
 	def _atomic_dump(target_file):
 		target_file.parent.mkdir(parents=True, exist_ok=True)
@@ -723,6 +834,7 @@ def exportar_presentes():
 		return admin_error
 
 	presentes = load_presentes()
+	sync_state = acknowledge_new_products()
 	content = json.dumps(presentes, ensure_ascii=False, indent=2)
 	filename = f"presentes-export-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
 
@@ -730,7 +842,10 @@ def exportar_presentes():
 		content,
 		status=200,
 		mimetype="application/json",
-		headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+		headers={
+			"Content-Disposition": f'attachment; filename="{filename}"',
+			"X-New-Products-Ack-At": sync_state["novos_produtos_ack_em"],
+		},
 	)
 
 
@@ -765,6 +880,8 @@ def admin_metrics():
 	]
 
 	presence = get_active_admin_sessions_payload()
+	sync_state = load_admin_sync_state()
+	pending_new_products = get_pending_new_products(presentes, sync_state.get("novos_produtos_ack_em"))
 	pix_contributions = load_pix_contributions()
 	pix_total = len(pix_contributions)
 	pix_valor_total = round(sum(float(item.get("valor", 0) or 0) for item in pix_contributions), 2)
@@ -813,6 +930,10 @@ def admin_metrics():
 			"valor_total": round(valor_total, 2),
 			"valor_reservado": round(valor_reservado, 2),
 			"ultimas_reservas": ultimas_reservas_payload,
+			"novos_produtos_pendentes_total": len(pending_new_products),
+			"novos_produtos_pendentes": pending_new_products[:8],
+			"novos_produtos_ack_em": sync_state.get("novos_produtos_ack_em") or "",
+			"ultimo_export_em": sync_state.get("ultimo_export_em") or "",
 			"pix_contribuicoes_total": pix_total,
 			"pix_contribuicoes_valor_total": pix_valor_total,
 			"ultimas_contribuicoes_pix": ultimas_pix_payload,
@@ -912,6 +1033,7 @@ def criar_presente():
 					"foto_url": payload.get("foto_url") or DEFAULT_IMAGE_URL,
 					"produto_url": payload.get("produto_url") or "",
 					"especificacoes": payload.get("especificacoes") or [],
+					"criado_em": utc_now().isoformat(),
 					"reservado": False,
 				}
 			)
