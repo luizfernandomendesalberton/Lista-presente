@@ -4,10 +4,10 @@
 	--paper: #fffaf4;
 	--panel: rgba(255, 255, 255, 0.82);
 	--line: #e8dbc8;
-	--wine: #5a765f;
-	--wine-dark: #3f5b49;
+	--wine: #a06f5a;
+	--wine-dark: #7c5848;
 	--gold: #bb9155;
-	--ok: #3f6f5d;
+	--ok: #8a6d5c;
 	--shadow: 0 22px 64px rgba(33, 19, 13, 0.14);
 }
 
@@ -22,7 +22,7 @@ body {
 	min-height: 100vh;
 	background:
 		radial-gradient(circle at 20% 20%, rgba(241, 217, 183, 0.72) 0%, transparent 36%),
-		radial-gradient(circle at 80% 10%, rgba(210, 224, 208, 0.48) 0%, transparent 38%),
+		radial-gradient(circle at 80% 10%, rgba(231, 212, 193, 0.52) 0%, transparent 38%),
 		linear-gradient(150deg, #f6ecdf 0%, #efe3d3 52%, #e9dece 100%);
 	padding: 22px 0 50px;
 	overflow-x: hidden;
@@ -31,7 +31,7 @@ body {
 body.metrics-page {
 	background:
 		radial-gradient(circle at 18% 18%, rgba(235, 205, 166, 0.8) 0%, transparent 36%),
-		radial-gradient(circle at 82% 8%, rgba(198, 215, 198, 0.42) 0%, transparent 36%),
+		radial-gradient(circle at 82% 8%, rgba(232, 212, 194, 0.44) 0%, transparent 36%),
 		linear-gradient(152deg, #f6ebde 0%, #efe2d1 50%, #e8dcc9 100%);
 }
 
@@ -58,7 +58,7 @@ body.metrics-page .bg-shape {
 .bg-shape-two {
 	width: 320px;
 	height: 320px;
-	background: conic-gradient(from 0deg, #a8bea8, #e6d9bf, #a8bea8);
+	background: conic-gradient(from 0deg, #e8d3bc, #f1dec3, #d9bea9);
 	border-radius: 73% 27% 37% 63% / 57% 63% 37% 43%;
 	bottom: -100px;
 	right: -80px;
@@ -85,7 +85,7 @@ body.metrics-page .bg-shape {
 	display: inline-flex;
 	padding: 8px 14px;
 	border-radius: 999px;
-	background: linear-gradient(130deg, #ecd2a8, #c8d8be);
+	background: linear-gradient(130deg, #ecd2a8, #ddb7a2);
 	font-weight: 700;
 	font-size: 0.75rem;
 	letter-spacing: 0.14em;
@@ -153,7 +153,7 @@ h1 {
 	left: 0;
 	right: 0;
 	height: 4px;
-	background: linear-gradient(90deg, #c89b5f, #6e896d, #5b748c);
+	background: linear-gradient(90deg, #c89b5f, #c88863, #8c7363);
 	opacity: 0.9;
 }
 
@@ -186,7 +186,7 @@ h1 {
 	height: 3px;
 	margin-top: 0.4rem;
 	border-radius: 999px;
-	background: linear-gradient(90deg, #c89b5f, #6e896d, #5b748c);
+	background: linear-gradient(90deg, #c89b5f, #c88863, #8c7363);
 	opacity: 0.75;
 }
 
@@ -241,9 +241,9 @@ h1 {
 }
 
 .card.reservado {
-	background: linear-gradient(180deg, #f1fff7, #fbfffd);
-	border-color: #b8dfcf;
-	box-shadow: 0 14px 38px rgba(27, 124, 95, 0.1);
+	background: linear-gradient(180deg, #fff9f4, #fbf4ed);
+	border-color: #dcc6b5;
+	box-shadow: 0 14px 38px rgba(125, 93, 72, 0.1);
 }
 
 .card.reservado::before {
@@ -254,12 +254,12 @@ h1 {
 	z-index: 2;
 	padding: 6px 10px;
 	border-radius: 999px;
-	background: rgba(27, 124, 95, 0.92);
+	background: linear-gradient(140deg, #9f7f68, #7f6253);
 	color: #fff;
 	font-size: 0.72rem;
 	font-weight: 700;
 	letter-spacing: 0.04em;
-	box-shadow: 0 8px 16px rgba(27, 124, 95, 0.18);
+	box-shadow: 0 8px 16px rgba(112, 83, 65, 0.2);
 }
 
 .card:not(.reservado)::before {
@@ -270,12 +270,12 @@ h1 {
 	z-index: 2;
 	padding: 6px 10px;
 	border-radius: 999px;
-	background: rgba(164, 58, 82, 0.92);
+	background: linear-gradient(140deg, #c48768, #a76d58);
 	color: #fff;
 	font-size: 0.72rem;
 	font-weight: 700;
 	letter-spacing: 0.04em;
-	box-shadow: 0 8px 16px rgba(159, 47, 69, 0.18);
+	box-shadow: 0 8px 16px rgba(167, 109, 88, 0.22);
 }
 
 .media-wrap {
@@ -301,7 +301,7 @@ h1 {
 	top: 10px;
 	left: 10px;
 	margin: 0;
-	background: rgba(34, 28, 53, 0.82);
+	background: rgba(101, 84, 71, 0.84);
 	color: #fff;
 	font-size: 0.75rem;
 	padding: 6px 10px;
@@ -323,7 +323,7 @@ h1 {
 
 .presente-preco {
 	margin: 0;
-	color: #9f2f45;
+	color: #a76d58;
 	font-weight: 700;
 	font-size: 1.06rem;
 	padding-bottom: 2px;
@@ -341,7 +341,7 @@ h1 {
 	display: grid;
 	gap: 4px;
 	font-size: 0.88rem;
-	color: #4f4863;
+	color: #65584c;
 }
 
 .presente-status {
@@ -351,8 +351,8 @@ h1 {
 	font-size: 0.88rem;
 	font-weight: 700;
 	color: var(--ok);
-	background: rgba(27, 124, 95, 0.09);
-	border: 1px solid rgba(27, 124, 95, 0.16);
+	background: rgba(160, 111, 90, 0.1);
+	border: 1px solid rgba(160, 111, 90, 0.18);
 	border-radius: 999px;
 	padding: 6px 10px;
 }
@@ -407,20 +407,20 @@ textarea:focus {
 
 button {
 	border: 1px solid var(--wine);
-	background: linear-gradient(140deg, #6f8d72, #4f6f58);
+	background: linear-gradient(140deg, #c68f6f, #9b6d58);
 	color: #fff;
 	font-weight: 600;
 	border-radius: 14px;
 	padding: 10px 16px;
 	cursor: pointer;
 	transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
-	box-shadow: 0 12px 24px rgba(63, 91, 73, 0.24);
+	box-shadow: 0 12px 24px rgba(155, 109, 88, 0.26);
 }
 
 button:hover {
 	transform: translateY(-1px);
 	filter: brightness(1.04);
-	box-shadow: 0 14px 28px rgba(63, 91, 73, 0.3);
+	box-shadow: 0 14px 28px rgba(155, 109, 88, 0.32);
 }
 
 .check-wrap {
@@ -431,29 +431,29 @@ button:hover {
 
 .btn-remover {
 	margin: 0 12px 12px;
-	border-color: #b37356;
-	background: linear-gradient(140deg, #cb8f72, #a06d56);
+	border-color: #ae755f;
+	background: linear-gradient(140deg, #d49a7c, #a96f5a);
 	font-size: 0.88rem;
 }
 
 .btn-editar {
 	margin: 0 12px 12px;
 	border-color: #9c8352;
-	background: linear-gradient(140deg, #c7ab74, #977b4c);
+	background: linear-gradient(140deg, #d7b682, #ab8758);
 	font-size: 0.88rem;
 }
 
 .btn-desreservar {
 	margin: 0 12px 12px;
-	border-color: #5a768f;
-	background: linear-gradient(140deg, #7591a9, #536f86);
+	border-color: #8f7c70;
+	background: linear-gradient(140deg, #ae9a8d, #857164);
 	font-size: 0.88rem;
 }
 
 .btn-pix-presente {
 	margin: 0 12px 12px;
-	border-color: #4f7f66;
-	background: linear-gradient(140deg, #6a9b82, #466c57);
+	border-color: #9b7a52;
+	background: linear-gradient(140deg, #c7a06a, #967248);
 	font-size: 0.88rem;
 }
 
@@ -485,8 +485,8 @@ button:hover {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	border: 1px solid rgba(90, 118, 95, 0.24);
-	background: linear-gradient(145deg, rgba(253, 248, 240, 0.96), rgba(243, 236, 225, 0.96));
+	border: 1px solid rgba(160, 111, 90, 0.22);
+	background: linear-gradient(145deg, rgba(253, 248, 240, 0.96), rgba(245, 232, 219, 0.96));
 	color: var(--wine);
 	font-weight: 700;
 	border-radius: 999px;
@@ -498,7 +498,7 @@ button:hover {
 
 .btn-link:hover {
 	transform: translateY(-1px);
-	background: linear-gradient(145deg, rgba(255, 251, 244, 1), rgba(247, 240, 230, 1));
+	background: linear-gradient(145deg, rgba(255, 251, 244, 1), rgba(248, 236, 225, 1));
 	box-shadow: 0 12px 24px rgba(71, 58, 37, 0.14);
 }
 
@@ -568,7 +568,7 @@ button:hover {
 	height: 3px;
 	margin-top: 0.35rem;
 	border-radius: 999px;
-	background: linear-gradient(90deg, #c89b5f, #6e896d);
+	background: linear-gradient(90deg, #c89b5f, #c88863);
 	opacity: 0.7;
 }
 
@@ -620,9 +620,9 @@ button:hover {
 
 #adminMetricsOnlyPage .panel-head button,
 #adminMetricsOnlyPage #adminLogoutBtn {
-	background: linear-gradient(140deg, #6f8d72, #4f6f58);
-	border-color: #4f6f58;
-	box-shadow: 0 14px 28px rgba(63, 91, 73, 0.26);
+	background: linear-gradient(140deg, #c68f6f, #9b6d58);
+	border-color: #9b6d58;
+	box-shadow: 0 14px 28px rgba(155, 109, 88, 0.28);
 }
 
 #adminMetricsOnlyPage .btn-secondary {
@@ -638,7 +638,7 @@ button:hover {
 }
 
 #adminMetricsOnlyPage .admin-tip strong {
-	color: #486451;
+	color: #8f6654;
 }
 
 #adminMetricsOnlyPage #adminPresenceHint {
@@ -670,7 +670,7 @@ button:hover {
 	top: 0;
 	width: 100%;
 	height: 4px;
-	background: linear-gradient(90deg, #c89b5f, #6e896d, #5b748c);
+	background: linear-gradient(90deg, #c89b5f, #c88863, #8c7363);
 	opacity: 0.75;
 }
 
@@ -723,8 +723,8 @@ button:hover {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	border: 1px solid rgba(124, 102, 67, 0.28);
-	background: linear-gradient(140deg, rgba(199, 173, 128, 0.2), rgba(249, 240, 225, 0.94));
+	border: 1px solid rgba(170, 130, 97, 0.3);
+	background: linear-gradient(140deg, #f4e7d6, #e8d5bf);
 	color: var(--wine-dark);
 	font-weight: 600;
 	border-radius: 14px;
@@ -775,7 +775,7 @@ button:hover {
 	max-height: 92vh;
 	overflow-y: auto;
 	border-radius: 20px;
-	background: linear-gradient(140deg, rgba(255, 253, 248, 0.98), rgba(249, 255, 254, 0.95));
+	background: linear-gradient(140deg, rgba(255, 253, 248, 0.98), rgba(248, 241, 232, 0.96));
 	border: 1px solid #e5dccf;
 	padding: 18px;
 	box-shadow: 0 26px 70px rgba(16, 12, 29, 0.34);
