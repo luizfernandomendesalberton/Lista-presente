@@ -122,12 +122,12 @@ h1 {
 }
 
 .panel {
-	background: var(--panel);
-	border: 1px solid rgba(255, 255, 255, 0.8);
-	border-radius: 24px;
-	padding: 18px;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 249, 243, 0.82));
+	border: 1px solid rgba(255, 255, 255, 0.82);
+	border-radius: 28px;
+	padding: 20px;
 	box-shadow: var(--shadow);
-	backdrop-filter: blur(10px);
+	backdrop-filter: blur(12px);
 }
 
 .panel-head {
@@ -151,6 +151,17 @@ h1 {
 	font-weight: 400;
 }
 
+.panel-head h2::after {
+	content: "";
+	display: block;
+	width: 3.75rem;
+	height: 3px;
+	margin-top: 0.4rem;
+	border-radius: 999px;
+	background: linear-gradient(90deg, #d7a35f, #b44b62);
+	opacity: 0.75;
+}
+
 .filters {
 	display: grid;
 	grid-template-columns: 2fr 1fr 1fr;
@@ -172,14 +183,20 @@ h1 {
 }
 
 .card {
-	border: 1px solid var(--line);
-	border-radius: 20px;
+	border: 1px solid rgba(228, 217, 202, 0.95);
+	border-radius: 24px;
 	overflow: hidden;
-	background: var(--paper);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 247, 237, 0.98));
 	display: grid;
 	align-content: start;
 	animation: revealUp 0.5s both ease;
-	box-shadow: 0 8px 30px rgba(46, 31, 19, 0.08);
+	box-shadow: 0 12px 36px rgba(46, 31, 19, 0.1);
+	transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.card:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 18px 42px rgba(46, 31, 19, 0.14);
 }
 
 .card.reservado {
@@ -219,14 +236,15 @@ h1 {
 }
 
 .card-main {
-	padding: 14px;
+	padding: 15px 15px 10px;
 	display: grid;
 	gap: 8px;
 }
 
 .presente-nome {
 	margin: 0;
-	font-size: 1.15rem;
+	font-size: 1.18rem;
+	line-height: 1.15;
 }
 
 .presente-preco {
@@ -259,9 +277,13 @@ h1 {
 }
 
 .reserve-form {
-	padding: 0 14px 14px;
+	margin: 2px 12px 0;
+	padding: 12px 12px 8px;
 	display: grid;
 	gap: 8px;
+	border: 1px solid rgba(228, 217, 202, 0.72);
+	border-radius: 16px;
+	background: rgba(255, 255, 255, 0.72);
 }
 
 label {
@@ -286,10 +308,11 @@ input[type="search"],
 select,
 textarea {
 	border: 1px solid var(--line);
-	background: #fff;
+	background: linear-gradient(180deg, #fff, #fffaf6);
 	border-radius: 12px;
 	padding: 10px;
 	color: var(--ink);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 input:focus,
@@ -297,23 +320,25 @@ select:focus,
 textarea:focus {
 	outline: 2px solid #edcba5;
 	border-color: #edcba5;
+	box-shadow: 0 0 0 4px rgba(237, 203, 165, 0.18);
 }
 
 button {
 	border: 1px solid var(--wine);
-	background: linear-gradient(140deg, #ab3752, #84253c);
+	background: linear-gradient(140deg, #ac3953, #81243d);
 	color: #fff;
 	font-weight: 600;
-	border-radius: 12px;
-	padding: 10px 14px;
+	border-radius: 14px;
+	padding: 10px 16px;
 	cursor: pointer;
-	transition: transform 0.2s ease, filter 0.2s ease;
-	box-shadow: 0 10px 22px rgba(159, 47, 69, 0.18);
+	transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+	box-shadow: 0 12px 24px rgba(159, 47, 69, 0.2);
 }
 
 button:hover {
 	transform: translateY(-1px);
-	filter: brightness(1.03);
+	filter: brightness(1.04);
+	box-shadow: 0 14px 28px rgba(159, 47, 69, 0.24);
 }
 
 .check-wrap {
@@ -323,35 +348,35 @@ button:hover {
 }
 
 .btn-remover {
-	margin: 0 14px 14px;
-	border-color: #ca6464;
-	background: linear-gradient(140deg, #db7a78, #c15858);
+	margin: 0 12px 12px;
+	border-color: #c85d60;
+	background: linear-gradient(140deg, #db7a78, #b94a53);
 	font-size: 0.88rem;
 }
 
 .btn-editar {
-	margin: 0 14px 14px;
-	border-color: #8c6f37;
-	background: linear-gradient(140deg, #b89a5a, #92783f);
+	margin: 0 12px 12px;
+	border-color: #9a7a3b;
+	background: linear-gradient(140deg, #c7aa67, #9b7b42);
 	font-size: 0.88rem;
 }
 
 .btn-desreservar {
-	margin: 0 14px 14px;
-	border-color: #3d69b5;
-	background: linear-gradient(140deg, #4d84d8, #3f67b0);
+	margin: 0 12px 12px;
+	border-color: #466dad;
+	background: linear-gradient(140deg, #547fd1, #3f67b0);
 	font-size: 0.88rem;
 }
 
 .btn-pix-presente {
-	margin: 0 14px 14px;
+	margin: 0 12px 12px;
 	border-color: #2f7a66;
-	background: linear-gradient(140deg, #2b8e73, #256f64);
+	background: linear-gradient(140deg, #32957a, #246a61);
 	font-size: 0.88rem;
 }
 
 .admin-panel {
-	background: linear-gradient(160deg, rgba(255, 255, 255, 0.84), rgba(255, 247, 236, 0.8));
+	background: linear-gradient(160deg, rgba(255, 255, 255, 0.84), rgba(255, 247, 236, 0.82));
 	padding: 22px;
 }
 
@@ -388,11 +413,11 @@ button:hover {
 .admin-form {
 	display: grid;
 	gap: 10px;
-	padding: 14px;
-	border: 1px solid var(--line);
-	border-radius: 18px;
-	background: rgba(255, 255, 255, 0.68);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+	padding: 16px;
+	border: 1px solid rgba(228, 217, 202, 0.92);
+	border-radius: 20px;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 250, 245, 0.88));
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .admin-metrics {
@@ -423,9 +448,9 @@ button:hover {
 
 .admin-recent-wrap {
 	border: 1px solid var(--line);
-	border-radius: 14px;
-	padding: 10px 12px;
-	background: rgba(255, 255, 255, 0.72);
+	border-radius: 16px;
+	padding: 12px 14px;
+	background: rgba(255, 255, 255, 0.76);
 	margin-bottom: 12px;
 }
 
@@ -467,6 +492,7 @@ button:hover {
 	gap: 8px;
 	align-items: center;
 	justify-content: flex-end;
+	flex-wrap: wrap;
 }
 
 .btn-secondary {
@@ -477,7 +503,7 @@ button:hover {
 	background: linear-gradient(140deg, rgba(175, 65, 90, 0.12), rgba(255, 233, 239, 0.9));
 	color: var(--wine-dark);
 	font-weight: 600;
-	border-radius: 12px;
+	border-radius: 14px;
 	padding: 10px 14px;
 	text-decoration: none;
 	transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
@@ -641,6 +667,10 @@ button:hover {
 		width: 100%;
 	}
 
+	.panel {
+		padding: 16px 14px;
+	}
+
 	.btn-link {
 		width: 100%;
 	}
@@ -651,5 +681,9 @@ button:hover {
 
 	.admin-form {
 		padding: 12px;
+	}
+
+	.reserve-form {
+		margin-inline: 8px;
 	}
 }
