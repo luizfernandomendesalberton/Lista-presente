@@ -28,6 +28,17 @@ body {
 	overflow-x: hidden;
 }
 
+body.metrics-page {
+	background:
+		radial-gradient(circle at 18% 18%, rgba(244, 206, 166, 0.85) 0%, transparent 35%),
+		radial-gradient(circle at 82% 8%, rgba(207, 180, 245, 0.42) 0%, transparent 34%),
+		linear-gradient(152deg, #fff8f1 0%, #f8f0e8 48%, #f5efff 100%);
+}
+
+body.metrics-page .bg-shape {
+	opacity: 0.22;
+}
+
 .bg-shape {
 	position: fixed;
 	z-index: -1;
@@ -569,6 +580,108 @@ button:hover {
 
 .admin-recent-list li::marker {
 	color: var(--gold);
+}
+
+#adminMetricsOnlyPage .hero {
+	background: linear-gradient(130deg, rgba(255, 255, 255, 0.9), rgba(255, 245, 236, 0.86));
+	border-color: rgba(233, 214, 190, 0.7);
+	box-shadow: 0 24px 58px rgba(66, 41, 28, 0.14);
+}
+
+#adminMetricsOnlyPage .hero h1 {
+	color: #5a4052;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+#adminMetricsOnlyPage .subtitle {
+	color: #6a6079;
+	font-weight: 500;
+}
+
+#adminMetricsOnlyPage .admin-panel {
+	background: linear-gradient(165deg, rgba(255, 255, 255, 0.9), rgba(255, 246, 236, 0.9));
+	border: 1px solid rgba(232, 215, 194, 0.92);
+	box-shadow: 0 28px 62px rgba(47, 30, 20, 0.14);
+}
+
+#adminMetricsOnlyPage .panel-head h2 {
+	color: #624859;
+}
+
+#adminMetricsOnlyPage .panel-head button,
+#adminMetricsOnlyPage #adminLogoutBtn {
+	background: linear-gradient(140deg, #b4506e, #8b2f4a);
+	border-color: #8b2f4a;
+	box-shadow: 0 14px 28px rgba(154, 61, 88, 0.24);
+}
+
+#adminMetricsOnlyPage .btn-secondary {
+	border-color: rgba(174, 75, 101, 0.28);
+	background: linear-gradient(145deg, rgba(255, 247, 244, 0.98), rgba(250, 232, 238, 0.95));
+	color: #8b3450;
+	box-shadow: 0 10px 20px rgba(152, 61, 88, 0.12);
+}
+
+#adminMetricsOnlyPage .admin-tip {
+	color: #685f75;
+	font-weight: 500;
+}
+
+#adminMetricsOnlyPage .admin-tip strong {
+	color: #7f2d46;
+}
+
+#adminMetricsOnlyPage #adminPresenceHint {
+	display: inline-flex;
+	justify-self: center;
+	padding: 10px 14px;
+	border-radius: 999px;
+	border: 1px solid rgba(191, 165, 126, 0.42);
+	background: linear-gradient(145deg, rgba(255, 251, 244, 0.92), rgba(255, 242, 224, 0.86));
+	box-shadow: 0 8px 18px rgba(121, 95, 57, 0.1);
+}
+
+#adminMetricsOnlyPage .admin-metrics {
+	gap: 12px;
+}
+
+#adminMetricsOnlyPage .admin-metrics article {
+	position: relative;
+	border-color: rgba(225, 210, 189, 0.94);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 244, 0.96));
+	box-shadow: 0 12px 24px rgba(67, 44, 30, 0.08);
+	overflow: hidden;
+}
+
+#adminMetricsOnlyPage .admin-metrics article::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 4px;
+	background: linear-gradient(90deg, #d7a35f, #b44b62, #547fd1);
+	opacity: 0.75;
+}
+
+#adminMetricsOnlyPage .admin-metrics strong {
+	font-size: 2rem;
+	font-weight: 700;
+	line-height: 1;
+	color: #4e3548;
+	letter-spacing: -0.02em;
+}
+
+#adminMetricsOnlyPage .admin-metrics span {
+	font-size: 0.95rem;
+	font-weight: 500;
+	color: #6f667f;
+}
+
+#adminMetricsOnlyPage .admin-recent-wrap {
+	border-color: rgba(225, 210, 189, 0.95);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 249, 241, 0.95));
+	box-shadow: 0 12px 24px rgba(67, 44, 30, 0.06);
 }
 
 .admin-grid-two {
