@@ -50,6 +50,7 @@ const adminExportBtn = document.getElementById("adminExportBtn");
 const adminSubmitBtn = document.getElementById("adminSubmitBtn");
 const adminCancelEditBtn = document.getElementById("adminCancelEditBtn");
 const adminFormTitle = document.getElementById("adminFormTitle");
+const adminMetricsOnlyPage = document.getElementById("adminMetricsOnlyPage");
 
 const adminNome = document.getElementById("adminNome");
 const adminPreco = document.getElementById("adminPreco");
@@ -58,7 +59,9 @@ const adminFoto = document.getElementById("adminFoto");
 const adminProdutoUrl = document.getElementById("adminProdutoUrl");
 const adminDescricao = document.getElementById("adminDescricao");
 const adminEspecificacoes = document.getElementById("adminEspecificacoes");
-const isAdminPage = Boolean(adminForm);
+const hasGiftListUI = Boolean(listaEl && statusEl && template && filtroBusca && filtroCategoria && filtroOrdem);
+const hasAdminMetricsUI = Boolean(adminMetricTotal || adminRecentList || adminPresenceHint || adminPixRecentList || adminUnreserveRecentList);
+const isAdminPage = Boolean(adminForm || adminMetricsOnlyPage);
 let adminAuthenticated = !isAdminPage;
 let editingPresenteId = null;
 let autoRefreshTimerId = null;
@@ -292,6 +295,9 @@ function getAdminHeaders() {
 	if (!isAdminPage) {
 		return {};
 	}
+	if (!adminTokenInput) {
+		return {};
+	}
 
 	const token = adminTokenInput.value.trim();
 	if (!token) {
@@ -329,7 +335,7 @@ function setAdminMode(authenticated, email = "") {
 
 
 function renderAdminMetrics(metrics) {
-	if (!adminMetricTotal) {
+	if (!hasAdminMetricsUI) {
 		return;
 	}
 
@@ -446,7 +452,7 @@ function renderAdminMetrics(metrics) {
 
 
 async function carregarMetricasAdmin() {
-	if (!isAdminPage || !adminAuthenticated) {
+	if (!isAdminPage || !adminAuthenticated || !hasAdminMetricsUI) {
 		renderAdminMetrics(null);
 		return;
 	}
@@ -491,7 +497,14 @@ function startAutoRefresh() {
 			return;
 		}
 
-		await carregarPresentes({ silent: true });
+		if (hasGiftListUI) {
+			await carregarPresentes({ silent: true });
+			return;
+		}
+
+		if (isAdminPage && adminAuthenticated) {
+			await carregarMetricasAdmin();
+		}
 	}, AUTO_REFRESH_INTERVAL_MS);
 }
 
@@ -565,6 +578,10 @@ async function syncAdminSession() {
 
 
 function updateStats(presentes) {
+	if (!hasGiftListUI) {
+		return;
+	}
+
 	if (!statTotal || !statDisponivel || !statReservado) {
 		return;
 	}
@@ -580,6 +597,10 @@ function updateStats(presentes) {
 
 
 function updateCategorias(presentes) {
+	if (!hasGiftListUI) {
+		return;
+	}
+
 	const categories = [...new Set(presentes.map((item) => item.categoria || "Geral"))].sort();
 	const current = filtroCategoria.value;
 
@@ -599,6 +620,10 @@ function updateCategorias(presentes) {
 
 
 function getFilteredPresentes() {
+	if (!hasGiftListUI) {
+		return [];
+	}
+
 	const search = filtroBusca.value.trim().toLowerCase();
 	const category = filtroCategoria.value;
 	const order = filtroOrdem.value;
@@ -760,6 +785,10 @@ async function desreservarPresente(presenteId) {
 
 
 function renderPresentes() {
+	if (!hasGiftListUI) {
+		return;
+	}
+
 	const presentes = getFilteredPresentes();
 	listaEl.innerHTML = "";
 
@@ -908,6 +937,13 @@ function renderPresentes() {
 
 
 async function carregarPresentes(options = {}) {
+	if (!hasGiftListUI) {
+		if (isAdminPage && adminAuthenticated) {
+			await carregarMetricasAdmin();
+		}
+		return;
+	}
+
 	const { silent = false } = options;
 
 	if (!silent) {
@@ -1060,7 +1096,8 @@ if (isAdminPage) {
 		});
 	}
 
-	adminForm.addEventListener("submit", async (event) => {
+	if (adminForm) {
+		adminForm.addEventListener("submit", async (event) => {
 		event.preventDefault();
 		if (!adminAuthenticated) {
 			adminStatus.textContent = "Faça login para adicionar presentes.";
@@ -1109,7 +1146,8 @@ if (isAdminPage) {
 		} catch (error) {
 			adminStatus.textContent = error.message;
 		}
-	});
+		});
+	}
 }
 
 
@@ -1123,7 +1161,14 @@ if (filtroOrdem) {
 	filtroOrdem.addEventListener("change", renderPresentes);
 }
 if (btnAtualizar) {
-	btnAtualizar.addEventListener("click", carregarPresentes);
+	btnAtualizar.addEventListener("click", async () => {
+		if (hasGiftListUI) {
+			await carregarPresentes();
+			return;
+		}
+
+		await carregarMetricasAdmin();
+	});
 }
 if (btnPixDonation) {
 	btnPixDonation.addEventListener("click", () => {
@@ -1161,7 +1206,12 @@ async function initPage() {
 		await syncAdminSession();
 	}
 
-	await carregarPresentes();
+	if (hasGiftListUI) {
+		await carregarPresentes();
+	} else if (isAdminPage && adminAuthenticated) {
+		await carregarMetricasAdmin();
+	}
+
 	startAutoRefresh();
 }
 

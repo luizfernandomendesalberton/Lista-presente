@@ -421,7 +421,28 @@ button:hover {
 
 .admin-actions {
 	display: flex;
+	gap: 8px;
+	align-items: center;
 	justify-content: flex-end;
+}
+
+.btn-secondary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--line);
+	background: rgba(255, 255, 255, 0.92);
+	color: var(--ink);
+	font-weight: 600;
+	border-radius: 12px;
+	padding: 10px 14px;
+	text-decoration: none;
+	transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn-secondary:hover {
+	transform: translateY(-1px);
+	filter: brightness(0.98);
 }
 
 .reveal-up {
@@ -567,6 +588,11 @@ button:hover {
 	}
 
 	.admin-actions {
+		flex-direction: column;
 		justify-content: stretch;
+	}
+
+	.admin-actions .btn-secondary {
+		width: 100%;
 	}
 }

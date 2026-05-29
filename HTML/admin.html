@@ -19,6 +19,7 @@
 			<h1>Gerenciar Presentes</h1>
 			<p class="subtitle">Cadastre, revise e remova presentes da lista do casamento.</p>
 			<p class="admin-tip"><a href="/" style="color: inherit;">Voltar para a lista pública</a></p>
+			<p class="admin-tip"><a href="/admin/metricas" style="color: inherit;">Abrir painel de métricas separado</a></p>
 		</header>
 
 		<section class="panel admin-panel">
@@ -48,70 +49,9 @@
 			<div id="adminManagerPanel" hidden>
 				<p class="admin-tip">Logado como <strong id="adminSessionEmail">-</strong></p>
 				<div class="admin-actions" style="margin-bottom: 1rem;">
+					<a class="btn-secondary" href="/admin/metricas">Ver painel de métricas</a>
 					<button id="adminExportBtn" type="button">Baixar JSON Atual</button>
 					<button id="adminLogoutBtn" type="button">Sair</button>
-				</div>
-
-				<section class="admin-metrics" aria-label="Métricas da lista">
-					<article>
-						<strong id="adminMetricTotal">0</strong>
-						<span>Total de presentes</span>
-					</article>
-					<article>
-						<strong id="adminMetricReservados">0</strong>
-						<span>Reservados</span>
-					</article>
-					<article>
-						<strong id="adminMetricDisponiveis">0</strong>
-						<span>Disponíveis</span>
-					</article>
-					<article>
-						<strong id="adminMetricPercentual">0%</strong>
-						<span>Percentual reservado</span>
-					</article>
-					<article>
-						<strong id="adminMetricValorTotal">R$ 0,00</strong>
-						<span>Valor total da lista</span>
-					</article>
-					<article>
-						<strong id="adminMetricValorReservado">R$ 0,00</strong>
-						<span>Valor já reservado</span>
-					</article>
-					<article>
-						<strong id="adminMetricAdminsAtivos">0</strong>
-						<span>Admins online agora</span>
-					</article>
-					<article>
-						<strong id="adminMetricPixTotal">0</strong>
-						<span>Contribuições PIX</span>
-					</article>
-					<article>
-						<strong id="adminMetricPixValorTotal">R$ 0,00</strong>
-						<span>Total em contribuições PIX</span>
-					</article>
-				</section>
-
-				<p id="adminPresenceHint" class="admin-tip">Nenhum admin online no momento.</p>
-
-				<div class="admin-recent-wrap">
-					<h3>Últimas reservas</h3>
-					<ul id="adminRecentList" class="admin-recent-list">
-						<li>Nenhuma reserva recente.</li>
-					</ul>
-				</div>
-
-				<div class="admin-recent-wrap">
-					<h3>Últimas contribuições PIX</h3>
-					<ul id="adminPixRecentList" class="admin-recent-list">
-						<li>Nenhuma contribuição PIX registrada.</li>
-					</ul>
-				</div>
-
-				<div class="admin-recent-wrap">
-					<h3>Últimas desmarcações de reserva</h3>
-					<ul id="adminUnreserveRecentList" class="admin-recent-list">
-						<li>Nenhuma desmarcação registrada.</li>
-					</ul>
 				</div>
 
 				<form id="adminForm" class="admin-form">
