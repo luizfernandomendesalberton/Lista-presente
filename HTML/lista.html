@@ -40,6 +40,7 @@
 			<div class="panel-head">
 				<h2>Catálogo de Presentes</h2>
 				<div class="panel-head-actions">
+					<button id="btnOpenOnboarding" type="button">Como Funciona</button>
 					<button id="btnPixDonation" type="button">Dar Em Dinheiro (PIX)</button>
 					<button id="btnAtualizar" type="button">Atualizar</button>
 				</div>
@@ -130,6 +131,53 @@
 				</label>
 				<div class="pix-actions">
 					<button id="pixCopyBtn" type="button">Copiar Código PIX</button>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<div id="onboardingModal" class="onboarding-modal" hidden>
+		<div class="onboarding-backdrop" data-close-onboarding="true"></div>
+		<section class="onboarding-card" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+			<button id="onboardingClose" class="onboarding-close" type="button" aria-label="Fechar guia">x</button>
+			<p class="onboarding-kicker">Guia Rápido</p>
+			<h2 id="onboardingTitle">Veja em 40 segundos como usar</h2>
+			<p id="onboardingCaption" class="onboarding-caption">Passo 1 de 4</p>
+
+			<div id="onboardingTrack" class="onboarding-track" aria-live="polite">
+				<article class="onboarding-step is-active" data-step="0">
+					<h3>Escolha o presente</h3>
+					<p>Use a busca e os filtros para encontrar algo que combine com você.</p>
+				</article>
+				<article class="onboarding-step" data-step="1">
+					<h3>Preencha seu nome</h3>
+					<p>Em cada card, informe seu nome e, se quiser, também seu e-mail.</p>
+				</article>
+				<article class="onboarding-step" data-step="2">
+					<h3>Marque para reservar</h3>
+					<p>Ao marcar a caixa de seleção, o presente fica reservado automaticamente.</p>
+				</article>
+				<article class="onboarding-step" data-step="3">
+					<h3>Prefere PIX?</h3>
+					<p>Use o botão de PIX geral ou de um presente para contribuir em dinheiro.</p>
+				</article>
+			</div>
+
+			<div id="onboardingDots" class="onboarding-dots" aria-hidden="true">
+				<span class="is-active"></span>
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+
+			<div class="onboarding-actions">
+				<label class="onboarding-check-wrap" for="onboardingDontShow">
+					<input id="onboardingDontShow" type="checkbox">
+					Não mostrar este guia novamente
+				</label>
+				<div class="onboarding-buttons">
+					<button id="onboardingPrev" type="button" class="btn-secondary">Voltar</button>
+					<button id="onboardingNext" type="button">Próximo</button>
 				</div>
 			</div>
 		</section>

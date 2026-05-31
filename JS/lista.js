@@ -18,6 +18,15 @@ const pixQrCanvas = document.getElementById("pixQrCanvas");
 const pixResumo = document.getElementById("pixResumo");
 const pixPayload = document.getElementById("pixPayload");
 const pixCopyBtn = document.getElementById("pixCopyBtn");
+const btnOpenOnboarding = document.getElementById("btnOpenOnboarding");
+const onboardingModal = document.getElementById("onboardingModal");
+const onboardingClose = document.getElementById("onboardingClose");
+const onboardingCaption = document.getElementById("onboardingCaption");
+const onboardingTrack = document.getElementById("onboardingTrack");
+const onboardingDots = document.getElementById("onboardingDots");
+const onboardingPrev = document.getElementById("onboardingPrev");
+const onboardingNext = document.getElementById("onboardingNext");
+const onboardingDontShow = document.getElementById("onboardingDontShow");
 
 const statTotal = document.getElementById("statTotal");
 const statDisponivel = document.getElementById("statDisponivel");
@@ -68,8 +77,12 @@ let adminAuthenticated = !isAdminPage;
 let editingPresenteId = null;
 let autoRefreshTimerId = null;
 const AUTO_REFRESH_INTERVAL_MS = 15000;
+const ONBOARDING_STORAGE_KEY = "lista_casamento_hide_onboarding";
+const ONBOARDING_AUTOPLAY_MS = 4200;
 let pixReferenciaAtual = "Contribuicao em dinheiro";
 let pixNomePresenteAtual = "";
+let onboardingStepIndex = 0;
+let onboardingTimerId = null;
 
 const BRL = new Intl.NumberFormat("pt-BR", {
 	style: "currency",
@@ -95,6 +108,123 @@ function closePixModal() {
 	}
 	if (pixStatus) {
 		pixStatus.textContent = "";
+	}
+}
+
+
+function getOnboardingSteps() {
+	if (!onboardingTrack) {
+		return [];
+	}
+
+	return Array.from(onboardingTrack.querySelectorAll(".onboarding-step"));
+}
+
+
+function clearOnboardingAutoplay() {
+	if (!onboardingTimerId) {
+		return;
+	}
+
+	window.clearInterval(onboardingTimerId);
+	onboardingTimerId = null;
+}
+
+
+function setOnboardingStep(index) {
+	const steps = getOnboardingSteps();
+	if (!steps.length) {
+		return;
+	}
+
+	onboardingStepIndex = Math.max(0, Math.min(index, steps.length - 1));
+
+	steps.forEach((step, currentIndex) => {
+		step.classList.toggle("is-active", currentIndex === onboardingStepIndex);
+	});
+
+	if (onboardingDots) {
+		const dots = Array.from(onboardingDots.querySelectorAll("span"));
+		dots.forEach((dot, currentIndex) => {
+			dot.classList.toggle("is-active", currentIndex === onboardingStepIndex);
+		});
+	}
+
+	if (onboardingCaption) {
+		onboardingCaption.textContent = `Passo ${onboardingStepIndex + 1} de ${steps.length}`;
+	}
+
+	if (onboardingPrev) {
+		onboardingPrev.disabled = onboardingStepIndex === 0;
+	}
+
+	if (onboardingNext) {
+		onboardingNext.textContent = onboardingStepIndex >= steps.length - 1 ? "Finalizar" : "Próximo";
+	}
+}
+
+
+function saveOnboardingPreference() {
+	if (!onboardingDontShow) {
+		return;
+	}
+
+	if (onboardingDontShow.checked) {
+		window.localStorage.setItem(ONBOARDING_STORAGE_KEY, "1");
+		return;
+	}
+
+	window.localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+}
+
+
+function closeOnboarding() {
+	if (!onboardingModal) {
+		return;
+	}
+
+	saveOnboardingPreference();
+	clearOnboardingAutoplay();
+	onboardingModal.hidden = true;
+}
+
+
+function startOnboardingAutoplay() {
+	const steps = getOnboardingSteps();
+	if (!steps.length || steps.length === 1) {
+		return;
+	}
+
+	clearOnboardingAutoplay();
+	onboardingTimerId = window.setInterval(() => {
+		const isLastStep = onboardingStepIndex >= steps.length - 1;
+		setOnboardingStep(isLastStep ? 0 : onboardingStepIndex + 1);
+	}, ONBOARDING_AUTOPLAY_MS);
+}
+
+
+function openOnboarding(options = {}) {
+	if (!onboardingModal) {
+		return;
+	}
+
+	const { forceStart = false } = options;
+	const shouldHide = window.localStorage.getItem(ONBOARDING_STORAGE_KEY) === "1";
+
+	if (!forceStart && shouldHide) {
+		return;
+	}
+
+	if (onboardingDontShow) {
+		onboardingDontShow.checked = shouldHide;
+	}
+
+	onboardingModal.hidden = false;
+	setOnboardingStep(0);
+	startOnboardingAutoplay();
+
+	if (onboardingNext) {
+		onboardingNext.focus();
 	}
 }
 
@@ -1218,9 +1348,56 @@ if (pixModal) {
 		}
 	});
 }
+if (btnOpenOnboarding) {
+	btnOpenOnboarding.addEventListener("click", () => {
+		openOnboarding({ forceStart: true });
+	});
+}
+if (onboardingClose) {
+	onboardingClose.addEventListener("click", closeOnboarding);
+}
+if (onboardingModal) {
+	onboardingModal.addEventListener("click", (event) => {
+		const target = event.target;
+		if (target instanceof HTMLElement && target.dataset.closeOnboarding === "true") {
+			closeOnboarding();
+		}
+	});
+}
+if (onboardingPrev) {
+	onboardingPrev.addEventListener("click", () => {
+		setOnboardingStep(onboardingStepIndex - 1);
+		startOnboardingAutoplay();
+	});
+}
+if (onboardingNext) {
+	onboardingNext.addEventListener("click", () => {
+		const steps = getOnboardingSteps();
+		if (!steps.length) {
+			closeOnboarding();
+			return;
+		}
+
+		if (onboardingStepIndex >= steps.length - 1) {
+			closeOnboarding();
+			return;
+		}
+
+		setOnboardingStep(onboardingStepIndex + 1);
+		startOnboardingAutoplay();
+	});
+}
+if (onboardingDontShow) {
+	onboardingDontShow.addEventListener("change", saveOnboardingPreference);
+}
 document.addEventListener("keydown", (event) => {
 	if (event.key === "Escape" && pixModal && !pixModal.hidden) {
 		closePixModal();
+		return;
+	}
+
+	if (event.key === "Escape" && onboardingModal && !onboardingModal.hidden) {
+		closeOnboarding();
 	}
 });
 
@@ -1231,6 +1408,7 @@ async function initPage() {
 
 	if (hasGiftListUI) {
 		await carregarPresentes();
+		openOnboarding();
 	} else if (isAdminPage && adminAuthenticated) {
 		await carregarMetricasAdmin();
 	}
