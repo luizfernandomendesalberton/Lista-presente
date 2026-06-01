@@ -679,11 +679,14 @@ button:hover {
 }
 
 #adminMetricsOnlyPage .admin-metrics {
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 	gap: 12px;
 }
 
 #adminMetricsOnlyPage .admin-metrics article {
 	position: relative;
+	text-align: center;
+	align-items: center;
 	border-color: rgba(225, 210, 189, 0.94);
 	background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 244, 0.96));
 	box-shadow: 0 12px 24px rgba(67, 44, 30, 0.08);
@@ -702,17 +705,27 @@ button:hover {
 }
 
 #adminMetricsOnlyPage .admin-metrics strong {
-	font-size: 2rem;
+	display: block;
+	width: 100%;
+	font-size: clamp(1.4rem, 3.6vw, 2rem);
 	font-weight: 700;
-	line-height: 1;
+	line-height: 1.15;
 	color: #4d4338;
-	letter-spacing: -0.02em;
+	letter-spacing: -0.01em;
+	overflow-wrap: anywhere;
 }
 
 #adminMetricsOnlyPage .admin-metrics span {
+	width: 100%;
 	font-size: 0.95rem;
 	font-weight: 500;
 	color: #6d655a;
+}
+
+#adminMetricValorTotal,
+#adminMetricValorReservado,
+#adminMetricPixValorTotal {
+	font-size: clamp(1.25rem, 3vw, 1.72rem);
 }
 
 #adminMetricsOnlyPage .admin-recent-wrap {
@@ -1080,6 +1093,37 @@ button:hover {
 		padding-top: 14px;
 	}
 
+	/* Alvos de toque confortáveis no celular */
+	button,
+	.btn-link,
+	.btn-secondary {
+		min-height: 44px;
+	}
+
+	input[type="text"],
+	input[type="email"],
+	input[type="number"],
+	input[type="url"],
+	input[type="search"],
+	input[type="password"],
+	select,
+	textarea {
+		min-height: 44px;
+	}
+
+	.check-wrap,
+	.onboarding-check-wrap {
+		column-gap: 10px;
+	}
+
+	.check-wrap input[type="checkbox"],
+	.onboarding-check-wrap input[type="checkbox"] {
+		width: 22px;
+		height: 22px;
+		margin: 0;
+		accent-color: #9a3e57;
+	}
+
 	.container {
 		width: min(100%, 95vw);
 	}
@@ -1100,6 +1144,7 @@ button:hover {
 	.panel-head-actions {
 		width: 100%;
 		flex-direction: column;
+		gap: 10px;
 	}
 
 	.filters {
@@ -1123,6 +1168,20 @@ button:hover {
 		padding: 16px 14px;
 	}
 
+	.lista {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 14px;
+	}
+
+	.card {
+		min-width: 0;
+		border-radius: 20px;
+	}
+
+	.card-main {
+		padding: 14px 12px 10px;
+	}
+
 	.btn-link {
 		width: 100%;
 	}
@@ -1136,7 +1195,29 @@ button:hover {
 	}
 
 	.reserve-form {
-		margin-inline: 8px;
+		margin-inline: 10px;
+		padding: 12px 10px 8px;
+	}
+
+	.btn-pix-presente,
+	.btn-remover,
+	.btn-editar,
+	.btn-desreservar {
+		margin: 0 10px 10px;
+		width: calc(100% - 20px);
+		padding: 11px 12px;
+		font-size: 0.84rem;
+		line-height: 1.25;
+		white-space: normal;
+		text-align: center;
+	}
+
+	#adminMetricsOnlyPage .admin-metrics {
+		grid-template-columns: 1fr;
+	}
+
+	#adminMetricsOnlyPage .admin-metrics strong {
+		font-size: clamp(1.3rem, 6.4vw, 1.7rem);
 	}
 
 	.onboarding-buttons {
@@ -1149,5 +1230,233 @@ button:hover {
 
 	.onboarding-track {
 		min-height: 198px;
+	}
+}
+
+@media (max-width: 480px) {
+	body {
+		padding: 10px 0 30px;
+	}
+
+	.container {
+		width: 100%;
+		padding-inline: 8px;
+		gap: 14px;
+	}
+
+	.hero {
+		padding: 16px 12px;
+		border-radius: 20px;
+	}
+
+	.hero-stats article {
+		padding: 10px 10px 9px;
+	}
+
+	.hero-stats strong {
+		font-size: 1.24rem;
+	}
+
+	.panel,
+	.admin-panel {
+		padding: 14px 10px;
+		border-radius: 20px;
+	}
+
+	.card-main {
+		padding: 12px 10px 8px;
+	}
+
+	.reserve-form {
+		margin-inline: 8px;
+		padding: 10px 8px 8px;
+	}
+
+	label {
+		font-size: 0.84rem;
+	}
+
+	input[type="text"],
+	input[type="email"],
+	input[type="number"],
+	input[type="url"],
+	input[type="search"],
+	select,
+	textarea {
+		padding: 9px;
+	}
+
+	.btn-pix-presente,
+	.btn-remover,
+	.btn-editar,
+	.btn-desreservar {
+		margin: 0 8px 8px;
+		width: calc(100% - 16px);
+		padding: 10px;
+		font-size: 0.81rem;
+	}
+
+	#adminMetricsOnlyPage .admin-metrics article {
+		padding: 10px;
+	}
+
+	#adminMetricsOnlyPage .admin-metrics strong {
+		font-size: clamp(1.16rem, 6.6vw, 1.52rem);
+		font-variant-numeric: tabular-nums;
+	}
+
+	#adminMetricsOnlyPage .admin-metrics span {
+		font-size: 0.86rem;
+	}
+
+	.pix-modal,
+	.onboarding-modal {
+		padding: 10px;
+	}
+
+	.pix-modal-card,
+	.onboarding-card {
+		width: min(560px, 100vw - 20px);
+	}
+}
+
+@media (max-width: 360px) {
+	.hero-stats strong {
+		font-size: 1.14rem;
+	}
+
+	.presente-nome {
+		font-size: 1.06rem;
+	}
+
+	.presente-preco {
+		font-size: 0.98rem;
+	}
+
+	.presente-descricao,
+	.presente-especificacoes {
+		font-size: 0.84rem;
+	}
+
+	.btn-pix-presente,
+	.btn-remover,
+	.btn-editar,
+	.btn-desreservar {
+		font-size: 0.78rem;
+	}
+
+	#adminMetricsOnlyPage .admin-metrics strong {
+		font-size: clamp(1.08rem, 6.2vw, 1.34rem);
+	}
+}
+
+@media (max-width: 320px) {
+	.container {
+		padding-inline: 6px;
+		gap: 12px;
+	}
+
+	.hero {
+		padding: 14px 10px;
+	}
+
+	h1 {
+		font-size: clamp(1.52rem, 8.2vw, 1.78rem);
+	}
+
+	.subtitle {
+		font-size: 0.9rem;
+	}
+
+	.hero-stats article {
+		padding: 9px 8px;
+	}
+
+	.hero-stats strong {
+		font-size: 1.02rem;
+	}
+
+	.hero-stats span {
+		font-size: 0.8rem;
+	}
+
+	.panel,
+	.admin-panel {
+		padding: 12px 8px;
+	}
+
+	.panel-head h2 {
+		font-size: 1.08rem;
+	}
+
+	.card {
+		border-radius: 18px;
+	}
+
+	.card-main {
+		padding: 10px 8px 8px;
+		gap: 7px;
+	}
+
+	.reserve-form {
+		margin-inline: 6px;
+		padding: 9px 7px 7px;
+		gap: 7px;
+	}
+
+	.presente-nome {
+		font-size: 1rem;
+	}
+
+	.presente-preco {
+		font-size: 0.92rem;
+	}
+
+	.presente-descricao,
+		.presente-especificacoes {
+		font-size: 0.8rem;
+	}
+
+	.btn-pix-presente,
+	.btn-remover,
+	.btn-editar,
+	.btn-desreservar {
+		margin: 0 6px 8px;
+		width: calc(100% - 12px);
+		padding: 9px;
+		font-size: 0.74rem;
+		line-height: 1.2;
+	}
+
+	#adminMetricsOnlyPage .admin-metrics article {
+		padding: 9px;
+	}
+
+	#adminMetricsOnlyPage .admin-metrics strong {
+		font-size: clamp(1rem, 5.6vw, 1.2rem);
+	}
+
+	#adminMetricsOnlyPage .admin-metrics span {
+		font-size: 0.8rem;
+	}
+
+	.pix-modal,
+	.onboarding-modal {
+		padding: 8px;
+	}
+
+	.pix-modal-card,
+	.onboarding-card {
+		width: min(560px, 100vw - 16px);
+		padding: 14px;
+	}
+
+	.onboarding-track {
+		min-height: 210px;
+		padding: 12px;
+	}
+
+	.onboarding-step {
+		inset: 12px;
 	}
 }
