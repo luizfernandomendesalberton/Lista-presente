@@ -582,11 +582,18 @@ function renderAdminMetrics(metrics) {
 		const ttlSegundos = Number(metrics.admins_ativos_ttl_segundos || 0);
 		const ttlMinutos = ttlSegundos > 0 ? Math.ceil(ttlSegundos / 60) : 0;
 		const adminsAtivos = Array.isArray(metrics.admins_ativos) ? metrics.admins_ativos : [];
+		const uniqueAdmins = Array.from(
+			new Map(
+				adminsAtivos
+					.filter((item) => item && item.email)
+					.map((item) => [String(item.email).trim().toLowerCase(), item])
+			).values()
+		);
 
-		if (!adminsAtivos.length) {
+		if (!uniqueAdmins.length) {
 			adminPresenceHint.textContent = "Nenhum admin online no momento.";
 		} else {
-			const emails = adminsAtivos
+			const emails = uniqueAdmins
 				.map((item) => item.email)
 				.filter(Boolean)
 				.join(", ");
@@ -650,8 +657,9 @@ async function carregarMetricasAdmin() {
 	}
 
 	try {
-		const response = await fetch("/api/admin/metrics", {
+		const response = await fetch(`/api/admin/metrics?t=${Date.now()}`, {
 			method: "GET",
+			cache: "no-store",
 			credentials: "same-origin",
 			headers: {
 				...getAdminHeaders(),
@@ -1185,8 +1193,9 @@ if (isAdminPage) {
 			}
 
 			try {
-				const response = await fetch("/api/admin/export", {
+				const response = await fetch(`/api/admin/export?t=${Date.now()}`, {
 					method: "GET",
+					cache: "no-store",
 					credentials: "same-origin",
 					headers: {
 						...getAdminHeaders(),

@@ -310,6 +310,30 @@ def require_admin_auth(request_obj):
 	return jsonify({"erro": "Acesso restrito. Faça login como administrador."}), 401
 
 
+def get_json_export_owner_email():
+	configured = clean_credential(os.getenv("JSON_EXPORT_OWNER_EMAIL", "")).lower()
+	if configured:
+		return configured
+
+	# Fallback: first admin user is considered the export owner when no dedicated variable is set.
+	return clean_credential(os.getenv("ADMIN_USER_1_EMAIL", "")).lower()
+
+
+def require_json_export_owner():
+	owner_email = get_json_export_owner_email()
+	if not owner_email:
+		return jsonify({"erro": "Exportação JSON não configurada. Defina JSON_EXPORT_OWNER_EMAIL no servidor."}), 503
+
+	if not is_session_admin():
+		return jsonify({"erro": "Faça login com o e-mail autorizado para exportar o JSON."}), 401
+
+	current_email = clean_credential(session.get("admin_email") or "").lower()
+	if current_email != owner_email:
+		return jsonify({"erro": "Somente o e-mail autorizado pode baixar o JSON."}), 403
+
+	return None
+
+
 def utc_now():
 	return datetime.now(UTC)
 
@@ -355,13 +379,21 @@ def get_active_admin_sessions_payload():
 	now_utc = utc_now()
 	with ACTIVE_ADMIN_SESSIONS_LOCK:
 		cleanup_admin_sessions_locked(now_utc)
-		sessions_payload = [
-			{
-				"email": data.get("email", ""),
-				"last_seen": data.get("last_seen", ""),
+		sessions_by_email = {}
+		for data in ACTIVE_ADMIN_SESSIONS.values():
+			email = str(data.get("email") or "").strip().lower()
+			if not email:
+				continue
+
+			candidate = {
+				"email": email,
+				"last_seen": str(data.get("last_seen") or "").strip(),
 			}
-			for data in ACTIVE_ADMIN_SESSIONS.values()
-		]
+			current = sessions_by_email.get(email)
+			if not current or candidate["last_seen"] > current.get("last_seen", ""):
+				sessions_by_email[email] = candidate
+
+		sessions_payload = list(sessions_by_email.values())
 
 	sessions_payload.sort(key=lambda item: item.get("last_seen", ""), reverse=True)
 	return {
@@ -844,6 +876,10 @@ def exportar_presentes():
 	if admin_error:
 		return admin_error
 
+	owner_error = require_json_export_owner()
+	if owner_error:
+		return owner_error
+
 	presentes = load_presentes()
 	sync_state = acknowledge_new_products()
 	content = json.dumps(presentes, ensure_ascii=False, indent=2)
@@ -856,6 +892,8 @@ def exportar_presentes():
 		headers={
 			"Content-Disposition": f'attachment; filename="{filename}"',
 			"X-New-Products-Ack-At": sync_state["novos_produtos_ack_em"],
+			"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+			"Pragma": "no-cache",
 		},
 	)
 
@@ -932,7 +970,7 @@ def admin_metrics():
 		for item in ultimas_desmarcacoes
 	]
 
-	return jsonify(
+	response = jsonify(
 		{
 			"total": total,
 			"disponiveis": disponiveis,
@@ -954,6 +992,9 @@ def admin_metrics():
 			"admins_ativos_ttl_segundos": presence["ttl_segundos"],
 		}
 	)
+	response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+	response.headers["Pragma"] = "no-cache"
+	return response
 
 
 @app.route("/api/admin/presence", methods=["GET"])

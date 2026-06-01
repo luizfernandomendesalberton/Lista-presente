@@ -669,13 +669,18 @@ button:hover {
 }
 
 #adminMetricsOnlyPage #adminPresenceHint {
-	display: inline-flex;
-	justify-self: center;
+	display: block;
+	justify-self: stretch;
+	max-width: 100%;
 	padding: 10px 14px;
-	border-radius: 999px;
+	border-radius: 28px;
 	border: 1px solid rgba(191, 165, 126, 0.42);
 	background: linear-gradient(145deg, rgba(255, 251, 244, 0.92), rgba(255, 242, 224, 0.86));
 	box-shadow: 0 8px 18px rgba(121, 95, 57, 0.1);
+	text-align: left;
+	line-height: 1.35;
+	overflow-wrap: anywhere;
+	word-break: break-word;
 }
 
 #adminMetricsOnlyPage .admin-metrics {
@@ -1214,6 +1219,12 @@ button:hover {
 
 	#adminMetricsOnlyPage .admin-metrics {
 		grid-template-columns: 1fr;
+	}
+
+	#adminMetricsOnlyPage #adminPresenceHint {
+		padding: 10px 12px;
+		border-radius: 22px;
+		font-size: 0.98rem;
 	}
 
 	#adminMetricsOnlyPage .admin-metrics strong {
