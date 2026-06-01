@@ -27,6 +27,8 @@ const onboardingDots = document.getElementById("onboardingDots");
 const onboardingPrev = document.getElementById("onboardingPrev");
 const onboardingNext = document.getElementById("onboardingNext");
 const onboardingDontShow = document.getElementById("onboardingDontShow");
+const onboardingProgressBar = document.querySelector(".onboarding-progress-bar");
+const appVersionEl = document.getElementById("appVersion");
 
 const statTotal = document.getElementById("statTotal");
 const statDisponivel = document.getElementById("statDisponivel");
@@ -78,7 +80,7 @@ let editingPresenteId = null;
 let autoRefreshTimerId = null;
 const AUTO_REFRESH_INTERVAL_MS = 15000;
 const ONBOARDING_STORAGE_KEY = "lista_casamento_hide_onboarding";
-const ONBOARDING_AUTOPLAY_MS = 4200;
+const ONBOARDING_AUTOPLAY_MS = 7000;
 let pixReferenciaAtual = "Contribuicao em dinheiro";
 let pixNomePresenteAtual = "";
 let onboardingStepIndex = 0;
@@ -94,6 +96,26 @@ let presentesState = [];
 
 function formatPixValue(value) {
 	return BRL.format(Number(value || 0));
+}
+
+
+async function carregarVersaoApp() {
+	if (!appVersionEl) {
+		return;
+	}
+
+	try {
+		const response = await fetch("/api/version");
+		if (!response.ok) {
+			throw new Error("Falha ao buscar versão.");
+		}
+
+		const result = await response.json();
+		const version = String(result.version || "--").trim();
+		appVersionEl.textContent = `Versão ${version}`;
+	} catch (_error) {
+		appVersionEl.textContent = "Versão --";
+	}
 }
 
 
@@ -131,6 +153,18 @@ function clearOnboardingAutoplay() {
 }
 
 
+function restartOnboardingProgress() {
+	if (!onboardingProgressBar) {
+		return;
+	}
+
+	onboardingProgressBar.style.animation = "none";
+	// Force reflow so CSS animation restarts from 0 on each slide.
+	void onboardingProgressBar.offsetWidth;
+	onboardingProgressBar.style.animation = `onboardingProgress ${ONBOARDING_AUTOPLAY_MS}ms linear forwards`;
+}
+
+
 function setOnboardingStep(index) {
 	const steps = getOnboardingSteps();
 	if (!steps.length) {
@@ -142,6 +176,8 @@ function setOnboardingStep(index) {
 	steps.forEach((step, currentIndex) => {
 		step.classList.toggle("is-active", currentIndex === onboardingStepIndex);
 	});
+
+	restartOnboardingProgress();
 
 	if (onboardingDots) {
 		const dots = Array.from(onboardingDots.querySelectorAll("span"));
@@ -186,6 +222,10 @@ function closeOnboarding() {
 	saveOnboardingPreference();
 	clearOnboardingAutoplay();
 	onboardingModal.hidden = true;
+
+	if (onboardingProgressBar) {
+		onboardingProgressBar.style.animation = "none";
+	}
 }
 
 
@@ -1402,6 +1442,8 @@ document.addEventListener("keydown", (event) => {
 });
 
 async function initPage() {
+	await carregarVersaoApp();
+
 	if (isAdminPage) {
 		await syncAdminSession();
 	}

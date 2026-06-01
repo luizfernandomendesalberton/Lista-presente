@@ -53,6 +53,7 @@ ADMIN_SYNC_FILE_LOCK = FileLock(str(ADMIN_SYNC_LOCK_FILE), timeout=15)
 ACTIVE_ADMIN_SESSIONS = {}
 ACTIVE_ADMIN_SESSIONS_LOCK = threading.Lock()
 ADMIN_ACTIVITY_TTL_SECONDS = int(os.getenv("ADMIN_ACTIVITY_TTL_SECONDS", "900"))
+APP_VERSION = str(os.getenv("APP_VERSION", "1.0.0")).strip() or "1.0.0"
 
 
 def load_dotenv_file():
@@ -766,6 +767,16 @@ def js_files(filename):
 @app.route("/api/presentes", methods=["GET"])
 def listar_presentes():
 	return jsonify(load_presentes())
+
+
+@app.route("/api/version", methods=["GET"])
+def app_version():
+	return jsonify(
+		{
+			"version": APP_VERSION,
+			"app_name": "Lista de Presentes de Casamento",
+		}
+	)
 
 
 @app.route("/api/pix/gerar", methods=["POST", "OPTIONS"])

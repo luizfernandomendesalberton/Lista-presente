@@ -111,6 +111,15 @@ body.metrics-page .bg-shape {
 	box-shadow: 0 8px 18px rgba(175, 95, 80, 0.12);
 }
 
+.app-version {
+	margin: 10px 0 0;
+	font-size: 0.8rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #7b6558;
+}
+
 h1 {
 	margin: 12px 0 8px;
 	font-family: "Prata", serif;
@@ -928,6 +937,23 @@ button:hover {
 	color: var(--muted);
 }
 
+.onboarding-progress {
+	height: 7px;
+	border-radius: 999px;
+	background: rgba(168, 128, 113, 0.24);
+	overflow: hidden;
+	border: 1px solid rgba(207, 176, 157, 0.44);
+}
+
+.onboarding-progress-bar {
+	display: block;
+	height: 100%;
+	width: 100%;
+	transform-origin: left center;
+	transform: scaleX(0);
+	background: linear-gradient(90deg, #d6a37c, #a23f5a, #6f2a40);
+}
+
 .onboarding-track {
 	position: relative;
 	min-height: 178px;
@@ -967,6 +993,11 @@ button:hover {
 	opacity: 1;
 	transform: translateX(0);
 	pointer-events: auto;
+}
+
+.onboarding-modal[hidden] .onboarding-progress-bar {
+	animation: none;
+	transform: scaleX(0);
 }
 
 .onboarding-dots {
@@ -1018,6 +1049,15 @@ button:hover {
 	to {
 		opacity: 1;
 		transform: translateY(0);
+	}
+}
+
+@keyframes onboardingProgress {
+	from {
+		transform: scaleX(0);
+	}
+	to {
+		transform: scaleX(1);
 	}
 }
 
