@@ -86,7 +86,7 @@ const adminConvidadosList = document.getElementById("adminConvidadosList");
 const hasGiftListUI = Boolean(listaEl && statusEl && template && filtroBusca && filtroCategoria && filtroOrdem);
 const hasAdminMetricsUI = Boolean(adminMetricTotal || adminRecentList || adminPresenceHint || adminPixRecentList || adminUnreserveRecentList);
 const hasAdminConvidadosUI = Boolean(adminConvidadosPanel && adminConvidadoForm && adminConvidadosList);
-const isAdminPage = Boolean(adminForm || adminMetricsOnlyPage);
+const isAdminPage = Boolean(adminForm || adminMetricsOnlyPage || adminConvidadoForm);
 let adminAuthenticated = !isAdminPage;
 let editingPresenteId = null;
 let editingConvidadoId = null;
@@ -1004,6 +1004,9 @@ function startAutoRefresh() {
 		}
 
 		if (isAdminPage && adminAuthenticated) {
+			if (hasAdminConvidadosUI) {
+				await carregarConvidadosAdmin();
+			}
 			await carregarMetricasAdmin();
 		}
 	}, AUTO_REFRESH_INTERVAL_MS);
@@ -1793,6 +1796,9 @@ async function initPage() {
 			}
 		}
 	} else if (isAdminPage && adminAuthenticated) {
+		if (hasAdminConvidadosUI) {
+			await carregarConvidadosAdmin();
+		}
 		await carregarMetricasAdmin();
 	}
 

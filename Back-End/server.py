@@ -1012,6 +1012,13 @@ def admin_metrics_page():
 	return response
 
 
+@app.route("/admin/convidados", methods=["GET"])
+def admin_convidados_page():
+	response = send_from_directory(HTML_DIR, "admin-convidados.html")
+	response.headers["Cache-Control"] = "no-store, max-age=0"
+	return response
+
+
 @app.route("/CSS/<path:filename>", methods=["GET"])
 def css_files(filename):
 	response = send_from_directory(CSS_DIR, filename)

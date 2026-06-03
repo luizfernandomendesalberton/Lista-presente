@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Admin - Lista de Convidados</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Prata&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/CSS/lista.css">
+</head>
+<body>
+	<div class="bg-shape bg-shape-one" aria-hidden="true"></div>
+	<div class="bg-shape bg-shape-two" aria-hidden="true"></div>
+
+	<main class="container reveal-up">
+		<header class="hero">
+			<p class="tag">Área de Administração</p>
+			<p id="appVersion" class="app-version">Versão --</p>
+			<h1>Gerenciar Convidados</h1>
+			<p class="subtitle">Edite nomes, grupos e status de presença em uma tela separada da lista de presentes.</p>
+			<p class="admin-tip"><a class="btn-link" href="/sair">Voltar para entrada dos convidados</a></p>
+			<p class="admin-tip"><a class="btn-link" href="/admin">Abrir gestão de presentes</a> <a class="btn-link" href="/admin/metricas">Abrir painel de métricas</a></p>
+		</header>
+
+		<section class="panel admin-panel">
+			<div class="panel-head">
+				<h2 id="adminConvidadoFormTitle">Lista de Convidados</h2>
+				<button id="btnAtualizar" type="button">Atualizar</button>
+			</div>
+			<p class="panel-note">Use esta área para corrigir confirmações, editar grupos de família e manter a lista de presença atualizada.</p>
+
+			<div id="adminAuthPanel">
+				<form id="adminLoginForm" class="admin-form">
+					<label>
+						E-mail de administrador
+						<input id="adminEmail" type="email" placeholder="Ex.: seuemail@gmail.com" required>
+					</label>
+
+					<label>
+						Senha
+						<input id="adminPassword" type="password" required>
+					</label>
+
+					<div class="admin-actions">
+						<button type="submit">Entrar</button>
+					</div>
+				</form>
+			</div>
+
+			<div id="adminManagerPanel" hidden>
+				<p class="admin-tip">Logado como <strong id="adminSessionEmail">-</strong></p>
+				<div class="admin-actions" style="margin-bottom: 1rem;">
+					<a class="btn-secondary" href="/admin">Gerenciar presentes</a>
+					<a class="btn-secondary" href="/admin/metricas">Ver métricas</a>
+					<button id="adminLogoutBtn" type="button">Sair</button>
+				</div>
+
+				<section class="panel" id="adminConvidadosPanel">
+					<form id="adminConvidadoForm" class="admin-form">
+						<div class="admin-grid-two">
+							<label>
+								Nome do convidado
+								<input id="adminConvidadoNome" type="text" minlength="3" required>
+							</label>
+
+							<label>
+								Grupo/Família
+								<input id="adminConvidadoGrupo" type="text" placeholder="Ex.: Grupo 01" required>
+							</label>
+						</div>
+
+						<div class="admin-grid-two">
+							<label>
+								Tipo
+								<select id="adminConvidadoTipo">
+									<option value="convidado" selected>Convidado</option>
+									<option value="noivos">Noivos</option>
+								</select>
+							</label>
+
+							<label>
+								Status de presença
+								<select id="adminConvidadoPresenca">
+									<option value="pendente" selected>Pendente</option>
+									<option value="confirmado">Confirmado</option>
+									<option value="nao_vai">Não vai</option>
+								</select>
+							</label>
+						</div>
+
+						<div class="admin-actions">
+							<button id="adminConvidadoCancelEditBtn" type="button" hidden>Cancelar edição</button>
+							<button id="adminConvidadoSubmitBtn" type="submit">Adicionar convidado</button>
+						</div>
+					</form>
+
+					<p id="adminConvidadoStatus" class="status"></p>
+					<div id="adminConvidadosList" class="convidados-admin-list"></div>
+				</section>
+			</div>
+
+			<p id="adminStatus" class="status"></p>
+		</section>
+	</main>
+
+	<script src="/JS/lista.js"></script>
+</body>
+</html>
