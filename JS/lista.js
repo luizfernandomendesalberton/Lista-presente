@@ -72,11 +72,24 @@ const adminFoto = document.getElementById("adminFoto");
 const adminProdutoUrl = document.getElementById("adminProdutoUrl");
 const adminDescricao = document.getElementById("adminDescricao");
 const adminEspecificacoes = document.getElementById("adminEspecificacoes");
+const adminConvidadosPanel = document.getElementById("adminConvidadosPanel");
+const adminConvidadoForm = document.getElementById("adminConvidadoForm");
+const adminConvidadoNome = document.getElementById("adminConvidadoNome");
+const adminConvidadoGrupo = document.getElementById("adminConvidadoGrupo");
+const adminConvidadoTipo = document.getElementById("adminConvidadoTipo");
+const adminConvidadoPresenca = document.getElementById("adminConvidadoPresenca");
+const adminConvidadoSubmitBtn = document.getElementById("adminConvidadoSubmitBtn");
+const adminConvidadoCancelEditBtn = document.getElementById("adminConvidadoCancelEditBtn");
+const adminConvidadoFormTitle = document.getElementById("adminConvidadoFormTitle");
+const adminConvidadoStatus = document.getElementById("adminConvidadoStatus");
+const adminConvidadosList = document.getElementById("adminConvidadosList");
 const hasGiftListUI = Boolean(listaEl && statusEl && template && filtroBusca && filtroCategoria && filtroOrdem);
 const hasAdminMetricsUI = Boolean(adminMetricTotal || adminRecentList || adminPresenceHint || adminPixRecentList || adminUnreserveRecentList);
+const hasAdminConvidadosUI = Boolean(adminConvidadosPanel && adminConvidadoForm && adminConvidadosList);
 const isAdminPage = Boolean(adminForm || adminMetricsOnlyPage);
 let adminAuthenticated = !isAdminPage;
 let editingPresenteId = null;
+let editingConvidadoId = null;
 let autoRefreshTimerId = null;
 const AUTO_REFRESH_INTERVAL_MS = 15000;
 const ONBOARDING_STORAGE_KEY = "lista_casamento_hide_onboarding";
@@ -92,6 +105,7 @@ const BRL = new Intl.NumberFormat("pt-BR", {
 });
 
 let presentesState = [];
+let convidadosState = [];
 
 
 function formatPixValue(value) {
@@ -498,10 +512,293 @@ function setAdminMode(authenticated, email = "") {
 	if (adminSessionEmail) {
 		adminSessionEmail.textContent = email || "-";
 	}
+	if (hasAdminConvidadosUI && adminConvidadosPanel) {
+		adminConvidadosPanel.hidden = !authenticated;
+	}
 
 	if (!authenticated) {
 		setEditingMode(null);
+		setConvidadoEditingMode(null);
+		renderAdminConvidados([]);
 		renderAdminMetrics(null);
+	}
+}
+
+
+function getConvidadoStatusLabel(status) {
+	if (status === "confirmado") {
+		return "Confirmado";
+	}
+	if (status === "nao_vai") {
+		return "Não vai";
+	}
+	return "Pendente";
+}
+
+
+function setConvidadoEditingMode(convidado) {
+	if (!hasAdminConvidadosUI || !adminConvidadoForm) {
+		return;
+	}
+
+	if (!convidado) {
+		editingConvidadoId = null;
+		adminConvidadoForm.reset();
+		if (adminConvidadoTipo) {
+			adminConvidadoTipo.value = "convidado";
+		}
+		if (adminConvidadoPresenca) {
+			adminConvidadoPresenca.value = "pendente";
+		}
+		if (adminConvidadoFormTitle) {
+			adminConvidadoFormTitle.textContent = "Lista de Convidados";
+		}
+		if (adminConvidadoSubmitBtn) {
+			adminConvidadoSubmitBtn.textContent = "Adicionar convidado";
+		}
+		if (adminConvidadoCancelEditBtn) {
+			adminConvidadoCancelEditBtn.hidden = true;
+		}
+		return;
+	}
+
+	editingConvidadoId = Number(convidado.id);
+	adminConvidadoNome.value = convidado.nome || "";
+	adminConvidadoGrupo.value = convidado.grupo || "Sem grupo";
+	adminConvidadoTipo.value = convidado.tipo || "convidado";
+	adminConvidadoPresenca.value = convidado.status_presenca || "pendente";
+
+	if (adminConvidadoFormTitle) {
+		adminConvidadoFormTitle.textContent = `Editando convidado: ${convidado.nome || "Convidado"}`;
+	}
+	if (adminConvidadoSubmitBtn) {
+		adminConvidadoSubmitBtn.textContent = "Salvar convidado";
+	}
+	if (adminConvidadoCancelEditBtn) {
+		adminConvidadoCancelEditBtn.hidden = false;
+	}
+
+	if (adminConvidadoStatus) {
+		adminConvidadoStatus.textContent = "Modo edição de convidado ativo.";
+	}
+}
+
+
+function renderAdminConvidados(convidados) {
+	if (!hasAdminConvidadosUI || !adminConvidadosList) {
+		return;
+	}
+
+	adminConvidadosList.innerHTML = "";
+
+	if (!Array.isArray(convidados) || !convidados.length) {
+		adminConvidadosList.innerHTML = "<p>Nenhum convidado cadastrado.</p>";
+		return;
+	}
+
+	convidados.forEach((convidado) => {
+		const card = document.createElement("article");
+		card.className = "convidado-admin-card";
+
+		const main = document.createElement("div");
+		main.className = "convidado-admin-main";
+
+		const title = document.createElement("h4");
+		title.textContent = convidado.nome || "Convidado";
+		main.appendChild(title);
+
+		const info = document.createElement("p");
+		info.textContent = `Grupo: ${convidado.grupo || "Sem grupo"} | Tipo: ${convidado.tipo || "convidado"} | Presença: ${getConvidadoStatusLabel(convidado.status_presenca)}`;
+		main.appendChild(info);
+
+		if (convidado.presenca_confirmada_em) {
+			const time = document.createElement("p");
+			time.textContent = `Atualizado em ${formatReservationTime(convidado.presenca_confirmada_em)}`;
+			main.appendChild(time);
+		}
+
+		card.appendChild(main);
+
+		const actions = document.createElement("div");
+		actions.className = "convidado-admin-actions";
+
+		const btnEditar = document.createElement("button");
+		btnEditar.type = "button";
+		btnEditar.textContent = "Editar";
+		btnEditar.addEventListener("click", () => {
+			setConvidadoEditingMode(convidado);
+			window.scrollTo({ top: 0, behavior: "smooth" });
+		});
+		actions.appendChild(btnEditar);
+
+		const btnCorrigir = document.createElement("button");
+		btnCorrigir.type = "button";
+		btnCorrigir.className = "btn-secondary";
+		btnCorrigir.textContent = "Corrigir para pendente";
+		btnCorrigir.addEventListener("click", async () => {
+			await salvarConvidadoAdmin(convidado, "pendente");
+		});
+		actions.appendChild(btnCorrigir);
+
+		const btnRemoverConvidado = document.createElement("button");
+		btnRemoverConvidado.type = "button";
+		btnRemoverConvidado.className = "btn-remover";
+		btnRemoverConvidado.textContent = "Remover";
+		btnRemoverConvidado.addEventListener("click", async () => {
+			await removerConvidadoAdmin(convidado.id);
+		});
+		actions.appendChild(btnRemoverConvidado);
+
+		card.appendChild(actions);
+		adminConvidadosList.appendChild(card);
+	});
+}
+
+
+async function carregarConvidadosAdmin() {
+	if (!hasAdminConvidadosUI || !adminAuthenticated) {
+		return;
+	}
+
+	try {
+		const response = await fetch(`/api/admin/convidados?t=${Date.now()}`, {
+			method: "GET",
+			cache: "no-store",
+			credentials: "same-origin",
+			headers: {
+				...getAdminHeaders(),
+			},
+		});
+
+		const result = await response.json();
+		if (!response.ok) {
+			throw new Error(result.erro || "Falha ao carregar convidados.");
+		}
+
+		convidadosState = Array.isArray(result) ? result : [];
+		renderAdminConvidados(convidadosState);
+	} catch (error) {
+		if (adminConvidadoStatus) {
+			adminConvidadoStatus.textContent = error.message;
+		}
+	}
+}
+
+
+async function salvarConvidadoAdmin(convidadoBase, forceStatus = "") {
+	if (!adminAuthenticated) {
+		if (adminConvidadoStatus) {
+			adminConvidadoStatus.textContent = "Faça login para alterar convidados.";
+		}
+		return;
+	}
+
+	const isFormMode = !convidadoBase;
+	const payload = isFormMode
+		? {
+			nome: adminConvidadoNome.value.trim(),
+			grupo: adminConvidadoGrupo.value.trim() || "Sem grupo",
+			tipo: adminConvidadoTipo.value,
+			status_presenca: forceStatus || adminConvidadoPresenca.value,
+		}
+		: {
+			nome: convidadoBase.nome,
+			grupo: convidadoBase.grupo || "Sem grupo",
+			tipo: convidadoBase.tipo || "convidado",
+			status_presenca: forceStatus || convidadoBase.status_presenca || "pendente",
+		};
+
+	if (payload.nome.length < 3) {
+		if (adminConvidadoStatus) {
+			adminConvidadoStatus.textContent = "Nome do convidado precisa ter ao menos 3 caracteres.";
+		}
+		return;
+	}
+
+	const isEditing = Number.isInteger(editingConvidadoId) && isFormMode;
+	const method = isEditing || !isFormMode ? "PUT" : "POST";
+	const endpoint = !isFormMode
+		? `/api/admin/convidados/${convidadoBase.id}`
+		: isEditing
+			? `/api/admin/convidados/${editingConvidadoId}`
+			: "/api/admin/convidados";
+
+	if (adminConvidadoStatus) {
+		adminConvidadoStatus.textContent = "Salvando convidado...";
+	}
+
+	try {
+		const response = await fetch(endpoint, {
+			method,
+			credentials: "same-origin",
+			headers: {
+				"Content-Type": "application/json",
+				...getAdminHeaders(),
+			},
+			body: JSON.stringify(payload),
+		});
+
+		const result = await response.json();
+		if (!response.ok) {
+			throw new Error(result.erro || "Falha ao salvar convidado.");
+		}
+
+		if (adminConvidadoStatus) {
+			adminConvidadoStatus.textContent = result.mensagem || "Convidado salvo com sucesso.";
+		}
+
+		if (isFormMode) {
+			setConvidadoEditingMode(null);
+		}
+
+		await carregarConvidadosAdmin();
+	} catch (error) {
+		if (adminConvidadoStatus) {
+			adminConvidadoStatus.textContent = error.message;
+		}
+	}
+}
+
+
+async function removerConvidadoAdmin(convidadoId) {
+	if (!adminAuthenticated) {
+		if (adminConvidadoStatus) {
+			adminConvidadoStatus.textContent = "Faça login para remover convidados.";
+		}
+		return;
+	}
+
+	if (!window.confirm("Deseja remover este convidado da lista?")) {
+		return;
+	}
+
+	try {
+		const response = await fetch(`/api/admin/convidados/${convidadoId}`, {
+			method: "DELETE",
+			credentials: "same-origin",
+			headers: {
+				...getAdminHeaders(),
+			},
+		});
+
+		const result = await response.json();
+		if (!response.ok) {
+			throw new Error(result.erro || "Falha ao remover convidado.");
+		}
+
+		if (adminConvidadoStatus) {
+			adminConvidadoStatus.textContent = result.mensagem || "Convidado removido com sucesso.";
+		}
+
+		if (Number.isInteger(editingConvidadoId) && editingConvidadoId === convidadoId) {
+			setConvidadoEditingMode(null);
+		}
+
+		await carregarConvidadosAdmin();
+	} catch (error) {
+		if (adminConvidadoStatus) {
+			adminConvidadoStatus.textContent = error.message;
+		}
 	}
 }
 
@@ -698,6 +995,10 @@ function startAutoRefresh() {
 		}
 
 		if (hasGiftListUI) {
+			if (isAdminPage && !adminAuthenticated) {
+				return;
+			}
+
 			await carregarPresentes({ silent: true });
 			return;
 		}
@@ -1161,6 +1462,7 @@ async function carregarPresentes(options = {}) {
 
 		if (silent && !changed) {
 			if (isAdminPage && adminAuthenticated) {
+				await carregarConvidadosAdmin();
 				await carregarMetricasAdmin();
 			}
 			return;
@@ -1173,6 +1475,7 @@ async function carregarPresentes(options = {}) {
 		renderPresentes();
 
 		if (isAdminPage && adminAuthenticated) {
+			await carregarConvidadosAdmin();
 			await carregarMetricasAdmin();
 		}
 	} catch (error) {
@@ -1265,6 +1568,7 @@ if (isAdminPage) {
 				adminLoginForm.reset();
 				adminStatus.textContent = "Login realizado com sucesso.";
 				await carregarPresentes();
+				await carregarConvidadosAdmin();
 			} catch (error) {
 				adminStatus.textContent = error.message;
 			}
@@ -1284,10 +1588,29 @@ if (isAdminPage) {
 
 				setAdminMode(false);
 				adminStatus.textContent = "Sessão encerrada.";
+				if (hasAdminConvidadosUI) {
+					convidadosState = [];
+				}
 				await carregarPresentes();
 			} catch (error) {
 				adminStatus.textContent = error.message;
 			}
+		});
+	}
+
+	if (adminConvidadoCancelEditBtn) {
+		adminConvidadoCancelEditBtn.addEventListener("click", () => {
+			setConvidadoEditingMode(null);
+			if (adminConvidadoStatus) {
+				adminConvidadoStatus.textContent = "Edição de convidado cancelada.";
+			}
+		});
+	}
+
+	if (adminConvidadoForm) {
+		adminConvidadoForm.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			await salvarConvidadoAdmin(null);
 		});
 	}
 
@@ -1458,8 +1781,17 @@ async function initPage() {
 	}
 
 	if (hasGiftListUI) {
-		await carregarPresentes();
-		openOnboarding();
+		if (isAdminPage && !adminAuthenticated) {
+			statusEl.textContent = "Faça login para carregar os presentes.";
+		} else {
+			await carregarPresentes();
+			if (isAdminPage && adminAuthenticated) {
+				await carregarConvidadosAdmin();
+			}
+			if (!isAdminPage) {
+				openOnboarding();
+			}
+		}
 	} else if (isAdminPage && adminAuthenticated) {
 		await carregarMetricasAdmin();
 	}

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Entrada dos Convidados</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Prata&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/CSS/lista.css">
+</head>
+<body>
+	<div class="bg-shape bg-shape-one" aria-hidden="true"></div>
+	<div class="bg-shape bg-shape-two" aria-hidden="true"></div>
+
+	<main class="container reveal-up">
+		<header class="hero">
+			<p class="tag">Casamento Luiz Fernando & Ana Paula 2026</p>
+			<p id="appVersion" class="app-version">Versao --</p>
+			<h1>Entrada dos Convidados</h1>
+			<p class="subtitle">Digite a senha para abrir a lista de presenca. Depois da confirmacao, a lista de presentes sera liberada.</p>
+			<p class="admin-tip"><a class="btn-link" href="/admin">Area de administracao</a></p>
+		</header>
+
+		<section class="panel guest-auth-panel">
+			<div class="login-mode-switch" role="tablist" aria-label="Modo de acesso">
+				<button id="showGuestAccessBtn" class="login-mode-btn is-active" type="button" role="tab" aria-selected="true">Acesso por senha</button>
+				<button id="showAdminAccessBtn" class="login-mode-btn" type="button" role="tab" aria-selected="false">Acesso noivos (total)</button>
+			</div>
+		</section>
+
+		<section id="guestAccessPanel" class="panel guest-auth-panel login-mode-panel">
+			<div class="panel-head">
+				<h2>Acesso por Senha</h2>
+			</div>
+
+			<form id="guestLoginForm" class="admin-form" autocomplete="off">
+				<label>
+					Senha dos convidados
+					<input id="guestPassword" type="password" placeholder="Digite a senha" required>
+				</label>
+				<div class="admin-actions">
+					<button type="submit">Entrar</button>
+				</div>
+			</form>
+
+			<p id="guestLoginStatus" class="status"></p>
+		</section>
+
+		<section id="adminAccessPanel" class="panel guest-auth-panel login-mode-panel" hidden>
+			<div class="panel-head">
+				<h2>Acesso dos Noivos (Total)</h2>
+			</div>
+
+			<form id="adminDirectLoginForm" class="admin-form" autocomplete="off">
+				<label>
+					E-mail
+					<input id="adminDirectEmail" type="email" placeholder="Ex.: seuemail@gmail.com" required>
+				</label>
+				<label>
+					Senha de administrador
+					<input id="adminDirectPassword" type="password" placeholder="Digite sua senha" required>
+				</label>
+				<div class="admin-actions">
+					<button type="submit">Entrar com acesso total</button>
+				</div>
+			</form>
+
+			<p id="adminDirectStatus" class="status"></p>
+		</section>
+	</main>
+
+	<script src="/JS/acesso-presenca.js"></script>
+</body>
+</html>

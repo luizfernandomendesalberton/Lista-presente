@@ -5,6 +5,7 @@ import re
 import smtplib
 import threading
 import tempfile
+import unicodedata
 import uuid
 from datetime import UTC
 from decimal import Decimal, InvalidOperation
@@ -13,7 +14,7 @@ from email.mime.text import MIMEText
 from filelock import FileLock
 from pathlib import Path
 
-from flask import Flask, Response, jsonify, request, send_from_directory, session
+from flask import Flask, Response, jsonify, redirect, request, send_from_directory, session
 
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -23,6 +24,9 @@ JS_DIR = ROOT_DIR / "JS"
 DATA_FILE = Path(__file__).resolve().parent / "presentes.json"
 DATA_FILE = Path(os.getenv("DATA_FILE_PATH", str(DATA_FILE)))
 FALLBACK_DATA_FILE = Path(__file__).resolve().parent / "presentes.json"
+CONVIDADOS_FILE = Path(__file__).resolve().parent / "convidados.json"
+CONVIDADOS_FILE = Path(os.getenv("CONVIDADOS_FILE_PATH", str(CONVIDADOS_FILE)))
+CONVIDADOS_FALLBACK_FILE = Path(__file__).resolve().parent / "convidados.json"
 PIX_CONTRIB_FILE = Path(__file__).resolve().parent / "pix_contribuicoes.json"
 PIX_CONTRIB_FILE = Path(os.getenv("PIX_CONTRIB_FILE_PATH", str(PIX_CONTRIB_FILE)))
 PIX_CONTRIB_FALLBACK_FILE = Path(__file__).resolve().parent / "pix_contribuicoes.json"
@@ -41,6 +45,9 @@ app = Flask(__name__)
 PRESENTES_LOCK = threading.Lock()
 DATA_LOCK_FILE = Path(os.getenv("DATA_FILE_LOCK_PATH", str(DATA_FILE) + ".lock"))
 PRESENTES_FILE_LOCK = FileLock(str(DATA_LOCK_FILE), timeout=15)
+CONVIDADOS_LOCK = threading.Lock()
+CONVIDADOS_LOCK_FILE = Path(os.getenv("CONVIDADOS_LOCK_PATH", str(CONVIDADOS_FILE) + ".lock"))
+CONVIDADOS_FILE_LOCK = FileLock(str(CONVIDADOS_LOCK_FILE), timeout=15)
 PIX_CONTRIB_LOCK = threading.Lock()
 PIX_CONTRIB_LOCK_FILE = Path(os.getenv("PIX_CONTRIB_LOCK_PATH", str(PIX_CONTRIB_FILE) + ".lock"))
 PIX_CONTRIB_FILE_LOCK = FileLock(str(PIX_CONTRIB_LOCK_FILE), timeout=15)
@@ -54,6 +61,7 @@ ACTIVE_ADMIN_SESSIONS = {}
 ACTIVE_ADMIN_SESSIONS_LOCK = threading.Lock()
 ADMIN_ACTIVITY_TTL_SECONDS = int(os.getenv("ADMIN_ACTIVITY_TTL_SECONDS", "900"))
 APP_VERSION = str(os.getenv("APP_VERSION", "1.0.0")).strip() or "1.0.0"
+DEFAULT_GUEST_PASSWORD = str(os.getenv("GUEST_PASSWORD", "luizeana") or "luizeana").strip() or "luizeana"
 
 
 def load_dotenv_file():
@@ -83,6 +91,158 @@ app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-change-me")
 def clean_credential(value):
 	# Normalizes accidental spaces/newlines copied from dashboards.
 	return str(value or "").replace("\u200b", "").strip()
+
+
+def normalize_name_key(value):
+	clean = str(value or "").strip().lower()
+	if not clean:
+		return ""
+
+	clean = unicodedata.normalize("NFKD", clean)
+	clean = "".join(ch for ch in clean if not unicodedata.combining(ch))
+	clean = re.sub(r"\s+", " ", clean)
+	return clean
+
+
+def default_convidados():
+	return [
+		{
+			"id": 1,
+			"nome": "Ana Paula Noiva",
+			"grupo": "Noivos",
+			"tipo": "noivos",
+			"presenca_confirmada": False,
+		},
+		{
+			"id": 2,
+			"nome": "Noivo Luiz Fernando",
+			"grupo": "Noivos",
+			"tipo": "noivos",
+			"presenca_confirmada": False,
+		},
+	]
+
+
+def normalize_convidado(raw, forced_id=None):
+	convidado_id = forced_id if forced_id is not None else raw.get("id")
+	nome = str(raw.get("nome") or "").strip()
+	if not nome:
+		nome = f"Convidado {convidado_id or ''}".strip()
+
+	tipo = str(raw.get("tipo") or "convidado").strip().lower()
+	if tipo not in {"convidado", "noivos"}:
+		tipo = "convidado"
+
+	return {
+		"id": int(convidado_id),
+		"nome": nome,
+		"nome_key": normalize_name_key(nome),
+		"grupo": str(raw.get("grupo") or "Sem grupo").strip() or "Sem grupo",
+		"tipo": tipo,
+		"presenca_confirmada": bool(raw.get("presenca_confirmada", False)),
+		"vai_ao_evento": bool(raw.get("vai_ao_evento", False)),
+		"presenca_confirmada_em": str(raw.get("presenca_confirmada_em") or "").strip(),
+	}
+
+
+def normalize_all_convidados(convidados):
+	normalized = []
+	for index, convidado in enumerate(convidados, start=1):
+		normalized.append(normalize_convidado(convidado, forced_id=index))
+	return normalized
+
+
+def save_convidados(convidados):
+	def _atomic_dump(target_file):
+		target_file.parent.mkdir(parents=True, exist_ok=True)
+		with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=target_file.parent, delete=False) as tmp_file:
+			json.dump(convidados, tmp_file, ensure_ascii=False, indent=2)
+			tmp_path = Path(tmp_file.name)
+
+		os.replace(tmp_path, target_file)
+
+	try:
+		_atomic_dump(CONVIDADOS_FILE)
+	except OSError:
+		_atomic_dump(CONVIDADOS_FALLBACK_FILE)
+
+
+def load_convidados():
+	data_file = CONVIDADOS_FILE
+	if not data_file.exists() and CONVIDADOS_FALLBACK_FILE.exists():
+		data_file = CONVIDADOS_FALLBACK_FILE
+
+	if not data_file.exists():
+		base = default_convidados()
+		save_convidados(base)
+		return base
+
+	with data_file.open("r", encoding="utf-8") as file:
+		loaded = json.load(file)
+
+	if not isinstance(loaded, list):
+		loaded = default_convidados()
+
+	normalized = normalize_all_convidados(loaded)
+	if normalized != loaded:
+		save_convidados(normalized)
+
+	return normalized
+
+
+def is_guest_authenticated():
+	return bool(session.get("guest_authenticated"))
+
+
+def get_current_guest_name_key():
+	return normalize_name_key(session.get("guest_name_key") or "")
+
+
+def get_guest_password():
+	return clean_credential(os.getenv("GUEST_PASSWORD", DEFAULT_GUEST_PASSWORD)) or "luizeana"
+
+
+def get_guest_from_session(convidados=None):
+	name_key = get_current_guest_name_key()
+	if not name_key:
+		return None
+
+	all_convidados = convidados if convidados is not None else load_convidados()
+	return next((item for item in all_convidados if item.get("nome_key") == name_key), None)
+
+
+def can_access_presentes():
+	if is_session_admin():
+		return True
+
+	if not is_guest_authenticated():
+		return False
+
+	convidado = get_guest_from_session()
+	if not convidado:
+		return False
+
+	if convidado.get("tipo") == "noivos":
+		return True
+
+	return bool(convidado.get("presenca_confirmada"))
+
+
+def build_convidado_payload(convidado):
+	status = "pendente"
+	if bool(convidado.get("presenca_confirmada")):
+		status = "confirmado" if bool(convidado.get("vai_ao_evento")) else "nao_vai"
+
+	return {
+		"id": int(convidado.get("id") or 0),
+		"nome": str(convidado.get("nome") or "").strip(),
+		"grupo": str(convidado.get("grupo") or "Sem grupo").strip() or "Sem grupo",
+		"tipo": str(convidado.get("tipo") or "convidado").strip(),
+		"status_presenca": status,
+		"presenca_confirmada": bool(convidado.get("presenca_confirmada")),
+		"vai_ao_evento": bool(convidado.get("vai_ao_evento")),
+		"presenca_confirmada_em": str(convidado.get("presenca_confirmada_em") or "").strip(),
+	}
 
 
 def default_presentes():
@@ -752,6 +912,44 @@ def send_pix_notification_email(nome_responsavel, valor, referencia):
 		server.sendmail(from_email, notify_to_emails, message.as_string())
 
 
+def send_presence_notification_email(grupo, nome_convidado, vai_ao_evento, confirmados_no_grupo, total_no_grupo):
+	smtp_host = os.getenv("SMTP_HOST")
+	smtp_port = int(os.getenv("SMTP_PORT", "587"))
+	smtp_user = os.getenv("SMTP_USER")
+	smtp_password = os.getenv("SMTP_PASSWORD")
+	smtp_use_tls = os.getenv("SMTP_USE_TLS", "1") == "1"
+
+	presence_notify_to = os.getenv("PRESENCA_NOTIFY_TO_EMAIL") or os.getenv("NOTIFY_TO_EMAIL")
+	notify_to_emails = parse_email_list(presence_notify_to)
+	from_email = os.getenv("FROM_EMAIL", smtp_user or "")
+
+	if not all([smtp_host, smtp_user, smtp_password, notify_to_emails]):
+		raise ValueError(
+			"Configuração SMTP incompleta para presença. Defina SMTP_HOST, SMTP_USER, SMTP_PASSWORD e PRESENCA_NOTIFY_TO_EMAIL (ou NOTIFY_TO_EMAIL)."
+		)
+
+	status_text = "confirmou presença" if vai_ao_evento else "informou que não irá"
+	body = (
+		"Atualização da lista de presença do casamento.\n\n"
+		f"Grupo/Família: {grupo}\n"
+		f"Convidado: {nome_convidado}\n"
+		f"Resposta: {status_text}\n"
+		f"Confirmações no grupo: {confirmados_no_grupo}/{total_no_grupo}\n"
+		f"Data/Hora: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n"
+	)
+
+	message = MIMEText(body, "plain", "utf-8")
+	message["Subject"] = f"Presença atualizada - {grupo}"
+	message["From"] = from_email
+	message["To"] = ", ".join(notify_to_emails)
+
+	with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as server:
+		if smtp_use_tls:
+			server.starttls()
+		server.login(smtp_user, smtp_password)
+		server.sendmail(from_email, notify_to_emails, message.as_string())
+
+
 @app.after_request
 def add_cors_headers(response):
 	response.headers["Access-Control-Allow-Origin"] = "*"
@@ -762,6 +960,39 @@ def add_cors_headers(response):
 
 @app.route("/", methods=["GET"])
 def index():
+	response = send_from_directory(HTML_DIR, "acesso.html")
+	response.headers["Cache-Control"] = "no-store, max-age=0"
+	return response
+
+
+@app.route("/sair", methods=["GET"])
+def sair_para_login():
+	remove_admin_session(session.get("admin_session_id"))
+	session.pop("admin_email", None)
+	session.pop("admin_session_id", None)
+	session.pop("guest_authenticated", None)
+	session.pop("guest_name_key", None)
+	session.pop("guest_nome", None)
+	return redirect("/", code=302)
+
+
+@app.route("/presenca", methods=["GET"])
+def presenca_page():
+	if not is_guest_authenticated() and not is_session_admin():
+		return redirect("/", code=302)
+
+	response = send_from_directory(HTML_DIR, "presenca.html")
+	response.headers["Cache-Control"] = "no-store, max-age=0"
+	return response
+
+
+@app.route("/presentes", methods=["GET"])
+def presentes_page():
+	if not can_access_presentes():
+		if is_guest_authenticated() or is_session_admin():
+			return redirect("/presenca", code=302)
+		return redirect("/", code=302)
+
 	response = send_from_directory(HTML_DIR, "lista.html")
 	response.headers["Cache-Control"] = "no-store, max-age=0"
 	return response
@@ -769,7 +1000,6 @@ def index():
 
 @app.route("/admin", methods=["GET"])
 def admin_page():
-	session.pop("admin_email", None)
 	response = send_from_directory(HTML_DIR, "admin.html")
 	response.headers["Cache-Control"] = "no-store, max-age=0"
 	return response
@@ -796,8 +1026,181 @@ def js_files(filename):
 	return response
 
 
+@app.route("/api/guest/login", methods=["POST", "OPTIONS"])
+def guest_login():
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	payload = request.get_json(silent=True) or {}
+	password = clean_credential(payload.get("password") or "")
+	configured_password = get_guest_password()
+
+	if not password:
+		return jsonify({"erro": "Informe a senha para continuar."}), 400
+
+	if not hmac.compare_digest(password, configured_password):
+		return jsonify({"erro": "Senha inválida."}), 401
+
+	session["guest_authenticated"] = True
+	session.pop("guest_name_key", None)
+	session.pop("guest_nome", None)
+
+	convidado = get_guest_from_session()
+	return jsonify(
+		{
+			"mensagem": "Senha validada com sucesso.",
+			"authenticated": True,
+			"guest_nome": convidado.get("nome") if convidado else "",
+			"can_access_presentes": can_access_presentes(),
+		}
+	)
+
+
+@app.route("/api/guest/logout", methods=["POST", "OPTIONS"])
+def guest_logout():
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	session.pop("guest_authenticated", None)
+	session.pop("guest_name_key", None)
+	session.pop("guest_nome", None)
+	return jsonify({"mensagem": "Sessão encerrada."})
+
+
+@app.route("/api/guest/session", methods=["GET"])
+def guest_session_status():
+	convidados = load_convidados()
+	convidado = get_guest_from_session(convidados)
+	admin_email = str(session.get("admin_email") or "").strip().lower()
+
+	return jsonify(
+		{
+			"authenticated": bool(is_guest_authenticated() or is_session_admin()),
+			"guest_authenticated": is_guest_authenticated(),
+			"admin_authenticated": is_session_admin(),
+			"admin_email": admin_email,
+			"guest_nome": convidado.get("nome") if convidado else "",
+			"guest_tipo": convidado.get("tipo") if convidado else "",
+			"presenca_confirmada": bool(convidado.get("presenca_confirmada")) if convidado else False,
+			"can_access_presentes": can_access_presentes(),
+		}
+	)
+
+
+@app.route("/api/presenca/grupos", methods=["GET"])
+def listar_presenca_grupos():
+	if not is_guest_authenticated() and not is_session_admin():
+		return jsonify({"erro": "Faça login com a senha para acessar esta área."}), 401
+
+	convidados = load_convidados()
+	grupos = {}
+	for convidado in convidados:
+		grupo = convidado.get("grupo") or "Sem grupo"
+		grupos.setdefault(grupo, []).append(
+			{
+				"id": convidado.get("id"),
+				"nome": convidado.get("nome"),
+				"tipo": convidado.get("tipo") or "convidado",
+				"presenca_confirmada": bool(convidado.get("presenca_confirmada")),
+				"vai_ao_evento": bool(convidado.get("vai_ao_evento")),
+				"presenca_confirmada_em": convidado.get("presenca_confirmada_em") or "",
+			}
+		)
+
+	grupos_payload = [
+		{"grupo": nome_grupo, "convidados": convidados_do_grupo}
+		for nome_grupo, convidados_do_grupo in grupos.items()
+	]
+
+	grupos_payload.sort(key=lambda item: (0 if item.get("grupo") == "Noivos" else 1, item.get("grupo", "")))
+
+	convidado_sessao = get_guest_from_session(convidados)
+	return jsonify(
+		{
+			"grupos": grupos_payload,
+			"guest_nome": convidado_sessao.get("nome") if convidado_sessao else "",
+			"guest_tipo": convidado_sessao.get("tipo") if convidado_sessao else "",
+			"can_access_presentes": can_access_presentes(),
+		}
+	)
+
+
+@app.route("/api/presenca/confirmar", methods=["POST", "OPTIONS"])
+def confirmar_presenca():
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	if not is_guest_authenticated() and not is_session_admin():
+		return jsonify({"erro": "Faça login com a senha para confirmar presença."}), 401
+
+	payload = request.get_json(silent=True) or {}
+	nome = str(payload.get("nome") or "").strip()
+	vai_ao_evento = bool(payload.get("vai_ao_evento", True))
+	nome_key = normalize_name_key(nome)
+
+	if not nome_key:
+		return jsonify({"erro": "Selecione o seu nome para confirmar presença."}), 400
+
+	with CONVIDADOS_LOCK:
+		with CONVIDADOS_FILE_LOCK:
+			convidados = load_convidados()
+			convidado = next((item for item in convidados if item.get("nome_key") == nome_key), None)
+
+			if not convidado:
+				return jsonify({"erro": "Nome não encontrado na lista de convidados."}), 404
+
+			session_name_key = get_current_guest_name_key()
+			if session_name_key and session_name_key != nome_key and not is_session_admin():
+				return jsonify({"erro": "Esta sessão já está vinculada a outro nome."}), 403
+
+			session["guest_name_key"] = nome_key
+			session["guest_nome"] = convidado.get("nome")
+
+			confirmation_time = utc_now().isoformat()
+			grupo_nome = str(convidado.get("grupo") or "Sem grupo").strip() or "Sem grupo"
+			membros_grupo = [item for item in convidados if (item.get("grupo") or "Sem grupo") == grupo_nome]
+
+			# RSVP is group-based: one confirmation updates all members in the same family group.
+			for membro in membros_grupo:
+				membro["presenca_confirmada"] = True
+				membro["vai_ao_evento"] = vai_ao_evento
+				membro["presenca_confirmada_em"] = confirmation_time
+
+			total_no_grupo = len(membros_grupo)
+			confirmados_no_grupo = total_no_grupo
+			save_convidados(convidados)
+
+	try:
+		send_presence_notification_email(
+			grupo_nome,
+			convidado.get("nome") or nome,
+			vai_ao_evento,
+			confirmados_no_grupo,
+			total_no_grupo,
+		)
+		email_status = "notificacao_enviada"
+	except Exception as exc:
+		app.logger.exception("Falha ao enviar e-mail de confirmacao de presenca")
+		email_status = f"notificacao_falhou: {exc}"
+
+	return jsonify(
+		{
+			"mensagem": f"Presença do grupo '{grupo_nome}' confirmada com sucesso.",
+			"convidado": convidado,
+			"grupo": grupo_nome,
+			"grupo_total": total_no_grupo,
+			"grupo_confirmados": confirmados_no_grupo,
+			"email_status": email_status,
+			"can_access_presentes": can_access_presentes(),
+		}
+	)
+
+
 @app.route("/api/presentes", methods=["GET"])
 def listar_presentes():
+	if not can_access_presentes():
+		return jsonify({"erro": "Confirme sua presença para acessar a lista de presentes."}), 403
+
 	return jsonify(load_presentes())
 
 
@@ -1035,6 +1438,10 @@ def admin_login():
 		return jsonify({"erro": "Credenciais inválidas."}), 401
 
 	session_id = uuid.uuid4().hex
+	# Reset any previous guest session so admin access starts clean.
+	session.pop("guest_authenticated", None)
+	session.pop("guest_name_key", None)
+	session.pop("guest_nome", None)
 	session["admin_email"] = email
 	session["admin_session_id"] = session_id
 	touch_admin_session(email, session_id)
@@ -1050,7 +1457,153 @@ def admin_logout():
 	remove_admin_session(session.get("admin_session_id"))
 	session.pop("admin_email", None)
 	session.pop("admin_session_id", None)
+	# Also clear guest session flags to avoid stale access state.
+	session.pop("guest_authenticated", None)
+	session.pop("guest_name_key", None)
+	session.pop("guest_nome", None)
 	return jsonify({"mensagem": "Logout realizado com sucesso."})
+
+
+@app.route("/api/admin/convidados", methods=["GET"])
+def listar_convidados_admin():
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	convidados = load_convidados()
+	payload = [build_convidado_payload(item) for item in convidados]
+	payload.sort(key=lambda item: (0 if item.get("grupo") == "Noivos" else 1, item.get("grupo", ""), item.get("nome", "")))
+	return jsonify(payload)
+
+
+@app.route("/api/admin/convidados", methods=["POST", "OPTIONS"])
+def criar_convidado_admin():
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	payload = request.get_json(silent=True) or {}
+	nome = str(payload.get("nome") or "").strip()
+	grupo = str(payload.get("grupo") or "Sem grupo").strip() or "Sem grupo"
+	tipo = str(payload.get("tipo") or "convidado").strip().lower()
+	status_presenca = str(payload.get("status_presenca") or "pendente").strip().lower()
+
+	if len(nome) < 3:
+		return jsonify({"erro": "Informe o nome do convidado com pelo menos 3 caracteres."}), 400
+
+	if tipo not in {"convidado", "noivos"}:
+		return jsonify({"erro": "Tipo inválido."}), 400
+
+	if status_presenca not in {"pendente", "confirmado", "nao_vai"}:
+		return jsonify({"erro": "Status de presença inválido."}), 400
+
+	with CONVIDADOS_LOCK:
+		with CONVIDADOS_FILE_LOCK:
+			convidados = load_convidados()
+			novo_id = max((int(item.get("id", 0)) for item in convidados), default=0) + 1
+
+			novo_convidado = normalize_convidado(
+				{
+					"id": novo_id,
+					"nome": nome,
+					"grupo": grupo,
+					"tipo": tipo,
+					"presenca_confirmada": status_presenca in {"confirmado", "nao_vai"},
+					"vai_ao_evento": status_presenca == "confirmado",
+					"presenca_confirmada_em": utc_now().isoformat() if status_presenca in {"confirmado", "nao_vai"} else "",
+				}
+			)
+
+			convidados.append(novo_convidado)
+			save_convidados(convidados)
+
+	return jsonify({"mensagem": "Convidado adicionado com sucesso.", "convidado": build_convidado_payload(novo_convidado)}), 201
+
+
+@app.route("/api/admin/convidados/<int:convidado_id>", methods=["PUT", "OPTIONS"])
+def atualizar_convidado_admin(convidado_id):
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	payload = request.get_json(silent=True) or {}
+	nome = str(payload.get("nome") or "").strip()
+	grupo = str(payload.get("grupo") or "Sem grupo").strip() or "Sem grupo"
+	tipo = str(payload.get("tipo") or "convidado").strip().lower()
+	status_presenca = str(payload.get("status_presenca") or "pendente").strip().lower()
+
+	if len(nome) < 3:
+		return jsonify({"erro": "Informe o nome do convidado com pelo menos 3 caracteres."}), 400
+
+	if tipo not in {"convidado", "noivos"}:
+		return jsonify({"erro": "Tipo inválido."}), 400
+
+	if status_presenca not in {"pendente", "confirmado", "nao_vai"}:
+		return jsonify({"erro": "Status de presença inválido."}), 400
+
+	with CONVIDADOS_LOCK:
+		with CONVIDADOS_FILE_LOCK:
+			convidados = load_convidados()
+			convidado = next((item for item in convidados if int(item.get("id", 0)) == convidado_id), None)
+
+			if not convidado:
+				return jsonify({"erro": "Convidado não encontrado."}), 404
+
+			convidado["nome"] = nome
+			convidado["nome_key"] = normalize_name_key(nome)
+			convidado["grupo"] = grupo
+			convidado["tipo"] = tipo
+
+			if status_presenca == "pendente":
+				convidado["presenca_confirmada"] = False
+				convidado["vai_ao_evento"] = False
+				convidado["presenca_confirmada_em"] = ""
+			elif status_presenca == "confirmado":
+				convidado["presenca_confirmada"] = True
+				convidado["vai_ao_evento"] = True
+				convidado["presenca_confirmada_em"] = convidado.get("presenca_confirmada_em") or utc_now().isoformat()
+			else:
+				convidado["presenca_confirmada"] = True
+				convidado["vai_ao_evento"] = False
+				convidado["presenca_confirmada_em"] = convidado.get("presenca_confirmada_em") or utc_now().isoformat()
+
+			save_convidados(convidados)
+
+	return jsonify({"mensagem": "Convidado atualizado com sucesso.", "convidado": build_convidado_payload(convidado)})
+
+
+@app.route("/api/admin/convidados/<int:convidado_id>", methods=["DELETE", "OPTIONS"])
+def remover_convidado_admin(convidado_id):
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	with CONVIDADOS_LOCK:
+		with CONVIDADOS_FILE_LOCK:
+			convidados = load_convidados()
+			before_count = len(convidados)
+			convidados = [item for item in convidados if int(item.get("id", 0)) != convidado_id]
+
+			if len(convidados) == before_count:
+				return jsonify({"erro": "Convidado não encontrado."}), 404
+
+			convidados = normalize_all_convidados(convidados)
+			save_convidados(convidados)
+
+	if get_current_guest_name_key() and get_current_guest_name_key() not in {item.get("nome_key") for item in convidados}:
+		session.pop("guest_name_key", None)
+		session.pop("guest_nome", None)
+
+	return jsonify({"mensagem": "Convidado removido com sucesso."})
 
 
 @app.route("/api/presentes", methods=["POST", "OPTIONS"])
@@ -1165,6 +1718,9 @@ def remover_presente(presente_id):
 def reservar_presente(presente_id):
 	if request.method == "OPTIONS":
 		return ("", 204)
+
+	if not can_access_presentes():
+		return jsonify({"erro": "Confirme sua presença antes de reservar presentes."}), 403
 
 	payload = request.get_json(silent=True) or {}
 	nome = (payload.get("nome") or "").strip()

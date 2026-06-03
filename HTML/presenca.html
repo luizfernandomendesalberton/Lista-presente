@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Lista de Presenca</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Prata&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/CSS/lista.css">
+</head>
+<body>
+	<div class="bg-shape bg-shape-one" aria-hidden="true"></div>
+	<div class="bg-shape bg-shape-two" aria-hidden="true"></div>
+
+	<main class="container reveal-up">
+		<header class="hero">
+			<p class="tag">Casamento Luiz Fernando & Ana Paula 2026</p>
+			<p id="appVersion" class="app-version">Versao --</p>
+			<h1>Lista de Presenca</h1>
+			<p class="subtitle">Selecione seu nome no grupo da sua familia e confirme. So depois disso a lista de presentes sera liberada.</p>
+			<p class="admin-tip">
+				<a class="btn-link" href="/sair">Trocar usuario</a>
+				<a class="btn-link" id="btnGoPresentes" href="/presentes">Ir para lista de presentes</a>
+			</p>
+		</header>
+
+		<section class="panel">
+			<div class="panel-head">
+				<h2>Confirmacao por Grupo</h2>
+				<button id="btnRefreshGrupos" type="button">Atualizar</button>
+			</div>
+			<p id="presencaHint" class="panel-note">Toque no seu nome e confirme sua resposta.</p>
+			<p id="presencaStatus" class="status"></p>
+			<div id="gruposList" class="grupo-lista"></div>
+		</section>
+	</main>
+
+	<script src="/JS/acesso-presenca.js"></script>
+</body>
+</html>

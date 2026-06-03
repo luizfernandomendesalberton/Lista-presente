@@ -1059,6 +1059,173 @@ button:hover {
 	flex-wrap: wrap;
 }
 
+.guest-auth-panel {
+	max-width: 560px;
+	justify-self: center;
+	width: 100%;
+}
+
+.login-mode-switch {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+}
+
+.login-mode-btn {
+	width: 100%;
+	border: 1px solid rgba(159, 75, 95, 0.24);
+	background: linear-gradient(145deg, rgba(253, 248, 240, 0.98), rgba(245, 224, 223, 0.96));
+	color: var(--wine);
+	box-shadow: 0 8px 20px rgba(71, 58, 37, 0.1);
+}
+
+.login-mode-btn.is-active {
+	border-color: var(--wine);
+	background: linear-gradient(140deg, #d6a37c, #9a3e57);
+	color: #fff;
+}
+
+.login-mode-panel.login-panel-reveal {
+	animation: loginPanelReveal 0.28s ease both;
+}
+
+@keyframes loginPanelReveal {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.grupo-lista {
+	display: grid;
+	gap: 14px;
+}
+
+.grupo-card {
+	border: 1px solid rgba(228, 217, 202, 0.9);
+	border-radius: 18px;
+	padding: 14px;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 240, 0.92));
+	box-shadow: 0 10px 22px rgba(46, 31, 19, 0.06);
+}
+
+.grupo-card h3 {
+	margin: 0 0 10px;
+	font-family: "Prata", serif;
+	font-size: 1.18rem;
+	font-weight: 400;
+}
+
+.grupo-convidados {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 10px;
+}
+
+.grupo-convidado {
+	display: grid;
+	gap: 7px;
+	padding: 10px;
+	border-radius: 14px;
+	border: 1px solid rgba(207, 186, 160, 0.75);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 252, 247, 0.95));
+}
+
+.grupo-convidado h4 {
+	margin: 0;
+	font-size: 1rem;
+}
+
+.grupo-convidado p {
+	margin: 0;
+	color: var(--muted);
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+
+.grupo-convidado small {
+	color: #7f6f62;
+	font-size: 0.78rem;
+}
+
+.grupo-convidado.is-current {
+	border-color: rgba(146, 91, 67, 0.64);
+	box-shadow: 0 0 0 3px rgba(214, 163, 124, 0.2);
+}
+
+.grupo-convidado.is-confirmed {
+	border-color: rgba(97, 151, 93, 0.56);
+	background: linear-gradient(180deg, rgba(246, 255, 246, 0.95), rgba(238, 251, 238, 0.95));
+}
+
+.grupo-convidado.is-declined {
+	border-color: rgba(151, 115, 97, 0.56);
+	background: linear-gradient(180deg, rgba(255, 248, 244, 0.95), rgba(248, 236, 227, 0.95));
+}
+
+.grupo-convidado-actions {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+}
+
+.btn-link.is-disabled {
+	opacity: 0.6;
+	pointer-events: none;
+	cursor: not-allowed;
+}
+
+.convidados-admin-list {
+	display: grid;
+	gap: 10px;
+	margin-top: 10px;
+}
+
+.convidado-admin-card {
+	border: 1px solid rgba(228, 217, 202, 0.9);
+	border-radius: 14px;
+	padding: 10px 12px;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 249, 242, 0.9));
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 10px;
+	align-items: center;
+}
+
+.convidado-admin-main {
+	display: grid;
+	gap: 5px;
+}
+
+.convidado-admin-main h4 {
+	margin: 0;
+	font-size: 1rem;
+}
+
+.convidado-admin-main p {
+	margin: 0;
+	font-size: 0.9rem;
+	color: var(--muted);
+}
+
+.convidado-admin-actions {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
+
+.convidado-admin-actions button {
+	width: auto;
+	min-width: 120px;
+	padding: 8px 10px;
+	font-size: 0.82rem;
+}
+
 @keyframes revealUp {
 	from {
 		opacity: 0;
@@ -1233,6 +1400,22 @@ button:hover {
 
 	.onboarding-buttons {
 		justify-content: stretch;
+	}
+
+	.grupo-convidado-actions {
+		grid-template-columns: 1fr;
+	}
+
+	.convidado-admin-card {
+		grid-template-columns: 1fr;
+	}
+
+	.convidado-admin-actions {
+		justify-content: stretch;
+	}
+
+	.convidado-admin-actions button {
+		width: 100%;
 	}
 
 	.onboarding-buttons button {

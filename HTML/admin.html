@@ -19,7 +19,7 @@
 			<p id="appVersion" class="app-version">Versão --</p>
 			<h1>Gerenciar Presentes</h1>
 			<p class="subtitle">Cadastre, revise e remova presentes da lista do casamento.</p>
-			<p class="admin-tip"><a class="btn-link" href="/">Voltar para a lista pública</a></p>
+			<p class="admin-tip"><a class="btn-link" href="/sair">Voltar para entrada dos convidados</a></p>
 			<p class="admin-tip"><a class="btn-link" href="/admin/metricas">Abrir painel de métricas separado</a></p>
 		</header>
 
@@ -143,6 +143,54 @@
 
 			<p id="statusGeral" class="status"></p>
 			<div id="listaPresentes" class="lista"></div>
+		</section>
+
+		<section class="panel" id="adminConvidadosPanel" hidden>
+			<div class="panel-head">
+				<h2 id="adminConvidadoFormTitle">Lista de Convidados</h2>
+			</div>
+			<p class="panel-note">Edite nomes e grupos, ajuste presença quando alguém confirmar sem querer e adicione novos convidados.</p>
+
+			<form id="adminConvidadoForm" class="admin-form">
+				<div class="admin-grid-two">
+					<label>
+						Nome do convidado
+						<input id="adminConvidadoNome" type="text" minlength="3" required>
+					</label>
+
+					<label>
+						Grupo/Família
+						<input id="adminConvidadoGrupo" type="text" placeholder="Ex.: Grupo 01" required>
+					</label>
+				</div>
+
+				<div class="admin-grid-two">
+					<label>
+						Tipo
+						<select id="adminConvidadoTipo">
+							<option value="convidado" selected>Convidado</option>
+							<option value="noivos">Noivos</option>
+						</select>
+					</label>
+
+					<label>
+						Status de presença
+						<select id="adminConvidadoPresenca">
+							<option value="pendente" selected>Pendente</option>
+							<option value="confirmado">Confirmado</option>
+							<option value="nao_vai">Não vai</option>
+						</select>
+					</label>
+				</div>
+
+				<div class="admin-actions">
+					<button id="adminConvidadoCancelEditBtn" type="button" hidden>Cancelar edição</button>
+					<button id="adminConvidadoSubmitBtn" type="submit">Adicionar convidado</button>
+				</div>
+			</form>
+
+			<p id="adminConvidadoStatus" class="status"></p>
+			<div id="adminConvidadosList" class="convidados-admin-list"></div>
 		</section>
 	</main>
 
