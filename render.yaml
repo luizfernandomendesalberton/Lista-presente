@@ -9,3 +9,5 @@ services:
     envVars:
       - key: APP_VERSION
         value: 3.17.1
+      - key: RUNTIME_DATA_DIR
+        value: /opt/render/project/src/Back-End/runtime-data-reset-20260603

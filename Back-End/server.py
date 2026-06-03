@@ -17,26 +17,43 @@ from pathlib import Path
 from flask import Flask, Response, jsonify, redirect, request, send_from_directory, session
 
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+BACKEND_DIR = Path(__file__).resolve().parent
+ROOT_DIR = BACKEND_DIR.parent
+ENV_FILE = BACKEND_DIR / ".env"
+
+
+def load_dotenv_file():
+	if not ENV_FILE.exists():
+		return
+
+	with ENV_FILE.open("r", encoding="utf-8") as file:
+		for raw_line in file:
+			line = raw_line.strip()
+			if not line or line.startswith("#") or "=" not in line:
+				continue
+
+			key, value = line.split("=", 1)
+			key = key.strip()
+			value = value.strip().strip('"').strip("'")
+
+			# Do not overwrite values already provided by the system environment.
+			if key and key not in os.environ:
+				os.environ[key] = value
+
+
+load_dotenv_file()
+
 HTML_DIR = ROOT_DIR / "HTML"
 CSS_DIR = ROOT_DIR / "CSS"
 JS_DIR = ROOT_DIR / "JS"
-DATA_FILE = Path(__file__).resolve().parent / "presentes.json"
-DATA_FILE = Path(os.getenv("DATA_FILE_PATH", str(DATA_FILE)))
-FALLBACK_DATA_FILE = Path(__file__).resolve().parent / "presentes.json"
-CONVIDADOS_FILE = Path(__file__).resolve().parent / "convidados.json"
-CONVIDADOS_FILE = Path(os.getenv("CONVIDADOS_FILE_PATH", str(CONVIDADOS_FILE)))
-CONVIDADOS_FALLBACK_FILE = Path(__file__).resolve().parent / "convidados.json"
-PIX_CONTRIB_FILE = Path(__file__).resolve().parent / "pix_contribuicoes.json"
-PIX_CONTRIB_FILE = Path(os.getenv("PIX_CONTRIB_FILE_PATH", str(PIX_CONTRIB_FILE)))
-PIX_CONTRIB_FALLBACK_FILE = Path(__file__).resolve().parent / "pix_contribuicoes.json"
-UNRESERVE_LOG_FILE = Path(__file__).resolve().parent / "desmarcacoes_reserva.json"
-UNRESERVE_LOG_FILE = Path(os.getenv("UNRESERVE_LOG_FILE_PATH", str(UNRESERVE_LOG_FILE)))
-UNRESERVE_LOG_FALLBACK_FILE = Path(__file__).resolve().parent / "desmarcacoes_reserva.json"
-ADMIN_SYNC_FILE = Path(__file__).resolve().parent / "admin_sync_state.json"
-ADMIN_SYNC_FILE = Path(os.getenv("ADMIN_SYNC_FILE_PATH", str(ADMIN_SYNC_FILE)))
-ADMIN_SYNC_FALLBACK_FILE = Path(__file__).resolve().parent / "admin_sync_state.json"
-ENV_FILE = Path(__file__).resolve().parent / ".env"
+RUNTIME_DATA_DIR = Path(os.getenv("RUNTIME_DATA_DIR", str(BACKEND_DIR / "runtime-data")))
+PRESENTES_SEED_FILE = BACKEND_DIR / "presentes.json"
+DATA_FILE = Path(os.getenv("DATA_FILE_PATH", str(RUNTIME_DATA_DIR / "presentes.json")))
+CONVIDADOS_SEED_FILE = BACKEND_DIR / "convidados.json"
+CONVIDADOS_FILE = Path(os.getenv("CONVIDADOS_FILE_PATH", str(RUNTIME_DATA_DIR / "convidados.json")))
+PIX_CONTRIB_FILE = Path(os.getenv("PIX_CONTRIB_FILE_PATH", str(RUNTIME_DATA_DIR / "pix_contribuicoes.json")))
+UNRESERVE_LOG_FILE = Path(os.getenv("UNRESERVE_LOG_FILE_PATH", str(RUNTIME_DATA_DIR / "desmarcacoes_reserva.json")))
+ADMIN_SYNC_FILE = Path(os.getenv("ADMIN_SYNC_FILE_PATH", str(RUNTIME_DATA_DIR / "admin_sync_state.json")))
 DEFAULT_IMAGE_URL = "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80"
 
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
@@ -62,28 +79,6 @@ ACTIVE_ADMIN_SESSIONS_LOCK = threading.Lock()
 ADMIN_ACTIVITY_TTL_SECONDS = int(os.getenv("ADMIN_ACTIVITY_TTL_SECONDS", "900"))
 APP_VERSION = str(os.getenv("APP_VERSION", "1.0.0")).strip() or "1.0.0"
 DEFAULT_GUEST_PASSWORD = str(os.getenv("GUEST_PASSWORD", "luizeana") or "luizeana").strip() or "luizeana"
-
-
-def load_dotenv_file():
-	if not ENV_FILE.exists():
-		return
-
-	with ENV_FILE.open("r", encoding="utf-8") as file:
-		for raw_line in file:
-			line = raw_line.strip()
-			if not line or line.startswith("#") or "=" not in line:
-				continue
-
-			key, value = line.split("=", 1)
-			key = key.strip()
-			value = value.strip().strip('"').strip("'")
-
-			# Do not overwrite values already provided by the system environment.
-			if key and key not in os.environ:
-				os.environ[key] = value
-
-
-load_dotenv_file()
 
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-change-me")
 
@@ -162,21 +157,22 @@ def save_convidados(convidados):
 
 		os.replace(tmp_path, target_file)
 
-	try:
-		_atomic_dump(CONVIDADOS_FILE)
-	except OSError:
-		_atomic_dump(CONVIDADOS_FALLBACK_FILE)
+	_atomic_dump(CONVIDADOS_FILE)
 
 
 def load_convidados():
 	data_file = CONVIDADOS_FILE
-	if not data_file.exists() and CONVIDADOS_FALLBACK_FILE.exists():
-		data_file = CONVIDADOS_FALLBACK_FILE
-
 	if not data_file.exists():
 		base = default_convidados()
-		save_convidados(base)
-		return base
+		if CONVIDADOS_SEED_FILE.exists():
+			with CONVIDADOS_SEED_FILE.open("r", encoding="utf-8") as file:
+				loaded = json.load(file)
+			if isinstance(loaded, list):
+				base = loaded
+
+		normalized = normalize_all_convidados(base)
+		save_convidados(normalized)
+		return normalized
 
 	with data_file.open("r", encoding="utf-8") as file:
 		loaded = json.load(file)
@@ -597,17 +593,11 @@ def save_pix_contributions(contributions):
 
 		os.replace(tmp_path, target_file)
 
-	try:
-		_atomic_dump(PIX_CONTRIB_FILE)
-	except OSError:
-		_atomic_dump(PIX_CONTRIB_FALLBACK_FILE)
+	_atomic_dump(PIX_CONTRIB_FILE)
 
 
 def load_pix_contributions():
 	data_file = PIX_CONTRIB_FILE
-	if not data_file.exists() and PIX_CONTRIB_FALLBACK_FILE.exists():
-		data_file = PIX_CONTRIB_FALLBACK_FILE
-
 	if not data_file.exists():
 		return []
 
@@ -658,8 +648,8 @@ def normalize_all_unreserve_entries(entries):
 
 def default_admin_sync_state():
 	return {
-		"novos_produtos_ack_em": "",
-		"novos_convidados_ack_em": "",
+		"novos_produtos_ack_em": get_latest_created_timestamp(load_presentes()),
+		"novos_convidados_ack_em": get_latest_created_timestamp(load_convidados()),
 		"ultimo_export_em": "",
 		"ultimo_export_convidados_em": "",
 	}
@@ -686,17 +676,11 @@ def save_admin_sync_state(state):
 
 		os.replace(tmp_path, target_file)
 
-	try:
-		_atomic_dump(ADMIN_SYNC_FILE)
-	except OSError:
-		_atomic_dump(ADMIN_SYNC_FALLBACK_FILE)
+	_atomic_dump(ADMIN_SYNC_FILE)
 
 
 def load_admin_sync_state():
 	data_file = ADMIN_SYNC_FILE
-	if not data_file.exists() and ADMIN_SYNC_FALLBACK_FILE.exists():
-		data_file = ADMIN_SYNC_FALLBACK_FILE
-
 	if not data_file.exists():
 		state = default_admin_sync_state()
 		save_admin_sync_state(state)
@@ -706,6 +690,10 @@ def load_admin_sync_state():
 		loaded = json.load(file)
 
 	normalized = normalize_admin_sync_state(loaded)
+	if not normalized.get("novos_produtos_ack_em"):
+		normalized["novos_produtos_ack_em"] = get_latest_created_timestamp(load_presentes())
+	if not normalized.get("novos_convidados_ack_em"):
+		normalized["novos_convidados_ack_em"] = get_latest_created_timestamp(load_convidados())
 	if normalized != loaded:
 		save_admin_sync_state(normalized)
 
@@ -726,6 +714,18 @@ def parse_iso_utc(value):
 		return parsed.replace(tzinfo=UTC)
 
 	return parsed.astimezone(UTC)
+
+
+def get_latest_created_timestamp(items):
+	latest = None
+	for item in items:
+		created_dt = parse_iso_utc(item.get("criado_em"))
+		if not created_dt:
+			continue
+		if latest is None or created_dt > latest:
+			latest = created_dt
+
+	return latest.isoformat() if latest else ""
 
 
 def get_pending_new_products(presentes, ack_timestamp):
@@ -808,17 +808,11 @@ def save_unreserve_entries(entries):
 
 		os.replace(tmp_path, target_file)
 
-	try:
-		_atomic_dump(UNRESERVE_LOG_FILE)
-	except OSError:
-		_atomic_dump(UNRESERVE_LOG_FALLBACK_FILE)
+	_atomic_dump(UNRESERVE_LOG_FILE)
 
 
 def load_unreserve_entries():
 	data_file = UNRESERVE_LOG_FILE
-	if not data_file.exists() and UNRESERVE_LOG_FALLBACK_FILE.exists():
-		data_file = UNRESERVE_LOG_FALLBACK_FILE
-
 	if not data_file.exists():
 		return []
 
@@ -848,13 +842,17 @@ def append_unreserve_entry(entry):
 
 def load_presentes():
 	data_file = DATA_FILE
-	if not data_file.exists() and FALLBACK_DATA_FILE.exists():
-		data_file = FALLBACK_DATA_FILE
-
 	if not data_file.exists():
 		base = default_presentes()
-		save_presentes(base)
-		return base
+		if PRESENTES_SEED_FILE.exists():
+			with PRESENTES_SEED_FILE.open("r", encoding="utf-8") as file:
+				loaded = json.load(file)
+			if isinstance(loaded, list):
+				base = loaded
+
+		normalized = normalize_all_presentes(base)
+		save_presentes(normalized)
+		return normalized
 
 	with data_file.open("r", encoding="utf-8") as file:
 		loaded = json.load(file)
@@ -875,10 +873,7 @@ def save_presentes(presentes):
 
 		os.replace(tmp_path, target_file)
 
-	try:
-		_atomic_dump(DATA_FILE)
-	except OSError:
-		_atomic_dump(FALLBACK_DATA_FILE)
+	_atomic_dump(DATA_FILE)
 
 
 def send_notification_email(presente, nome_responsavel, email_responsavel):
