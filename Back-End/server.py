@@ -139,6 +139,7 @@ def normalize_convidado(raw, forced_id=None):
 		"nome_key": normalize_name_key(nome),
 		"grupo": str(raw.get("grupo") or "Sem grupo").strip() or "Sem grupo",
 		"tipo": tipo,
+		"criado_em": str(raw.get("criado_em") or "").strip(),
 		"presenca_confirmada": bool(raw.get("presenca_confirmada", False)),
 		"vai_ao_evento": bool(raw.get("vai_ao_evento", False)),
 		"presenca_confirmada_em": str(raw.get("presenca_confirmada_em") or "").strip(),
@@ -658,7 +659,9 @@ def normalize_all_unreserve_entries(entries):
 def default_admin_sync_state():
 	return {
 		"novos_produtos_ack_em": "",
+		"novos_convidados_ack_em": "",
 		"ultimo_export_em": "",
+		"ultimo_export_convidados_em": "",
 	}
 
 
@@ -668,7 +671,9 @@ def normalize_admin_sync_state(raw):
 
 	return {
 		"novos_produtos_ack_em": str(raw.get("novos_produtos_ack_em") or "").strip(),
+		"novos_convidados_ack_em": str(raw.get("novos_convidados_ack_em") or "").strip(),
 		"ultimo_export_em": str(raw.get("ultimo_export_em") or "").strip(),
+		"ultimo_export_convidados_em": str(raw.get("ultimo_export_convidados_em") or "").strip(),
 	}
 
 
@@ -747,6 +752,31 @@ def get_pending_new_products(presentes, ack_timestamp):
 	return pending
 
 
+def get_pending_new_guests(convidados, ack_timestamp):
+	ack_dt = parse_iso_utc(ack_timestamp)
+	pending = []
+
+	for item in convidados:
+		created_dt = parse_iso_utc(item.get("criado_em"))
+		if not created_dt:
+			continue
+
+		if ack_dt and created_dt <= ack_dt:
+			continue
+
+		pending.append(
+			{
+				"id": int(item.get("id") or 0),
+				"nome": str(item.get("nome") or "Convidado").strip(),
+				"grupo": str(item.get("grupo") or "Sem grupo").strip() or "Sem grupo",
+				"criado_em": created_dt.isoformat(),
+			}
+		)
+
+	pending.sort(key=lambda item: item.get("criado_em", ""), reverse=True)
+	return pending
+
+
 def acknowledge_new_products():
 	with ADMIN_SYNC_LOCK:
 		with ADMIN_SYNC_FILE_LOCK:
@@ -754,6 +784,17 @@ def acknowledge_new_products():
 			now_iso = utc_now().isoformat()
 			state["novos_produtos_ack_em"] = now_iso
 			state["ultimo_export_em"] = now_iso
+			save_admin_sync_state(state)
+			return state
+
+
+def acknowledge_new_guests():
+	with ADMIN_SYNC_LOCK:
+		with ADMIN_SYNC_FILE_LOCK:
+			state = load_admin_sync_state()
+			now_iso = utc_now().isoformat()
+			state["novos_convidados_ack_em"] = now_iso
+			state["ultimo_export_convidados_em"] = now_iso
 			save_admin_sync_state(state)
 			return state
 
@@ -1341,6 +1382,8 @@ def admin_metrics():
 	presence = get_active_admin_sessions_payload()
 	sync_state = load_admin_sync_state()
 	pending_new_products = get_pending_new_products(presentes, sync_state.get("novos_produtos_ack_em"))
+	convidados = load_convidados()
+	pending_new_guests = get_pending_new_guests(convidados, sync_state.get("novos_convidados_ack_em"))
 	pix_contributions = load_pix_contributions()
 	pix_total = len(pix_contributions)
 	pix_valor_total = round(sum(float(item.get("valor", 0) or 0) for item in pix_contributions), 2)
@@ -1392,7 +1435,11 @@ def admin_metrics():
 			"novos_produtos_pendentes_total": len(pending_new_products),
 			"novos_produtos_pendentes": pending_new_products[:8],
 			"novos_produtos_ack_em": sync_state.get("novos_produtos_ack_em") or "",
+			"novos_convidados_pendentes_total": len(pending_new_guests),
+			"novos_convidados_pendentes": pending_new_guests[:8],
+			"novos_convidados_ack_em": sync_state.get("novos_convidados_ack_em") or "",
 			"ultimo_export_em": sync_state.get("ultimo_export_em") or "",
+			"ultimo_export_convidados_em": sync_state.get("ultimo_export_convidados_em") or "",
 			"pix_contribuicoes_total": pix_total,
 			"pix_contribuicoes_valor_total": pix_valor_total,
 			"ultimas_contribuicoes_pix": ultimas_pix_payload,
@@ -1483,6 +1530,55 @@ def listar_convidados_admin():
 	return jsonify(payload)
 
 
+@app.route("/api/admin/convidados/resumo", methods=["GET"])
+def resumo_convidados_admin():
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	convidados = load_convidados()
+	sync_state = load_admin_sync_state()
+	pending_new_guests = get_pending_new_guests(convidados, sync_state.get("novos_convidados_ack_em"))
+
+	return jsonify(
+		{
+			"total": len(convidados),
+			"novos_convidados_pendentes_total": len(pending_new_guests),
+			"novos_convidados_pendentes": pending_new_guests[:8],
+			"novos_convidados_ack_em": sync_state.get("novos_convidados_ack_em") or "",
+			"ultimo_export_convidados_em": sync_state.get("ultimo_export_convidados_em") or "",
+		}
+	)
+
+
+@app.route("/api/admin/convidados/export", methods=["GET"])
+def exportar_convidados_admin():
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	owner_error = require_json_export_owner()
+	if owner_error:
+		return owner_error
+
+	convidados = load_convidados()
+	sync_state = acknowledge_new_guests()
+	content = json.dumps(convidados, ensure_ascii=False, indent=2)
+	filename = f"convidados-export-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
+
+	return Response(
+		content,
+		status=200,
+		mimetype="application/json",
+		headers={
+			"Content-Disposition": f'attachment; filename="{filename}"',
+			"X-New-Guests-Ack-At": sync_state["novos_convidados_ack_em"],
+			"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+			"Pragma": "no-cache",
+		},
+	)
+
+
 @app.route("/api/admin/convidados", methods=["POST", "OPTIONS"])
 def criar_convidado_admin():
 	if request.method == "OPTIONS":
@@ -1518,6 +1614,7 @@ def criar_convidado_admin():
 					"nome": nome,
 					"grupo": grupo,
 					"tipo": tipo,
+					"criado_em": utc_now().isoformat(),
 					"presenca_confirmada": status_presenca in {"confirmado", "nao_vai"},
 					"vai_ao_evento": status_presenca == "confirmado",
 					"presenca_confirmada_em": utc_now().isoformat() if status_presenca in {"confirmado", "nao_vai"} else "",

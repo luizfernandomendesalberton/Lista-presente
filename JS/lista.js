@@ -43,6 +43,7 @@ const adminMetricAdminsAtivos = document.getElementById("adminMetricAdminsAtivos
 const adminMetricPixTotal = document.getElementById("adminMetricPixTotal");
 const adminMetricPixValorTotal = document.getElementById("adminMetricPixValorTotal");
 const adminMetricNovosPendentes = document.getElementById("adminMetricNovosPendentes");
+const adminMetricNovosConvidadosPendentes = document.getElementById("adminMetricNovosConvidadosPendentes");
 const adminRecentList = document.getElementById("adminRecentList");
 const adminPixRecentList = document.getElementById("adminPixRecentList");
 const adminUnreserveRecentList = document.getElementById("adminUnreserveRecentList");
@@ -83,6 +84,8 @@ const adminConvidadoCancelEditBtn = document.getElementById("adminConvidadoCance
 const adminConvidadoFormTitle = document.getElementById("adminConvidadoFormTitle");
 const adminConvidadoStatus = document.getElementById("adminConvidadoStatus");
 const adminConvidadosList = document.getElementById("adminConvidadosList");
+const adminConvidadosExportBtn = document.getElementById("adminConvidadosExportBtn");
+const adminNewGuestsHint = document.getElementById("adminNewGuestsHint");
 const hasGiftListUI = Boolean(listaEl && statusEl && template && filtroBusca && filtroCategoria && filtroOrdem);
 const hasAdminMetricsUI = Boolean(adminMetricTotal || adminRecentList || adminPresenceHint || adminPixRecentList || adminUnreserveRecentList);
 const hasAdminConvidadosUI = Boolean(adminConvidadosPanel && adminConvidadoForm && adminConvidadosList);
@@ -677,6 +680,43 @@ async function carregarConvidadosAdmin() {
 
 		convidadosState = Array.isArray(result) ? result : [];
 		renderAdminConvidados(convidadosState);
+		await carregarResumoConvidadosAdmin();
+	} catch (error) {
+		if (adminConvidadoStatus) {
+			adminConvidadoStatus.textContent = error.message;
+		}
+	}
+}
+
+
+async function carregarResumoConvidadosAdmin() {
+	if (!adminAuthenticated || !adminNewGuestsHint) {
+		return;
+	}
+
+	try {
+		const response = await fetch(`/api/admin/convidados/resumo?t=${Date.now()}`, {
+			method: "GET",
+			cache: "no-store",
+			credentials: "same-origin",
+			headers: {
+				...getAdminHeaders(),
+			},
+		});
+
+		const result = await response.json();
+		if (!response.ok) {
+			throw new Error(result.erro || "Falha ao carregar resumo de convidados.");
+		}
+
+		const pendentes = Number(result.novos_convidados_pendentes_total || 0);
+		if (pendentes > 0) {
+			adminNewGuestsHint.textContent = `${pendentes} novo(s) convidado(s) adicionado(s) desde o último backup JSON.`;
+		} else if (result.novos_convidados_ack_em) {
+			adminNewGuestsHint.textContent = `Sem pendências. Última conferência: ${formatReservationTime(result.novos_convidados_ack_em)}.`;
+		} else {
+			adminNewGuestsHint.textContent = "Nenhum novo convidado pendente de backup.";
+		}
 	} catch (error) {
 		if (adminConvidadoStatus) {
 			adminConvidadoStatus.textContent = error.message;
@@ -827,8 +867,14 @@ function renderAdminMetrics(metrics) {
 		if (adminMetricNovosPendentes) {
 			adminMetricNovosPendentes.textContent = "0";
 		}
+		if (adminMetricNovosConvidadosPendentes) {
+			adminMetricNovosConvidadosPendentes.textContent = "0";
+		}
 		if (adminNewProductsHint) {
 			adminNewProductsHint.textContent = "Nenhum novo produto pendente de conferência.";
+		}
+		if (adminNewGuestsHint) {
+			adminNewGuestsHint.textContent = "Nenhum novo convidado pendente de backup.";
 		}
 		if (adminPresenceHint) {
 			adminPresenceHint.textContent = "Nenhum admin online no momento.";
@@ -863,6 +909,9 @@ function renderAdminMetrics(metrics) {
 	if (adminMetricNovosPendentes) {
 		adminMetricNovosPendentes.textContent = String(metrics.novos_produtos_pendentes_total || 0);
 	}
+	if (adminMetricNovosConvidadosPendentes) {
+		adminMetricNovosConvidadosPendentes.textContent = String(metrics.novos_convidados_pendentes_total || 0);
+	}
 
 	if (adminNewProductsHint) {
 		const novosPendentes = Number(metrics.novos_produtos_pendentes_total || 0);
@@ -872,6 +921,17 @@ function renderAdminMetrics(metrics) {
 			adminNewProductsHint.textContent = `Sem pendências. Última conferência: ${formatReservationTime(metrics.novos_produtos_ack_em)}.`;
 		} else {
 			adminNewProductsHint.textContent = "Nenhum novo produto pendente de conferência.";
+		}
+	}
+
+	if (adminNewGuestsHint) {
+		const novosConvidadosPendentes = Number(metrics.novos_convidados_pendentes_total || 0);
+		if (novosConvidadosPendentes > 0) {
+			adminNewGuestsHint.textContent = `${novosConvidadosPendentes} novo(s) convidado(s) adicionado(s) desde o último backup JSON de convidados.`;
+		} else if (metrics.novos_convidados_ack_em) {
+			adminNewGuestsHint.textContent = `Sem pendências de convidados. Última conferência: ${formatReservationTime(metrics.novos_convidados_ack_em)}.`;
+		} else {
+			adminNewGuestsHint.textContent = "Nenhum novo convidado pendente de backup.";
 		}
 	}
 
@@ -1537,6 +1597,62 @@ if (isAdminPage) {
 				await carregarMetricasAdmin();
 			} catch (error) {
 				adminStatus.textContent = error.message;
+			}
+		});
+	}
+
+	if (adminConvidadosExportBtn) {
+		adminConvidadosExportBtn.addEventListener("click", async () => {
+			if (!adminAuthenticated) {
+				if (adminConvidadoStatus) {
+					adminConvidadoStatus.textContent = "Faça login para baixar o JSON de convidados.";
+				}
+				return;
+			}
+
+			try {
+				const response = await fetch(`/api/admin/convidados/export?t=${Date.now()}`, {
+					method: "GET",
+					cache: "no-store",
+					credentials: "same-origin",
+					headers: {
+						...getAdminHeaders(),
+					},
+				});
+
+				if (!response.ok) {
+					let message = "Falha ao exportar JSON de convidados.";
+					try {
+						const body = await response.json();
+						message = body.erro || message;
+					} catch (_error) {
+						// Keep fallback message when response body is not JSON.
+					}
+					throw new Error(message);
+				}
+
+				const blob = await response.blob();
+				const contentDisposition = response.headers.get("Content-Disposition") || "";
+				const match = contentDisposition.match(/filename=\"?([^\";]+)\"?/i);
+				const fileName = match ? match[1] : "convidados-export.json";
+
+				const fileUrl = window.URL.createObjectURL(blob);
+				const link = document.createElement("a");
+				link.href = fileUrl;
+				link.download = fileName;
+				document.body.appendChild(link);
+				link.click();
+				link.remove();
+				window.URL.revokeObjectURL(fileUrl);
+
+				if (adminConvidadoStatus) {
+					adminConvidadoStatus.textContent = "Arquivo JSON de convidados exportado e contador resetado.";
+				}
+				await carregarResumoConvidadosAdmin();
+			} catch (error) {
+				if (adminConvidadoStatus) {
+					adminConvidadoStatus.textContent = error.message;
+				}
 			}
 		});
 	}

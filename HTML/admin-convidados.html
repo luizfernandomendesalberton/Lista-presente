@@ -14,6 +14,12 @@
 	<div class="bg-shape bg-shape-two" aria-hidden="true"></div>
 
 	<main class="container reveal-up">
+		<nav class="admin-quick-nav" aria-label="Navegação rápida administrativa">
+			<a class="btn-link" href="/admin">Presentes</a>
+			<a class="btn-link is-current" href="/admin/convidados">Convidados</a>
+			<a class="btn-link" href="/admin/metricas">Métricas</a>
+		</nav>
+
 		<header class="hero">
 			<p class="tag">Área de Administração</p>
 			<p id="appVersion" class="app-version">Versão --</p>
@@ -53,8 +59,10 @@
 				<div class="admin-actions" style="margin-bottom: 1rem;">
 					<a class="btn-secondary" href="/admin">Gerenciar presentes</a>
 					<a class="btn-secondary" href="/admin/metricas">Ver métricas</a>
+					<button id="adminConvidadosExportBtn" type="button">Baixar JSON Convidados</button>
 					<button id="adminLogoutBtn" type="button">Sair</button>
 				</div>
+				<p id="adminNewGuestsHint" class="admin-tip admin-new-products-hint">Nenhum novo convidado pendente de backup.</p>
 
 				<section class="panel" id="adminConvidadosPanel">
 					<form id="adminConvidadoForm" class="admin-form">

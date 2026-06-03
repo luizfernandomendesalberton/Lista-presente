@@ -14,6 +14,12 @@
 	<div class="bg-shape bg-shape-two" aria-hidden="true"></div>
 
 	<main class="container reveal-up" id="adminMetricsOnlyPage">
+		<nav class="admin-quick-nav" aria-label="Navegação rápida administrativa">
+			<a class="btn-link" href="/admin">Presentes</a>
+			<a class="btn-link" href="/admin/convidados">Convidados</a>
+			<a class="btn-link is-current" href="/admin/metricas">Métricas</a>
+		</nav>
+
 		<header class="hero">
 			<p class="tag">Área de Administração</p>
 			<p id="appVersion" class="app-version">Versão --</p>
@@ -95,9 +101,14 @@
 						<strong id="adminMetricNovosPendentes">0</strong>
 						<span>Novos produtos pendentes</span>
 					</article>
+					<article>
+						<strong id="adminMetricNovosConvidadosPendentes">0</strong>
+						<span>Novos convidados pendentes</span>
+					</article>
 				</section>
 
 				<p id="adminNewProductsHint" class="admin-tip admin-new-products-hint">Nenhum novo produto pendente de conferência.</p>
+				<p id="adminNewGuestsHint" class="admin-tip admin-new-products-hint">Nenhum novo convidado pendente de backup.</p>
 				<p id="adminPresenceHint" class="admin-tip">Nenhum admin online no momento.</p>
 
 				<div class="admin-recent-wrap">
