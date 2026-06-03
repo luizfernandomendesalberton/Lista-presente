@@ -1001,6 +1001,10 @@ def add_cors_headers(response):
 
 @app.route("/", methods=["GET"])
 def index():
+	# Always require guests to pass through the password screen again on home access.
+	session.pop("guest_authenticated", None)
+	session.pop("guest_name_key", None)
+	session.pop("guest_nome", None)
 	response = send_from_directory(HTML_DIR, "acesso.html")
 	response.headers["Cache-Control"] = "no-store, max-age=0"
 	return response

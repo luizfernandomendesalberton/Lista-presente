@@ -20,6 +20,7 @@ const presencaRulesPanel = document.getElementById("presencaRulesPanel");
 const presencaRulesDismissBtn = document.getElementById("presencaRulesDismissBtn");
 const presencaConfirmModal = document.getElementById("presencaConfirmModal");
 const presencaConfirmClose = document.getElementById("presencaConfirmClose");
+const presencaConfirmTitle = document.getElementById("presencaConfirmTitle");
 const presencaConfirmSubtitle = document.getElementById("presencaConfirmSubtitle");
 const presencaConfirmMessage = document.getElementById("presencaConfirmMessage");
 const presencaConfirmNo = document.getElementById("presencaConfirmNo");
@@ -206,8 +207,26 @@ async function confirmPresence(nome, vaiAoEvento) {
 
 	const actionLabel = vaiAoEvento ? "confirmar presença" : "marcar como não vai";
 	const confirmMessage = `Deseja ${actionLabel}? Esta escolha será aplicada para todo o grupo/família e depois só os noivos (admin) podem alterar.`;
-	const confirmed = await askPresencaConfirmation(actionLabel, confirmMessage);
+	const confirmed = await askPresencaConfirmation(actionLabel, confirmMessage, {
+		title: "Confirmar Escolha",
+		subtitle: `Você escolheu ${actionLabel}.`,
+		confirmLabel: "Continuar",
+		cancelLabel: "Cancelar",
+	});
 	if (!confirmed) {
+		return;
+	}
+
+	const finalMessage = vaiAoEvento
+		? "Última confirmação: deseja salvar agora que TODO o grupo/família vai ao evento?"
+		: "Última confirmação: deseja salvar agora que TODO o grupo/família não vai ao evento?";
+	const finalConfirmed = await askPresencaConfirmation(actionLabel, finalMessage, {
+		title: "Confirmação Final",
+		subtitle: "Esta ação será gravada agora e ficará bloqueada para edição nesta tela.",
+		confirmLabel: "Sim, salvar agora",
+		cancelLabel: "Voltar",
+	});
+	if (!finalConfirmed) {
 		return;
 	}
 
@@ -259,14 +278,28 @@ function closePresencaConfirmModal(confirmed) {
 	}
 }
 
-function askPresencaConfirmation(actionLabel, message) {
+function askPresencaConfirmation(actionLabel, message, options = {}) {
 	if (!presencaConfirmModal || !presencaConfirmMessage) {
 		return Promise.resolve(window.confirm(message));
 	}
 
+	const title = String(options.title || "Confirmar Escolha").trim() || "Confirmar Escolha";
+	const subtitle = String(options.subtitle || `Você escolheu ${actionLabel}.`).trim() || `Você escolheu ${actionLabel}.`;
+	const confirmLabel = String(options.confirmLabel || "Confirmar agora").trim() || "Confirmar agora";
+	const cancelLabel = String(options.cancelLabel || "Cancelar").trim() || "Cancelar";
+
 	presencaConfirmMessage.textContent = message;
+	if (presencaConfirmTitle) {
+		presencaConfirmTitle.textContent = title;
+	}
 	if (presencaConfirmSubtitle) {
-		presencaConfirmSubtitle.textContent = `Você escolheu ${actionLabel}.`;
+		presencaConfirmSubtitle.textContent = subtitle;
+	}
+	if (presencaConfirmYes) {
+		presencaConfirmYes.textContent = confirmLabel;
+	}
+	if (presencaConfirmNo) {
+		presencaConfirmNo.textContent = cancelLabel;
 	}
 	presencaConfirmModal.hidden = false;
 
@@ -437,10 +470,6 @@ async function initLoginPage() {
 		if (sessionData.admin_authenticated) {
 			window.location.href = "/admin";
 			return;
-		}
-
-		if (sessionData.authenticated) {
-			window.location.href = "/presenca";
 		}
 	} catch (_error) {
 		// Login page continues available even if session endpoint fails.
