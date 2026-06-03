@@ -49,6 +49,20 @@
 		</section>
 	</main>
 
+	<div id="presencaConfirmModal" class="pix-modal" hidden>
+		<div class="pix-modal-backdrop" data-close-presenca-confirm="true"></div>
+		<section class="pix-modal-card" role="dialog" aria-modal="true" aria-labelledby="presencaConfirmTitle">
+			<button id="presencaConfirmClose" class="pix-close" type="button" aria-label="Fechar">x</button>
+			<h2 id="presencaConfirmTitle">Confirmar Escolha</h2>
+			<p class="pix-subtitle" id="presencaConfirmSubtitle">Confira sua decisão antes de continuar.</p>
+			<p id="presencaConfirmMessage" class="confirm-choice-message"></p>
+			<div class="confirm-choice-actions">
+				<button id="presencaConfirmNo" type="button" class="btn-secondary">Cancelar</button>
+				<button id="presencaConfirmYes" type="button">Confirmar agora</button>
+			</div>
+		</section>
+	</div>
+
 	<script src="/JS/acesso-presenca.js"></script>
 </body>
 </html>

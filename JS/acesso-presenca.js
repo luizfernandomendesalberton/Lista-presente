@@ -18,8 +18,15 @@ const btnGoPresentes = document.getElementById("btnGoPresentes");
 const btnRefreshGrupos = document.getElementById("btnRefreshGrupos");
 const presencaRulesPanel = document.getElementById("presencaRulesPanel");
 const presencaRulesDismissBtn = document.getElementById("presencaRulesDismissBtn");
+const presencaConfirmModal = document.getElementById("presencaConfirmModal");
+const presencaConfirmClose = document.getElementById("presencaConfirmClose");
+const presencaConfirmSubtitle = document.getElementById("presencaConfirmSubtitle");
+const presencaConfirmMessage = document.getElementById("presencaConfirmMessage");
+const presencaConfirmNo = document.getElementById("presencaConfirmNo");
+const presencaConfirmYes = document.getElementById("presencaConfirmYes");
 
 const PRESENCA_RULES_HIDE_KEY = "lista_casamento_hide_presenca_rules";
+let presencaConfirmResolver = null;
 
 const isLoginPage = Boolean(guestLoginForm);
 const isPresencaPage = Boolean(gruposList);
@@ -197,6 +204,13 @@ async function confirmPresence(nome, vaiAoEvento) {
 		return;
 	}
 
+	const actionLabel = vaiAoEvento ? "confirmar presença" : "marcar como não vai";
+	const confirmMessage = `Deseja ${actionLabel}? Esta escolha será aplicada para todo o grupo/família e depois só os noivos (admin) podem alterar.`;
+	const confirmed = await askPresencaConfirmation(actionLabel, confirmMessage);
+	if (!confirmed) {
+		return;
+	}
+
 	presencaStatus.textContent = "Salvando confirmacao...";
 
 	try {
@@ -231,6 +245,38 @@ async function confirmPresence(nome, vaiAoEvento) {
 	} catch (error) {
 		presencaStatus.textContent = error.message;
 	}
+}
+
+function closePresencaConfirmModal(confirmed) {
+	if (!presencaConfirmModal) {
+		return;
+	}
+
+	presencaConfirmModal.hidden = true;
+	if (typeof presencaConfirmResolver === "function") {
+		presencaConfirmResolver(Boolean(confirmed));
+		presencaConfirmResolver = null;
+	}
+}
+
+function askPresencaConfirmation(actionLabel, message) {
+	if (!presencaConfirmModal || !presencaConfirmMessage) {
+		return Promise.resolve(window.confirm(message));
+	}
+
+	presencaConfirmMessage.textContent = message;
+	if (presencaConfirmSubtitle) {
+		presencaConfirmSubtitle.textContent = `Você escolheu ${actionLabel}.`;
+	}
+	presencaConfirmModal.hidden = false;
+
+	if (presencaConfirmNo) {
+		presencaConfirmNo.focus();
+	}
+
+	return new Promise((resolve) => {
+		presencaConfirmResolver = resolve;
+	});
 }
 
 function buildGuestCard(convidado, guestNome) {
@@ -420,6 +466,33 @@ async function initPresencaPage() {
 		});
 	}
 
+	if (presencaConfirmYes) {
+		presencaConfirmYes.addEventListener("click", () => {
+			closePresencaConfirmModal(true);
+		});
+	}
+
+	if (presencaConfirmNo) {
+		presencaConfirmNo.addEventListener("click", () => {
+			closePresencaConfirmModal(false);
+		});
+	}
+
+	if (presencaConfirmClose) {
+		presencaConfirmClose.addEventListener("click", () => {
+			closePresencaConfirmModal(false);
+		});
+	}
+
+	if (presencaConfirmModal) {
+		presencaConfirmModal.addEventListener("click", (event) => {
+			const target = event.target;
+			if (target instanceof HTMLElement && target.dataset.closePresencaConfirm === "true") {
+				closePresencaConfirmModal(false);
+			}
+		});
+	}
+
 	if (btnGoPresentes) {
 		btnGoPresentes.addEventListener("click", async (event) => {
 			const sessionData = await getGuestSession();
@@ -453,5 +526,11 @@ async function initPage() {
 	await initLoginPage();
 	await initPresencaPage();
 }
+
+document.addEventListener("keydown", (event) => {
+	if (event.key === "Escape" && presencaConfirmModal && !presencaConfirmModal.hidden) {
+		closePresencaConfirmModal(false);
+	}
+});
 
 initPage();
