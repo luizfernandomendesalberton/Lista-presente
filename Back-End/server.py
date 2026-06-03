@@ -991,6 +991,45 @@ def send_presence_notification_email(grupo, nome_convidado, vai_ao_evento, confi
 		server.sendmail(from_email, notify_to_emails, message.as_string())
 
 
+def send_presence_change_request_email(grupo, nome_convidado, vai_ao_evento, mensagem=None):
+	smtp_host = os.getenv("SMTP_HOST")
+	smtp_port = int(os.getenv("SMTP_PORT", "587"))
+	smtp_user = os.getenv("SMTP_USER")
+	smtp_password = os.getenv("SMTP_PASSWORD")
+	smtp_use_tls = os.getenv("SMTP_USE_TLS", "1") == "1"
+
+	presence_notify_to = os.getenv("PRESENCA_NOTIFY_TO_EMAIL") or os.getenv("NOTIFY_TO_EMAIL")
+	notify_to_emails = parse_email_list(presence_notify_to)
+	from_email = os.getenv("FROM_EMAIL", smtp_user or "")
+
+	if not all([smtp_host, smtp_user, smtp_password, notify_to_emails]):
+		raise ValueError(
+			"Configuração SMTP incompleta para presença. Defina SMTP_HOST, SMTP_USER, SMTP_PASSWORD e PRESENCA_NOTIFY_TO_EMAIL (ou NOTIFY_TO_EMAIL)."
+		)
+
+	status_text = "confirmado" if vai_ao_evento else "não vai"
+	change_reason = str(mensagem or "").strip() or "Desejo trocar a resposta da confirmação de presença."
+	body = (
+		"Solicitação de alteração da resposta de presença.\n\n"
+		f"Grupo/Família: {grupo}\n"
+		f"Convidado: {nome_convidado}\n"
+		f"Status atual: {status_text}\n"
+		f"Motivo informado: {change_reason}\n"
+		f"Data/Hora: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n"
+	)
+
+	message = MIMEText(body, "plain", "utf-8")
+	message["Subject"] = f"Solicitação de alteração de presença - {grupo}"
+	message["From"] = from_email
+	message["To"] = ", ".join(notify_to_emails)
+
+	with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as server:
+		if smtp_use_tls:
+			server.starttls()
+		server.login(smtp_user, smtp_password)
+		server.sendmail(from_email, notify_to_emails, message.as_string())
+
+
 @app.after_request
 def add_cors_headers(response):
 	response.headers["Access-Control-Allow-Origin"] = "*"
@@ -1248,6 +1287,62 @@ def confirmar_presenca():
 			"grupo_confirmados": confirmados_no_grupo,
 			"email_status": email_status,
 			"can_access_presentes": can_access_presentes(),
+		}
+	)
+
+
+@app.route("/api/presenca/solicitar-alteracao", methods=["POST", "OPTIONS"])
+def solicitar_alteracao_presenca():
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	if not is_guest_authenticated() and not is_session_admin():
+		return jsonify({"erro": "Faça login com a senha para solicitar alteração."}), 401
+
+	payload = request.get_json(silent=True) or {}
+	nome = str(payload.get("nome") or "").strip()
+	mensagem = str(payload.get("mensagem") or "").strip()
+	nome_key = normalize_name_key(nome)
+
+	if not nome_key:
+		return jsonify({"erro": "Nome inválido para solicitação de alteração."}), 400
+
+	with CONVIDADOS_LOCK:
+		with CONVIDADOS_FILE_LOCK:
+			convidados = load_convidados()
+			convidado = next((item for item in convidados if item.get("nome_key") == nome_key), None)
+
+			if not convidado:
+				return jsonify({"erro": "Convidado não encontrado."}), 404
+
+			session_name_key = get_current_guest_name_key()
+			if session_name_key and session_name_key != nome_key and not is_session_admin():
+				return jsonify({"erro": "Esta sessão já está vinculada a outro nome."}), 403
+
+			session["guest_name_key"] = nome_key
+			session["guest_nome"] = convidado.get("nome")
+
+			if not bool(convidado.get("presenca_confirmada")):
+				return jsonify({"erro": "Somente respostas já confirmadas podem solicitar alteração."}), 400
+
+			grupo_nome = str(convidado.get("grupo") or "Sem grupo").strip() or "Sem grupo"
+
+	try:
+		send_presence_change_request_email(
+			grupo_nome,
+			convidado.get("nome") or nome,
+			bool(convidado.get("vai_ao_evento")),
+			mensagem,
+		)
+	except Exception as exc:
+		app.logger.exception("Falha ao enviar solicitação de alteração de presença")
+		return jsonify({"erro": f"Não foi possível enviar o e-mail agora: {exc}"}), 503
+
+	return jsonify(
+		{
+			"mensagem": "Solicitação enviada aos noivos por e-mail.",
+			"grupo": grupo_nome,
+			"convidado": convidado.get("nome") or nome,
 		}
 	)
 

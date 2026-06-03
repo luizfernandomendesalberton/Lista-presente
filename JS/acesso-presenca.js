@@ -266,6 +266,51 @@ async function confirmPresence(nome, vaiAoEvento) {
 	}
 }
 
+async function requestPresenceChange(convidado) {
+	if (!presencaStatus || !convidado || !convidado.nome) {
+		return;
+	}
+
+	const requestMessage = "Desejo trocar a resposta da confirmação de presença.";
+
+	const statusAtual = convidado.vai_ao_evento ? "confirmado para ir" : "confirmado como não vai";
+	const confirmMessage = `Deseja solicitar por e-mail uma alteração da resposta de ${convidado.nome}? Status atual: ${statusAtual}.`;
+	const confirmed = await askPresencaConfirmation("solicitar alteração", confirmMessage, {
+		title: "Solicitar Alteração",
+		subtitle: "Os noivos receberão seu pedido por e-mail para ajustar no painel admin.",
+		confirmLabel: "Enviar solicitação",
+		cancelLabel: "Cancelar",
+	});
+	if (!confirmed) {
+		return;
+	}
+
+	presencaStatus.textContent = "Enviando solicitação por e-mail...";
+
+	try {
+		const response = await fetch("/api/presenca/solicitar-alteracao", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "same-origin",
+			body: JSON.stringify({
+				nome: convidado.nome,
+				mensagem: requestMessage,
+			}),
+		});
+
+		const data = await response.json();
+		if (!response.ok) {
+			throw new Error(data.erro || "Não foi possível enviar a solicitação de alteração.");
+		}
+
+		presencaStatus.textContent = data.mensagem || "Solicitação enviada com sucesso.";
+	} catch (error) {
+		presencaStatus.textContent = error.message;
+	}
+}
+
 function closePresencaConfirmModal(confirmed) {
 	if (!presencaConfirmModal) {
 		return;
@@ -370,6 +415,17 @@ function buildGuestCard(convidado, guestNome) {
 		const lockedInfo = document.createElement("small");
 		lockedInfo.textContent = "Para alterar sua resposta, fale com os noivos (admin).";
 		card.appendChild(lockedInfo);
+
+		if (guestNome && guestNome === convidado.nome) {
+			const btnRequestChange = document.createElement("button");
+			btnRequestChange.type = "button";
+			btnRequestChange.className = "btn-secondary";
+			btnRequestChange.textContent = "Quero trocar minha resposta";
+			btnRequestChange.addEventListener("click", () => {
+				requestPresenceChange(convidado);
+			});
+			card.appendChild(btnRequestChange);
+		}
 	}
 
 	return card;
