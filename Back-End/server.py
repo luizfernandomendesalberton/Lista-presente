@@ -1067,6 +1067,18 @@ def presenca_page():
 
 @app.route("/presentes", methods=["GET"])
 def presentes_page():
+	if not is_session_admin():
+		referer = str(request.headers.get("Referer") or "").strip()
+		host_prefix = request.host_url.rstrip("/")
+		came_from_presenca = referer.startswith(f"{host_prefix}/presenca")
+
+		if not came_from_presenca:
+			# Direct link access should always return to login first.
+			session.pop("guest_authenticated", None)
+			session.pop("guest_name_key", None)
+			session.pop("guest_nome", None)
+			return redirect("/", code=302)
+
 	if not can_access_presentes():
 		if is_guest_authenticated() or is_session_admin():
 			return redirect("/presenca", code=302)
