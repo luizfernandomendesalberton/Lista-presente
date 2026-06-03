@@ -16,6 +16,10 @@ const presencaStatus = document.getElementById("presencaStatus");
 const presencaHint = document.getElementById("presencaHint");
 const btnGoPresentes = document.getElementById("btnGoPresentes");
 const btnRefreshGrupos = document.getElementById("btnRefreshGrupos");
+const presencaRulesPanel = document.getElementById("presencaRulesPanel");
+const presencaRulesDismissBtn = document.getElementById("presencaRulesDismissBtn");
+
+const PRESENCA_RULES_HIDE_KEY = "lista_casamento_hide_presenca_rules";
 
 const isLoginPage = Boolean(guestLoginForm);
 const isPresencaPage = Boolean(gruposList);
@@ -264,24 +268,31 @@ function buildGuestCard(convidado, guestNome) {
 	const actions = document.createElement("div");
 	actions.className = "grupo-convidado-actions";
 
-	const btnConfirm = document.createElement("button");
-	btnConfirm.type = "button";
-	btnConfirm.textContent = "Confirmar Presenca";
-	btnConfirm.addEventListener("click", () => {
-		confirmPresence(convidado.nome, true);
-	});
-	actions.appendChild(btnConfirm);
+	if (!convidado.presenca_confirmada) {
+		const btnConfirm = document.createElement("button");
+		btnConfirm.type = "button";
+		btnConfirm.textContent = "Confirmar Presenca";
+		btnConfirm.addEventListener("click", () => {
+			confirmPresence(convidado.nome, true);
+		});
+		actions.appendChild(btnConfirm);
 
-	const btnDecline = document.createElement("button");
-	btnDecline.type = "button";
-	btnDecline.className = "btn-secondary";
-	btnDecline.textContent = "Nao Vou";
-	btnDecline.addEventListener("click", () => {
-		confirmPresence(convidado.nome, false);
-	});
-	actions.appendChild(btnDecline);
+		const btnDecline = document.createElement("button");
+		btnDecline.type = "button";
+		btnDecline.className = "btn-secondary";
+		btnDecline.textContent = "Nao Vou";
+		btnDecline.addEventListener("click", () => {
+			confirmPresence(convidado.nome, false);
+		});
+		actions.appendChild(btnDecline);
 
-	card.appendChild(actions);
+		card.appendChild(actions);
+	} else {
+		const lockedInfo = document.createElement("small");
+		lockedInfo.textContent = "Para alterar sua resposta, fale com os noivos (admin).";
+		card.appendChild(lockedInfo);
+	}
+
 	return card;
 }
 
@@ -393,6 +404,20 @@ async function initLoginPage() {
 async function initPresencaPage() {
 	if (!isPresencaPage) {
 		return;
+	}
+
+	if (presencaRulesPanel) {
+		const shouldHideRules = window.localStorage.getItem(PRESENCA_RULES_HIDE_KEY) === "1";
+		presencaRulesPanel.hidden = shouldHideRules;
+	}
+
+	if (presencaRulesDismissBtn) {
+		presencaRulesDismissBtn.addEventListener("click", () => {
+			window.localStorage.setItem(PRESENCA_RULES_HIDE_KEY, "1");
+			if (presencaRulesPanel) {
+				presencaRulesPanel.hidden = true;
+			}
+		});
 	}
 
 	if (btnGoPresentes) {

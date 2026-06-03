@@ -1088,6 +1088,26 @@ button:hover {
 	width: 100%;
 }
 
+.presenca-alert-panel h2 {
+	margin: 0;
+	font-family: "Prata", serif;
+	font-weight: 400;
+	font-size: 1.28rem;
+}
+
+.presenca-rules {
+	margin: 6px 0 0;
+	padding-left: 18px;
+	display: grid;
+	gap: 6px;
+	color: #6a5a4d;
+	font-size: 0.95rem;
+}
+
+.presenca-rules li::marker {
+	color: var(--wine);
+}
+
 .login-mode-switch {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
@@ -1186,8 +1206,8 @@ button:hover {
 }
 
 .grupo-convidado.is-declined {
-	border-color: rgba(151, 115, 97, 0.56);
-	background: linear-gradient(180deg, rgba(255, 248, 244, 0.95), rgba(248, 236, 227, 0.95));
+	border-color: rgba(164, 79, 79, 0.62);
+	background: linear-gradient(180deg, rgba(255, 240, 240, 0.96), rgba(248, 223, 223, 0.96));
 }
 
 .grupo-convidado-actions {
