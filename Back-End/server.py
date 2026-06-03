@@ -1481,6 +1481,10 @@ def admin_metrics():
 	sync_state = load_admin_sync_state()
 	pending_new_products = get_pending_new_products(presentes, sync_state.get("novos_produtos_ack_em"))
 	convidados = load_convidados()
+	convidados_total = len(convidados)
+	convidados_confirmados = [item for item in convidados if bool(item.get("presenca_confirmada")) and bool(item.get("vai_ao_evento"))]
+	convidados_nao_vai = [item for item in convidados if bool(item.get("presenca_confirmada")) and not bool(item.get("vai_ao_evento"))]
+	convidados_pendentes_total = max(convidados_total - len(convidados_confirmados) - len(convidados_nao_vai), 0)
 	pending_new_guests = get_pending_new_guests(convidados, sync_state.get("novos_convidados_ack_em"))
 	pix_contributions = load_pix_contributions()
 	pix_total = len(pix_contributions)
@@ -1524,6 +1528,10 @@ def admin_metrics():
 	response = jsonify(
 		{
 			"total": total,
+			"convidados_total": convidados_total,
+			"convidados_confirmados_total": len(convidados_confirmados),
+			"convidados_nao_vai_total": len(convidados_nao_vai),
+			"convidados_pendentes_total": convidados_pendentes_total,
 			"disponiveis": disponiveis,
 			"reservados": len(reservados),
 			"percentual_reservado": round((len(reservados) / total) * 100, 1) if total else 0,

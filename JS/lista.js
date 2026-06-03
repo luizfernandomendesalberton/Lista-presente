@@ -44,6 +44,10 @@ const adminMetricPixTotal = document.getElementById("adminMetricPixTotal");
 const adminMetricPixValorTotal = document.getElementById("adminMetricPixValorTotal");
 const adminMetricNovosPendentes = document.getElementById("adminMetricNovosPendentes");
 const adminMetricNovosConvidadosPendentes = document.getElementById("adminMetricNovosConvidadosPendentes");
+const adminMetricConvidadosTotal = document.getElementById("adminMetricConvidadosTotal");
+const adminMetricConvidadosConfirmados = document.getElementById("adminMetricConvidadosConfirmados");
+const adminMetricConvidadosNaoVai = document.getElementById("adminMetricConvidadosNaoVai");
+const adminMetricConvidadosPendentes = document.getElementById("adminMetricConvidadosPendentes");
 const adminRecentList = document.getElementById("adminRecentList");
 const adminPixRecentList = document.getElementById("adminPixRecentList");
 const adminUnreserveRecentList = document.getElementById("adminUnreserveRecentList");
@@ -870,6 +874,18 @@ function renderAdminMetrics(metrics) {
 		if (adminMetricNovosConvidadosPendentes) {
 			adminMetricNovosConvidadosPendentes.textContent = "0";
 		}
+		if (adminMetricConvidadosTotal) {
+			adminMetricConvidadosTotal.textContent = "0";
+		}
+		if (adminMetricConvidadosConfirmados) {
+			adminMetricConvidadosConfirmados.textContent = "0";
+		}
+		if (adminMetricConvidadosNaoVai) {
+			adminMetricConvidadosNaoVai.textContent = "0";
+		}
+		if (adminMetricConvidadosPendentes) {
+			adminMetricConvidadosPendentes.textContent = "0";
+		}
 		if (adminNewProductsHint) {
 			adminNewProductsHint.textContent = "Nenhum novo produto pendente de conferência.";
 		}
@@ -911,6 +927,18 @@ function renderAdminMetrics(metrics) {
 	}
 	if (adminMetricNovosConvidadosPendentes) {
 		adminMetricNovosConvidadosPendentes.textContent = String(metrics.novos_convidados_pendentes_total || 0);
+	}
+	if (adminMetricConvidadosTotal) {
+		adminMetricConvidadosTotal.textContent = String(metrics.convidados_total || 0);
+	}
+	if (adminMetricConvidadosConfirmados) {
+		adminMetricConvidadosConfirmados.textContent = String(metrics.convidados_confirmados_total || 0);
+	}
+	if (adminMetricConvidadosNaoVai) {
+		adminMetricConvidadosNaoVai.textContent = String(metrics.convidados_nao_vai_total || 0);
+	}
+	if (adminMetricConvidadosPendentes) {
+		adminMetricConvidadosPendentes.textContent = String(metrics.convidados_pendentes_total || 0);
 	}
 
 	if (adminNewProductsHint) {
