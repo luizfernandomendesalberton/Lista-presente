@@ -85,6 +85,8 @@ function setPresentesAccess(enabled) {
 		return;
 	}
 
+	btnGoPresentes.hidden = !enabled;
+
 	btnGoPresentes.classList.toggle("is-disabled", !enabled);
 	btnGoPresentes.setAttribute("aria-disabled", enabled ? "false" : "true");
 
@@ -577,6 +579,7 @@ async function loadGroups() {
 		return;
 	}
 
+	setPresentesAccess(false);
 	presencaStatus.textContent = "Carregando grupos...";
 
 	try {
@@ -645,6 +648,8 @@ async function initPresencaPage() {
 	if (!isPresencaPage) {
 		return;
 	}
+
+	setPresentesAccess(false);
 
 	if (presencaRulesPanel) {
 		const shouldHideRules = window.localStorage.getItem(PRESENCA_RULES_HIDE_KEY) === "1";
