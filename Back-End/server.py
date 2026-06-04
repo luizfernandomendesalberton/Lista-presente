@@ -1200,12 +1200,8 @@ def guest_login():
 		return ("", 204)
 
 	payload = request.get_json(silent=True) or {}
-	nome = str(payload.get("nome") or "").strip()
 	password = clean_credential(payload.get("password") or "")
 	configured_password = get_guest_password()
-
-	if not nome:
-		return jsonify({"erro": "Selecione seu nome para continuar."}), 400
 
 	if not password:
 		return jsonify({"erro": "Informe a senha para continuar."}), 400
@@ -1213,24 +1209,18 @@ def guest_login():
 	if not hmac.compare_digest(password, configured_password):
 		return jsonify({"erro": "Senha inválida."}), 401
 
-	convidados = load_convidados()
-	convidado = next((item for item in convidados if item.get("nome") == nome), None)
-	if not convidado:
-		return jsonify({"erro": "Nome não encontrado na lista de convidados."}), 404
-
 	session.permanent = True
 	session["guest_session_id"] = uuid.uuid4().hex
 	session["guest_authenticated"] = True
-	session["guest_name_key"] = convidado.get("nome_key") or normalize_name_key(nome)
-	session["guest_nome"] = convidado.get("nome") or nome
+	session.pop("guest_name_key", None)
+	session.pop("guest_nome", None)
 	session.pop("passed_presenca_gate", None)
-	touch_guest_session(session.get("guest_name_key"), session.get("guest_session_id"))
 
 	return jsonify(
 		{
 			"mensagem": "Senha validada com sucesso.",
 			"authenticated": True,
-			"guest_nome": convidado.get("nome") if convidado else nome,
+			"guest_nome": "",
 			"can_access_presentes": can_access_presentes(),
 		}
 	)

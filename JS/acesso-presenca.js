@@ -1,6 +1,5 @@
 const appVersionEl = document.getElementById("appVersion");
 const guestLoginForm = document.getElementById("guestLoginForm");
-const guestNameSelect = document.getElementById("guestName");
 const guestPasswordInput = document.getElementById("guestPassword");
 const guestLoginStatus = document.getElementById("guestLoginStatus");
 const adminDirectLoginForm = document.getElementById("adminDirectLoginForm");
@@ -59,8 +58,8 @@ function setLoginMode(mode) {
 	showGuestAccessBtn.setAttribute("aria-selected", isGuestMode ? "true" : "false");
 	showAdminAccessBtn.setAttribute("aria-selected", isGuestMode ? "false" : "true");
 
-	if (isGuestMode && guestNameSelect) {
-		guestNameSelect.focus();
+	if (isGuestMode && guestPasswordInput) {
+		guestPasswordInput.focus();
 	}
 	if (!isGuestMode && adminDirectEmailInput) {
 		adminDirectEmailInput.focus();
@@ -128,75 +127,16 @@ async function getGuestSession() {
 }
 
 async function loadGuestOptions() {
-	if (!guestNameSelect) {
-		return;
-	}
-
-	guestNameSelect.innerHTML = '<option value="">Carregando convidados...</option>';
-
-	try {
-		const response = await fetch("/api/guest/opcoes", {
-			credentials: "same-origin",
-			cache: "no-store",
-		});
-
-		const data = await response.json();
-		if (!response.ok) {
-			throw new Error(data.erro || "Nao foi possivel carregar a lista de convidados.");
-		}
-
-		const guests = Array.isArray(data.convidados) ? data.convidados : [];
-		guestNameSelect.innerHTML = '<option value="">Selecione seu nome</option>';
-
-		let currentGroup = "";
-		let groupSelect = null;
-		const closeGroup = () => {
-			if (groupSelect) {
-				guestNameSelect.appendChild(groupSelect);
-			}
-			groupSelect = null;
-		};
-
-		for (const convidado of guests) {
-			const groupName = String(convidado.grupo || "Sem grupo").trim() || "Sem grupo";
-			if (groupName !== currentGroup) {
-				closeGroup();
-				currentGroup = groupName;
-				groupSelect = document.createElement("optgroup");
-				groupSelect.label = groupName;
-			}
-
-			const option = document.createElement("option");
-			option.value = String(convidado.nome || "").trim();
-			option.textContent = String(convidado.nome || "").trim();
-			if (convidado.presenca_confirmada) {
-				option.textContent += convidado.tipo === "noivos" ? " (noivos)" : " (confirmado)";
-			}
-			groupSelect.appendChild(option);
-		}
-
-		closeGroup();
-	} catch (error) {
-		guestNameSelect.innerHTML = '<option value="">Falha ao carregar convidados</option>';
-		if (guestLoginStatus) {
-			guestLoginStatus.textContent = error.message;
-		}
-	}
+	return;
 }
 
 async function submitGuestLogin(event) {
 	event.preventDefault();
-	if (!guestNameSelect || !guestPasswordInput || !guestLoginStatus) {
+	if (!guestPasswordInput || !guestLoginStatus) {
 		return;
 	}
-
-	const nome = guestNameSelect.value.trim();
 
 	const password = guestPasswordInput.value.trim();
-	if (!nome) {
-		guestLoginStatus.textContent = "Selecione seu nome na lista.";
-		return;
-	}
 	if (!password) {
 		guestLoginStatus.textContent = "Digite a senha para entrar.";
 		return;
@@ -211,7 +151,7 @@ async function submitGuestLogin(event) {
 				"Content-Type": "application/json",
 			},
 			credentials: "same-origin",
-			body: JSON.stringify({ nome, password }),
+			body: JSON.stringify({ password }),
 		});
 
 		const data = await response.json();
@@ -613,7 +553,6 @@ async function initLoginPage() {
 	}
 
 	setLoginMode("guest");
-	await loadGuestOptions();
 	if (showGuestAccessBtn) {
 		showGuestAccessBtn.addEventListener("click", () => {
 			setLoginMode("guest");
