@@ -218,6 +218,10 @@ async function submitGuestLogin(event) {
 
 		const data = await response.json();
 		if (!response.ok) {
+			if (response.status === 409) {
+				guestLoginStatus.textContent = "Este nome ja esta sendo usado em outro dispositivo/navegador. Encerre a sessao anterior e tente novamente.";
+				return;
+			}
 			throw new Error(data.erro || "Senha invalida.");
 		}
 
@@ -396,6 +400,9 @@ async function bindGuestName(nome) {
 
 		const data = await response.json();
 		if (!response.ok) {
+			if (response.status === 409) {
+				throw new Error("Este nome ja esta em uso em outro dispositivo/navegador.");
+			}
 			throw new Error(data.erro || "Nao foi possivel vincular sua sessao.");
 		}
 

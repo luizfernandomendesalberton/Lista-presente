@@ -244,6 +244,25 @@ def touch_guest_session(name_key, session_id):
 		}
 
 
+def is_guest_name_in_use(name_key, except_session_id=None):
+	clean_name_key = normalize_name_key(name_key)
+	if not clean_name_key:
+		return False
+
+	ignored_session_id = str(except_session_id or "").strip()
+	now_utc = utc_now()
+	with ACTIVE_GUEST_SESSIONS_LOCK:
+		cleanup_guest_sessions_locked(now_utc)
+		for current_session_id, data in ACTIVE_GUEST_SESSIONS.items():
+			if ignored_session_id and current_session_id == ignored_session_id:
+				continue
+
+			if str(data.get("name_key") or "").strip() == clean_name_key:
+				return True
+
+	return False
+
+
 def remove_guest_session(session_id):
 	clean_session_id = str(session_id or "").strip()
 	if not clean_session_id:
@@ -293,9 +312,6 @@ def can_access_presentes():
 	convidado = get_guest_from_session()
 	if not convidado:
 		return False
-
-	if convidado.get("tipo") == "noivos":
-		return True
 
 	return bool(convidado.get("presenca_confirmada"))
 
@@ -1218,6 +1234,10 @@ def guest_login():
 	if not convidado:
 		return jsonify({"erro": "Nome não encontrado na lista de convidados."}), 404
 
+	current_session_id = get_current_guest_session_id()
+	if is_guest_name_in_use(convidado.get("nome_key") or normalize_name_key(nome), except_session_id=current_session_id):
+		return jsonify({"erro": "Este nome já está em uso em outro dispositivo/navegador. Peça para encerrar a sessão anterior antes de entrar."}), 409
+
 	remove_guest_session(session.get("guest_session_id"))
 	session.permanent = True
 	session["guest_session_id"] = uuid.uuid4().hex
@@ -1426,6 +1446,9 @@ def guest_bind_name():
 	session_name_key = get_current_guest_name_key()
 	if session_name_key and session_name_key != nome_key and not is_session_admin():
 		return jsonify({"erro": "Esta sessão já está vinculada a outro nome."}), 403
+
+	if not is_session_admin() and is_guest_name_in_use(nome_key, except_session_id=get_current_guest_session_id()):
+		return jsonify({"erro": "Este nome já está em uso em outro dispositivo/navegador."}), 409
 
 	session["guest_name_key"] = nome_key
 	session["guest_nome"] = convidado.get("nome")
