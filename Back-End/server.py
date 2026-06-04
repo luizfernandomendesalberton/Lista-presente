@@ -84,6 +84,9 @@ DEFAULT_GUEST_PASSWORD = str(os.getenv("GUEST_PASSWORD", "luizeana") or "luizean
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-change-me")
 SESSION_LIFETIME_DAYS = int(os.getenv("SESSION_LIFETIME_DAYS", "30"))
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=max(1, SESSION_LIFETIME_DAYS))
+ACTIVE_GUEST_SESSIONS = {}
+ACTIVE_GUEST_SESSIONS_LOCK = threading.Lock()
+GUEST_ACTIVITY_TTL_SECONDS = int(os.getenv("GUEST_ACTIVITY_TTL_SECONDS", str(max(SESSION_LIFETIME_DAYS, 1) * 86400)))
 
 
 def clean_credential(value):
@@ -191,7 +194,10 @@ def load_convidados():
 
 
 def is_guest_authenticated():
-	return bool(session.get("guest_authenticated"))
+	if not bool(session.get("guest_authenticated")):
+		return False
+
+	return is_active_guest_session()
 
 
 def get_current_guest_name_key():
@@ -200,6 +206,72 @@ def get_current_guest_name_key():
 
 def get_guest_password():
 	return clean_credential(os.getenv("GUEST_PASSWORD", DEFAULT_GUEST_PASSWORD)) or "luizeana"
+
+
+def get_current_guest_session_id():
+	return str(session.get("guest_session_id") or "").strip()
+
+
+def cleanup_guest_sessions_locked(now_utc):
+	deadline = now_utc.timestamp() - max(GUEST_ACTIVITY_TTL_SECONDS, 30)
+	stale_ids = [
+		session_id
+		for session_id, data in ACTIVE_GUEST_SESSIONS.items()
+		if float(data.get("last_seen_ts", 0)) < deadline
+	]
+
+	for session_id in stale_ids:
+		ACTIVE_GUEST_SESSIONS.pop(session_id, None)
+
+
+def touch_guest_session(name_key, session_id):
+	clean_name_key = normalize_name_key(name_key)
+	clean_session_id = str(session_id or "").strip()
+	if not clean_name_key or not clean_session_id:
+		return
+
+	now_utc = utc_now()
+	with ACTIVE_GUEST_SESSIONS_LOCK:
+		cleanup_guest_sessions_locked(now_utc)
+		for current_session_id, data in list(ACTIVE_GUEST_SESSIONS.items()):
+			if str(data.get("name_key") or "").strip() == clean_name_key and current_session_id != clean_session_id:
+				ACTIVE_GUEST_SESSIONS.pop(current_session_id, None)
+
+		ACTIVE_GUEST_SESSIONS[clean_session_id] = {
+			"name_key": clean_name_key,
+			"last_seen": now_utc.isoformat(),
+			"last_seen_ts": now_utc.timestamp(),
+		}
+
+
+def remove_guest_session(session_id):
+	clean_session_id = str(session_id or "").strip()
+	if not clean_session_id:
+		return
+
+	with ACTIVE_GUEST_SESSIONS_LOCK:
+		ACTIVE_GUEST_SESSIONS.pop(clean_session_id, None)
+
+
+def is_active_guest_session():
+	name_key = get_current_guest_name_key()
+	session_id = get_current_guest_session_id()
+	if not name_key or not session_id:
+		return False
+
+	now_utc = utc_now()
+	with ACTIVE_GUEST_SESSIONS_LOCK:
+		cleanup_guest_sessions_locked(now_utc)
+		data = ACTIVE_GUEST_SESSIONS.get(session_id)
+		if not data:
+			return False
+
+		if str(data.get("name_key") or "").strip() != name_key:
+			return False
+
+		ACTIVE_GUEST_SESSIONS[session_id]["last_seen"] = now_utc.isoformat()
+		ACTIVE_GUEST_SESSIONS[session_id]["last_seen_ts"] = now_utc.timestamp()
+		return True
 
 
 def get_guest_from_session(convidados=None):
@@ -1046,11 +1118,14 @@ def index():
 @app.route("/sair", methods=["GET"])
 def sair_para_login():
 	remove_admin_session(session.get("admin_session_id"))
+	remove_guest_session(session.get("guest_session_id"))
 	session.pop("admin_email", None)
 	session.pop("admin_session_id", None)
 	session.pop("guest_authenticated", None)
 	session.pop("guest_name_key", None)
 	session.pop("guest_nome", None)
+	session.pop("guest_session_id", None)
+	session.pop("passed_presenca_gate", None)
 	return redirect("/", code=302)
 
 
@@ -1125,8 +1200,12 @@ def guest_login():
 		return ("", 204)
 
 	payload = request.get_json(silent=True) or {}
+	nome = str(payload.get("nome") or "").strip()
 	password = clean_credential(payload.get("password") or "")
 	configured_password = get_guest_password()
+
+	if not nome:
+		return jsonify({"erro": "Selecione seu nome para continuar."}), 400
 
 	if not password:
 		return jsonify({"erro": "Informe a senha para continuar."}), 400
@@ -1134,20 +1213,46 @@ def guest_login():
 	if not hmac.compare_digest(password, configured_password):
 		return jsonify({"erro": "Senha inválida."}), 401
 
-	session.permanent = True
-	session["guest_authenticated"] = True
-	session.pop("guest_name_key", None)
-	session.pop("guest_nome", None)
+	convidados = load_convidados()
+	convidado = next((item for item in convidados if item.get("nome") == nome), None)
+	if not convidado:
+		return jsonify({"erro": "Nome não encontrado na lista de convidados."}), 404
 
-	convidado = get_guest_from_session()
+	session.permanent = True
+	session["guest_session_id"] = uuid.uuid4().hex
+	session["guest_authenticated"] = True
+	session["guest_name_key"] = convidado.get("nome_key") or normalize_name_key(nome)
+	session["guest_nome"] = convidado.get("nome") or nome
+	session.pop("passed_presenca_gate", None)
+	touch_guest_session(session.get("guest_name_key"), session.get("guest_session_id"))
+
 	return jsonify(
 		{
 			"mensagem": "Senha validada com sucesso.",
 			"authenticated": True,
-			"guest_nome": convidado.get("nome") if convidado else "",
+			"guest_nome": convidado.get("nome") if convidado else nome,
 			"can_access_presentes": can_access_presentes(),
 		}
 	)
+
+
+@app.route("/api/guest/opcoes", methods=["GET"])
+def guest_options():
+	convidados = load_convidados()
+	opcoes = []
+	for convidado in convidados:
+		opcoes.append(
+			{
+				"id": int(convidado.get("id") or 0),
+				"nome": str(convidado.get("nome") or "").strip(),
+				"grupo": str(convidado.get("grupo") or "Sem grupo").strip() or "Sem grupo",
+				"tipo": str(convidado.get("tipo") or "convidado").strip(),
+				"presenca_confirmada": bool(convidado.get("presenca_confirmada")),
+			}
+		)
+
+	opcoes.sort(key=lambda item: (0 if item.get("grupo") == "Noivos" else 1, item.get("grupo", ""), item.get("nome", "")))
+	return jsonify({"convidados": opcoes})
 
 
 @app.route("/api/guest/logout", methods=["POST", "OPTIONS"])
@@ -1155,9 +1260,12 @@ def guest_logout():
 	if request.method == "OPTIONS":
 		return ("", 204)
 
+	remove_guest_session(session.get("guest_session_id"))
 	session.pop("guest_authenticated", None)
 	session.pop("guest_name_key", None)
 	session.pop("guest_nome", None)
+	session.pop("guest_session_id", None)
+	session.pop("passed_presenca_gate", None)
 	return jsonify({"mensagem": "Sessão encerrada."})
 
 
@@ -1320,6 +1428,7 @@ def guest_bind_name():
 
 	session["guest_name_key"] = nome_key
 	session["guest_nome"] = convidado.get("nome")
+	touch_guest_session(nome_key, session.get("guest_session_id"))
 
 	return jsonify(
 		{
@@ -1646,9 +1755,12 @@ def admin_login():
 	session_id = uuid.uuid4().hex
 	session.permanent = True
 	# Reset any previous guest session so admin access starts clean.
+	remove_guest_session(session.get("guest_session_id"))
 	session.pop("guest_authenticated", None)
 	session.pop("guest_name_key", None)
 	session.pop("guest_nome", None)
+	session.pop("guest_session_id", None)
+	session.pop("passed_presenca_gate", None)
 	session["admin_email"] = email
 	session["admin_session_id"] = session_id
 	touch_admin_session(email, session_id)
@@ -1662,12 +1774,15 @@ def admin_logout():
 		return ("", 204)
 
 	remove_admin_session(session.get("admin_session_id"))
+	remove_guest_session(session.get("guest_session_id"))
 	session.pop("admin_email", None)
 	session.pop("admin_session_id", None)
 	# Also clear guest session flags to avoid stale access state.
 	session.pop("guest_authenticated", None)
 	session.pop("guest_name_key", None)
 	session.pop("guest_nome", None)
+	session.pop("guest_session_id", None)
+	session.pop("passed_presenca_gate", None)
 	return jsonify({"mensagem": "Logout realizado com sucesso."})
 
 
