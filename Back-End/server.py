@@ -1777,7 +1777,8 @@ def admin_login():
 		return jsonify({"erro": "Credenciais inválidas."}), 401
 
 	session_id = uuid.uuid4().hex
-	session.permanent = True
+	# Admin access should always require login again after the app/browser is closed.
+	session.permanent = False
 	# Reset any previous guest session so admin access starts clean.
 	remove_guest_session(session.get("guest_session_id"))
 	session.pop("guest_authenticated", None)
