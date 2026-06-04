@@ -18,7 +18,7 @@
 			<p class="tag">Casamento Luiz Fernando & Ana Paula 2026</p>
 			<p id="appVersion" class="app-version">Versao --</p>
 			<h1>Entrada dos Convidados</h1>
-			<p class="subtitle">Digite apenas a senha para entrar. Depois, ao confirmar sua presenca, seu nome sera associado ao acesso da lista de presentes.</p>
+			<p class="subtitle">Selecione seu nome na lista e digite a senha dos convidados. Depois da confirmacao, a lista de presentes sera liberada.</p>
 			<p class="admin-tip"><a class="btn-link" href="/admin">Area de administracao</a></p>
 		</header>
 
@@ -35,6 +35,12 @@
 			</div>
 
 			<form id="guestLoginForm" class="admin-form" autocomplete="off">
+				<label>
+					Seu nome
+					<select id="guestName" required>
+						<option value="">Carregando convidados...</option>
+					</select>
+				</label>
 				<label>
 					Senha dos convidados
 					<input id="guestPassword" type="password" placeholder="Digite a senha" required>
