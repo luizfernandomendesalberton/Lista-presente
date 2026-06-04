@@ -126,10 +126,6 @@ async function getGuestSession() {
 	return response.json();
 }
 
-async function loadGuestOptions() {
-	return;
-}
-
 async function submitGuestLogin(event) {
 	event.preventDefault();
 	if (!guestPasswordInput || !guestLoginStatus) {
