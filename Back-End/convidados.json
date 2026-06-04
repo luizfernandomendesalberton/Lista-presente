@@ -5,9 +5,10 @@
     "nome_key": "ana paula noiva",
     "grupo": "Noivos",
     "tipo": "noivos",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "criado_em": "",
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-06-04T23:16:49.659927+00:00"
   },
   {
     "id": 2,
@@ -15,9 +16,10 @@
     "nome_key": "noivo luiz fernando",
     "grupo": "Noivos",
     "tipo": "noivos",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "criado_em": "",
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-06-04T23:16:49.659927+00:00"
   },
   {
     "id": 3,
@@ -25,6 +27,7 @@
     "nome_key": "vo fridolina",
     "grupo": "Grupo 01",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -35,6 +38,7 @@
     "nome_key": "vo lucas",
     "grupo": "Grupo 01",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -45,6 +49,7 @@
     "nome_key": "tia marlete",
     "grupo": "Grupo 02",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -55,6 +60,7 @@
     "nome_key": "tio joao",
     "grupo": "Grupo 02",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -65,6 +71,7 @@
     "nome_key": "lyan",
     "grupo": "Grupo 02",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -75,6 +82,7 @@
     "nome_key": "antonio carlos",
     "grupo": "Grupo 02",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -85,6 +93,7 @@
     "nome_key": "mel",
     "grupo": "Grupo 02",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -95,6 +104,7 @@
     "nome_key": "mae zenita",
     "grupo": "Grupo 03",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -105,6 +115,7 @@
     "nome_key": "aloisio",
     "grupo": "Grupo 03",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -115,6 +126,7 @@
     "nome_key": "alessio",
     "grupo": "Grupo 04",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -125,6 +137,7 @@
     "nome_key": "djenifer",
     "grupo": "Grupo 04",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -135,6 +148,7 @@
     "nome_key": "talita",
     "grupo": "Grupo 04",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -145,6 +159,7 @@
     "nome_key": "zenir",
     "grupo": "Grupo 05",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -155,6 +170,7 @@
     "nome_key": "tita",
     "grupo": "Grupo 06",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -165,6 +181,7 @@
     "nome_key": "marido tita",
     "grupo": "Grupo 06",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -175,6 +192,7 @@
     "nome_key": "karla",
     "grupo": "Grupo 07",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -185,6 +203,7 @@
     "nome_key": "marido karla",
     "grupo": "Grupo 07",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -195,6 +214,7 @@
     "nome_key": "christian",
     "grupo": "Grupo 08",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -205,6 +225,7 @@
     "nome_key": "namorada chefe",
     "grupo": "Grupo 08",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -215,6 +236,7 @@
     "nome_key": "paulo",
     "grupo": "Grupo 09",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -225,6 +247,7 @@
     "nome_key": "namorada paulo",
     "grupo": "Grupo 09",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -235,6 +258,7 @@
     "nome_key": "bianca",
     "grupo": "Grupo 10",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -245,6 +269,7 @@
     "nome_key": "pai",
     "grupo": "Grupo 11",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -255,6 +280,7 @@
     "nome_key": "mae",
     "grupo": "Grupo 11",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -265,6 +291,7 @@
     "nome_key": "irma",
     "grupo": "Grupo 12",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -275,6 +302,7 @@
     "nome_key": "joao",
     "grupo": "Grupo 12",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -285,6 +313,7 @@
     "nome_key": "adriano",
     "grupo": "Grupo 13",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -295,6 +324,7 @@
     "nome_key": "daiane",
     "grupo": "Grupo 13",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -305,6 +335,7 @@
     "nome_key": "vitor",
     "grupo": "Grupo 13",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -315,6 +346,7 @@
     "nome_key": "alexandre",
     "grupo": "Grupo 14",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -325,6 +357,7 @@
     "nome_key": "vovo",
     "grupo": "Grupo 15",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -335,6 +368,7 @@
     "nome_key": "lita",
     "grupo": "Grupo 16",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -345,6 +379,7 @@
     "nome_key": "preto",
     "grupo": "Grupo 16",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -355,6 +390,7 @@
     "nome_key": "gabriel",
     "grupo": "Grupo 16",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -365,6 +401,7 @@
     "nome_key": "namorada gabi",
     "grupo": "Grupo 16",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -375,6 +412,7 @@
     "nome_key": "lali",
     "grupo": "Grupo 16",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -385,6 +423,7 @@
     "nome_key": "elio",
     "grupo": "Grupo 17",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -395,6 +434,7 @@
     "nome_key": "santina",
     "grupo": "Grupo 17",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -405,6 +445,7 @@
     "nome_key": "engenheiro",
     "grupo": "Grupo 18",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -415,6 +456,7 @@
     "nome_key": "namorada engenheiro",
     "grupo": "Grupo 18",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -425,6 +467,7 @@
     "nome_key": "franciele",
     "grupo": "Grupo 19",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -435,6 +478,7 @@
     "nome_key": "andre",
     "grupo": "Grupo 19",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -445,6 +489,7 @@
     "nome_key": "filho",
     "grupo": "Grupo 19",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -455,6 +500,7 @@
     "nome_key": "morgana",
     "grupo": "Grupo 20",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -465,6 +511,7 @@
     "nome_key": "rafael",
     "grupo": "Grupo 20",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -475,6 +522,7 @@
     "nome_key": "filha",
     "grupo": "Grupo 20",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -485,6 +533,7 @@
     "nome_key": "juli",
     "grupo": "Grupo 21",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -495,6 +544,7 @@
     "nome_key": "sandro",
     "grupo": "Grupo 21",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -505,6 +555,7 @@
     "nome_key": "rodrigo",
     "grupo": "Grupo 22",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -515,6 +566,7 @@
     "nome_key": "desiree",
     "grupo": "Grupo 22",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -525,6 +577,7 @@
     "nome_key": "valentina",
     "grupo": "Grupo 22",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -535,6 +588,7 @@
     "nome_key": "fotografa",
     "grupo": "Grupo 23",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -545,6 +599,7 @@
     "nome_key": "assistente",
     "grupo": "Grupo 23",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -555,6 +610,7 @@
     "nome_key": "davi",
     "grupo": "Grupo 24",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -565,6 +621,7 @@
     "nome_key": "carla",
     "grupo": "Grupo 24",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -575,6 +632,7 @@
     "nome_key": "eric",
     "grupo": "Grupo 24",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -585,6 +643,7 @@
     "nome_key": "levi",
     "grupo": "Grupo 25",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -595,6 +654,7 @@
     "nome_key": "grasi",
     "grupo": "Grupo 25",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -605,6 +665,7 @@
     "nome_key": "isabela",
     "grupo": "Grupo 25",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
@@ -615,6 +676,7 @@
     "nome_key": "alice",
     "grupo": "Grupo 25",
     "tipo": "convidado",
+    "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
