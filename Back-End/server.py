@@ -8,6 +8,7 @@ import tempfile
 import unicodedata
 import uuid
 from datetime import UTC
+from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
 from email.mime.text import MIMEText
@@ -81,6 +82,8 @@ APP_VERSION = str(os.getenv("APP_VERSION", "1.0.0")).strip() or "1.0.0"
 DEFAULT_GUEST_PASSWORD = str(os.getenv("GUEST_PASSWORD", "luizeana") or "luizeana").strip() or "luizeana"
 
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-change-me")
+SESSION_LIFETIME_DAYS = int(os.getenv("SESSION_LIFETIME_DAYS", "30"))
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=max(1, SESSION_LIFETIME_DAYS))
 
 
 def clean_credential(value):
@@ -1035,10 +1038,6 @@ def add_cors_headers(response):
 
 @app.route("/", methods=["GET"])
 def index():
-	# Always require guests to pass through the password screen again on home access.
-	session.pop("guest_authenticated", None)
-	session.pop("guest_name_key", None)
-	session.pop("guest_nome", None)
 	response = send_from_directory(HTML_DIR, "acesso.html")
 	response.headers["Cache-Control"] = "no-store, max-age=0"
 	return response
@@ -1060,6 +1059,9 @@ def presenca_page():
 	if not is_guest_authenticated() and not is_session_admin():
 		return redirect("/", code=302)
 
+	# Mark that the guest passed through the presence screen before opening gifts.
+	session["passed_presenca_gate"] = True
+
 	response = send_from_directory(HTML_DIR, "presenca.html")
 	response.headers["Cache-Control"] = "no-store, max-age=0"
 	return response
@@ -1067,17 +1069,10 @@ def presenca_page():
 
 @app.route("/presentes", methods=["GET"])
 def presentes_page():
-	if not is_session_admin():
-		referer = str(request.headers.get("Referer") or "").strip()
-		host_prefix = request.host_url.rstrip("/")
-		came_from_presenca = referer.startswith(f"{host_prefix}/presenca")
-
-		if not came_from_presenca:
-			# Direct link access should always return to login first.
-			session.pop("guest_authenticated", None)
-			session.pop("guest_name_key", None)
-			session.pop("guest_nome", None)
-			return redirect("/", code=302)
+	if not is_session_admin() and not session.get("passed_presenca_gate"):
+		if is_guest_authenticated():
+			return redirect("/presenca", code=302)
+		return redirect("/", code=302)
 
 	if not can_access_presentes():
 		if is_guest_authenticated() or is_session_admin():
@@ -1139,6 +1134,7 @@ def guest_login():
 	if not hmac.compare_digest(password, configured_password):
 		return jsonify({"erro": "Senha inválida."}), 401
 
+	session.permanent = True
 	session["guest_authenticated"] = True
 	session.pop("guest_name_key", None)
 	session.pop("guest_nome", None)
@@ -1293,6 +1289,44 @@ def confirmar_presenca():
 			"grupo_total": total_no_grupo,
 			"grupo_confirmados": confirmados_no_grupo,
 			"email_status": email_status,
+			"can_access_presentes": can_access_presentes(),
+		}
+	)
+
+
+@app.route("/api/guest/vincular", methods=["POST", "OPTIONS"])
+def guest_bind_name():
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	if not is_guest_authenticated() and not is_session_admin():
+		return jsonify({"erro": "Faça login com a senha para continuar."}), 401
+
+	payload = request.get_json(silent=True) or {}
+	nome = str(payload.get("nome") or "").strip()
+	nome_key = normalize_name_key(nome)
+
+	if not nome_key:
+		return jsonify({"erro": "Nome inválido para vincular sessão."}), 400
+
+	convidados = load_convidados()
+	convidado = next((item for item in convidados if item.get("nome_key") == nome_key), None)
+	if not convidado:
+		return jsonify({"erro": "Convidado não encontrado."}), 404
+
+	session_name_key = get_current_guest_name_key()
+	if session_name_key and session_name_key != nome_key and not is_session_admin():
+		return jsonify({"erro": "Esta sessão já está vinculada a outro nome."}), 403
+
+	session["guest_name_key"] = nome_key
+	session["guest_nome"] = convidado.get("nome")
+
+	return jsonify(
+		{
+			"mensagem": "Sessão vinculada com sucesso.",
+			"guest_nome": convidado.get("nome") or "",
+			"guest_tipo": convidado.get("tipo") or "convidado",
+			"presenca_confirmada": bool(convidado.get("presenca_confirmada")),
 			"can_access_presentes": can_access_presentes(),
 		}
 	)
@@ -1610,6 +1644,7 @@ def admin_login():
 		return jsonify({"erro": "Credenciais inválidas."}), 401
 
 	session_id = uuid.uuid4().hex
+	session.permanent = True
 	# Reset any previous guest session so admin access starts clean.
 	session.pop("guest_authenticated", None)
 	session.pop("guest_name_key", None)

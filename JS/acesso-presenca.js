@@ -311,6 +311,39 @@ async function requestPresenceChange(convidado) {
 	}
 }
 
+async function bindGuestName(nome) {
+	if (!presencaStatus) {
+		return;
+	}
+
+	presencaStatus.textContent = "Vinculando sua sessão...";
+
+	try {
+		const response = await fetch("/api/guest/vincular", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "same-origin",
+			body: JSON.stringify({ nome }),
+		});
+
+		const data = await response.json();
+		if (!response.ok) {
+			throw new Error(data.erro || "Nao foi possivel vincular sua sessao.");
+		}
+
+		setPresentesAccess(Boolean(data.can_access_presentes));
+		presencaStatus.textContent = data.can_access_presentes
+			? "Sessao vinculada. A lista de presentes foi liberada."
+			: "Sessao vinculada, mas a lista de presentes ainda nao esta liberada.";
+
+		await loadGroups();
+	} catch (error) {
+		presencaStatus.textContent = error.message;
+	}
+}
+
 function closePresencaConfirmModal(confirmed) {
 	if (!presencaConfirmModal) {
 		return;
@@ -415,6 +448,17 @@ function buildGuestCard(convidado, guestNome) {
 		const lockedInfo = document.createElement("small");
 		lockedInfo.textContent = "Para alterar sua resposta, fale com os noivos (admin).";
 		card.appendChild(lockedInfo);
+
+		if (!guestNome) {
+			const btnBindGuest = document.createElement("button");
+			btnBindGuest.type = "button";
+			btnBindGuest.className = "btn-secondary";
+			btnBindGuest.textContent = "Sou eu";
+			btnBindGuest.addEventListener("click", () => {
+				bindGuestName(convidado.nome);
+			});
+			card.appendChild(btnBindGuest);
+		}
 
 		if (guestNome && guestNome === convidado.nome) {
 			const btnRequestChange = document.createElement("button");
