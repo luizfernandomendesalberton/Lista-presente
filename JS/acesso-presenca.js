@@ -28,6 +28,7 @@ const presencaConfirmNo = document.getElementById("presencaConfirmNo");
 const presencaConfirmYes = document.getElementById("presencaConfirmYes");
 
 const PRESENCA_RULES_HIDE_KEY = "lista_casamento_hide_presenca_rules";
+const ADMIN_TAB_SESSION_KEY = "lista_casamento_admin_tab_session";
 let presencaConfirmResolver = null;
 
 const isLoginPage = Boolean(guestLoginForm);
@@ -261,6 +262,12 @@ async function submitAdminDirectLogin(event) {
 		const data = await response.json();
 		if (!response.ok) {
 			throw new Error(data.erro || "Nao foi possivel entrar com acesso de administrador.");
+		}
+
+		try {
+			window.sessionStorage.setItem(ADMIN_TAB_SESSION_KEY, "1");
+		} catch (_error) {
+			// Ignore storage failures and continue with server-side login.
 		}
 
 		adminDirectStatus.textContent = "Acesso total liberado. Redirecionando...";

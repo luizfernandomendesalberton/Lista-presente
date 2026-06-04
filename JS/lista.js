@@ -100,6 +100,7 @@ let editingConvidadoId = null;
 let autoRefreshTimerId = null;
 const AUTO_REFRESH_INTERVAL_MS = 15000;
 const ONBOARDING_STORAGE_KEY = "lista_casamento_hide_onboarding";
+const ADMIN_TAB_SESSION_KEY = "lista_casamento_admin_tab_session";
 const ONBOARDING_AUTOPLAY_MS = 7000;
 let pixReferenciaAtual = "Contribuicao em dinheiro";
 let pixNomePresenteAtual = "";
@@ -113,6 +114,33 @@ const BRL = new Intl.NumberFormat("pt-BR", {
 
 let presentesState = [];
 let convidadosState = [];
+
+
+function setAdminTabSessionFlag() {
+	try {
+		window.sessionStorage.setItem(ADMIN_TAB_SESSION_KEY, "1");
+	} catch (_error) {
+		// Ignore storage failures and fall back to server-side session only.
+	}
+}
+
+
+function clearAdminTabSessionFlag() {
+	try {
+		window.sessionStorage.removeItem(ADMIN_TAB_SESSION_KEY);
+	} catch (_error) {
+		// Ignore storage failures.
+	}
+}
+
+
+function hasAdminTabSessionFlag() {
+	try {
+		return window.sessionStorage.getItem(ADMIN_TAB_SESSION_KEY) === "1";
+	} catch (_error) {
+		return false;
+	}
+}
 
 
 function formatPixValue(value) {
@@ -505,6 +533,12 @@ function getAdminHeaders() {
 
 function setAdminMode(authenticated, email = "") {
 	adminAuthenticated = authenticated;
+
+	if (authenticated) {
+		setAdminTabSessionFlag();
+	} else {
+		clearAdminTabSessionFlag();
+	}
 
 	if (!isAdminPage) {
 		return;
@@ -1149,6 +1183,20 @@ async function syncAdminSession() {
 		return;
 	}
 
+	if (!hasAdminTabSessionFlag()) {
+		try {
+			await fetch("/api/admin/logout", {
+				method: "POST",
+				credentials: "same-origin",
+			});
+		} catch (_error) {
+			// Ignore logout failure here; UI will still require fresh login.
+		}
+
+		setAdminMode(false);
+		return;
+	}
+
 	try {
 		const response = await fetch("/api/admin/session", {
 			credentials: "same-origin",
@@ -1711,6 +1759,7 @@ if (isAdminPage) {
 					throw new Error(result.erro || "Falha ao realizar login.");
 				}
 
+				setAdminTabSessionFlag();
 				setAdminMode(true, result.email || payload.email);
 				adminLoginForm.reset();
 				adminStatus.textContent = "Login realizado com sucesso.";
