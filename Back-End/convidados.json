@@ -177,8 +177,8 @@
   },
   {
     "id": 17,
-    "nome": "Marido Tita",
-    "nome_key": "marido tita",
+    "nome": "Cônjuge Tita",
+    "nome_key": "conjuge tita",
     "grupo": "Grupo 06",
     "tipo": "convidado",
     "criado_em": "",
@@ -199,8 +199,8 @@
   },
   {
     "id": 19,
-    "nome": "Marido Karla",
-    "nome_key": "marido karla",
+    "nome": "Cônjuge Karla",
+    "nome_key": "conjuge karla",
     "grupo": "Grupo 07",
     "tipo": "convidado",
     "criado_em": "",
@@ -221,8 +221,8 @@
   },
   {
     "id": 21,
-    "nome": "Namorada Chefe",
-    "nome_key": "namorada chefe",
+    "nome": "Acompanhante Christian",
+    "nome_key": "acompanhante christian",
     "grupo": "Grupo 08",
     "tipo": "convidado",
     "criado_em": "",
@@ -243,8 +243,8 @@
   },
   {
     "id": 23,
-    "nome": "Namorada Paulo",
-    "nome_key": "namorada paulo",
+    "nome": "Acompanhante Paulo",
+    "nome_key": "acompanhante paulo",
     "grupo": "Grupo 09",
     "tipo": "convidado",
     "criado_em": "",
@@ -287,8 +287,8 @@
   },
   {
     "id": 27,
-    "nome": "Irma",
-    "nome_key": "irma",
+    "nome": "Luiza M.A",
+    "nome_key": "luiza m.a",
     "grupo": "Grupo 12",
     "tipo": "convidado",
     "criado_em": "",
@@ -677,6 +677,17 @@
     "grupo": "Grupo 25",
     "tipo": "convidado",
     "criado_em": "",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 63,
+    "nome": "Ravi",
+    "nome_key": "ravi",
+    "grupo": "Grupo 12",
+    "tipo": "convidado",
+    "criado_em": "2026-06-05T15:10:12.628100+00:00",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
