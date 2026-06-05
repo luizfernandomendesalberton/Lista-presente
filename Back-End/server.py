@@ -1177,6 +1177,9 @@ def presentes_page():
 
 @app.route("/admin", methods=["GET"])
 def admin_page():
+	if not is_session_admin():
+		return redirect("/", code=302)
+
 	response = send_from_directory(HTML_DIR, "admin.html")
 	response.headers["Cache-Control"] = "no-store, max-age=0"
 	return response
@@ -1184,6 +1187,9 @@ def admin_page():
 
 @app.route("/admin/metricas", methods=["GET"])
 def admin_metrics_page():
+	if not is_session_admin():
+		return redirect("/", code=302)
+
 	response = send_from_directory(HTML_DIR, "admin-metricas.html")
 	response.headers["Cache-Control"] = "no-store, max-age=0"
 	return response
@@ -1191,6 +1197,9 @@ def admin_metrics_page():
 
 @app.route("/admin/convidados", methods=["GET"])
 def admin_convidados_page():
+	if not is_session_admin():
+		return redirect("/", code=302)
+
 	response = send_from_directory(HTML_DIR, "admin-convidados.html")
 	response.headers["Cache-Control"] = "no-store, max-age=0"
 	return response
