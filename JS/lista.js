@@ -74,6 +74,7 @@ const adminNome = document.getElementById("adminNome");
 const adminPreco = document.getElementById("adminPreco");
 const adminCategoria = document.getElementById("adminCategoria");
 const adminFoto = document.getElementById("adminFoto");
+const adminVideo = document.getElementById("adminVideo");
 const adminProdutoUrl = document.getElementById("adminProdutoUrl");
 const adminDescricao = document.getElementById("adminDescricao");
 const adminEspecificacoes = document.getElementById("adminEspecificacoes");
@@ -145,6 +146,51 @@ function hasAdminTabSessionFlag() {
 
 function formatPixValue(value) {
 	return BRL.format(Number(value || 0));
+}
+
+
+function getYouTubeEmbedUrl(rawUrl) {
+	const input = String(rawUrl || "").trim();
+	if (!input) {
+		return "";
+	}
+
+	let parsed;
+	try {
+		parsed = new URL(input);
+	} catch (_error) {
+		return "";
+	}
+
+	const host = parsed.hostname.replace(/^www\./i, "").replace(/^m\./i, "").toLowerCase();
+	const segments = parsed.pathname.split("/").filter(Boolean);
+	let videoId = "";
+
+	if (host === "youtu.be") {
+		videoId = segments[0] || "";
+	} else if (host.endsWith("youtube.com")) {
+		if (segments[0] === "watch") {
+			videoId = parsed.searchParams.get("v") || "";
+		} else if (segments[0] === "shorts" || segments[0] === "embed" || segments[0] === "live") {
+			videoId = segments[1] || "";
+		}
+	}
+
+	if (!/^[A-Za-z0-9_-]{6,}$/.test(videoId)) {
+		return "";
+	}
+
+	const params = new URLSearchParams({
+		autoplay: "1",
+		mute: "1",
+		playsinline: "1",
+		loop: "1",
+		playlist: videoId,
+		rel: "0",
+		modestbranding: "1",
+	});
+
+	return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
 }
 
 
@@ -1161,6 +1207,9 @@ function setEditingMode(presente) {
 	ensureAdminCategoryOption(presente.categoria || "Geral");
 	adminCategoria.value = presente.categoria || "Geral";
 	adminFoto.value = presente.foto_url || "";
+	if (adminVideo) {
+		adminVideo.value = presente.video_url || "";
+	}
 	adminProdutoUrl.value = presente.produto_url || "";
 	adminDescricao.value = presente.descricao || "";
 	adminEspecificacoes.value = (presente.especificacoes || []).join("\n");
@@ -1445,6 +1494,8 @@ function renderPresentes() {
 		const node = template.content.cloneNode(true);
 		const card = node.querySelector(".card");
 		const fotoEl = node.querySelector(".presente-foto");
+		const videoEl = node.querySelector(".presente-video");
+		const embedEl = node.querySelector(".presente-embed");
 		const categoriaEl = node.querySelector(".badge-categoria");
 		const nomeEl = node.querySelector(".presente-nome");
 		const precoEl = node.querySelector(".presente-preco");
@@ -1466,22 +1517,79 @@ function renderPresentes() {
 		precoEl.textContent = BRL.format(Number(presente.preco || 0));
 		descricaoEl.textContent = presente.descricao || "Sem descricao informada.";
 		categoriaEl.textContent = presente.categoria || "Geral";
+		const fallbackImageUrl = "https://images.unsplash.com/photo-1513883049090-d0b7439799bf?auto=format&fit=crop&w=900&q=80";
+		const videoUrl = String(presente.video_url || "").trim();
+		const youtubeEmbedUrl = getYouTubeEmbedUrl(videoUrl);
 
-		fotoEl.src = presente.foto_url;
+		const setupProdutoLink = (mediaEl) => {
+			if (!mediaEl) {
+				return;
+			}
+
+			if (presente.produto_url) {
+				mediaEl.style.cursor = "pointer";
+				mediaEl.title = "Abrir página do produto";
+				mediaEl.addEventListener("click", () => {
+					window.open(presente.produto_url, "_blank", "noopener,noreferrer");
+				});
+			} else {
+				mediaEl.style.cursor = "default";
+				mediaEl.title = "";
+			}
+		};
+
+		fotoEl.hidden = false;
+		fotoEl.src = presente.foto_url || fallbackImageUrl;
 		fotoEl.alt = `Foto do presente ${presente.nome}`;
-		if (presente.produto_url) {
-			fotoEl.style.cursor = "pointer";
-			fotoEl.title = "Abrir página do produto";
-			fotoEl.addEventListener("click", () => {
-				window.open(presente.produto_url, "_blank", "noopener,noreferrer");
-			});
-		} else {
-			fotoEl.style.cursor = "default";
-			fotoEl.title = "";
-		}
+		setupProdutoLink(fotoEl);
 		fotoEl.addEventListener("error", () => {
-			fotoEl.src = "https://images.unsplash.com/photo-1513883049090-d0b7439799bf?auto=format&fit=crop&w=900&q=80";
+			fotoEl.src = fallbackImageUrl;
 		});
+
+		if (embedEl) {
+			embedEl.hidden = true;
+			embedEl.removeAttribute("src");
+			embedEl.setAttribute("title", `Vídeo do presente ${presente.nome}`);
+		}
+
+		if (videoEl) {
+			if (youtubeEmbedUrl && embedEl) {
+				videoEl.pause();
+				videoEl.removeAttribute("src");
+				videoEl.load();
+				videoEl.hidden = true;
+				fotoEl.hidden = true;
+				embedEl.hidden = false;
+				embedEl.src = youtubeEmbedUrl;
+			} else if (videoUrl) {
+				videoEl.hidden = false;
+				fotoEl.hidden = true;
+				videoEl.src = videoUrl;
+				videoEl.setAttribute("aria-label", `Vídeo do presente ${presente.nome}`);
+				setupProdutoLink(videoEl);
+				videoEl.addEventListener("error", () => {
+					videoEl.hidden = true;
+					fotoEl.hidden = false;
+					fotoEl.src = presente.foto_url || fallbackImageUrl;
+				});
+
+				const autoplayAttempt = videoEl.play();
+				if (autoplayAttempt && typeof autoplayAttempt.catch === "function") {
+					autoplayAttempt.catch(() => {
+						// Ignore autoplay errors from browser policies.
+					});
+				}
+			} else {
+				videoEl.pause();
+				videoEl.removeAttribute("src");
+				videoEl.load();
+				videoEl.hidden = true;
+				if (embedEl) {
+					embedEl.hidden = true;
+					embedEl.removeAttribute("src");
+				}
+			}
+		}
 
 		especificacoesEl.innerHTML = "";
 		(presente.especificacoes || []).forEach((item) => {
@@ -1834,6 +1942,7 @@ if (isAdminPage) {
 			preco: Number(adminPreco.value),
 			categoria: adminCategoria.value.trim() || "Geral",
 			foto_url: adminFoto.value.trim(),
+			video_url: adminVideo ? adminVideo.value.trim() : "",
 			produto_url: adminProdutoUrl.value.trim(),
 			descricao: adminDescricao.value.trim(),
 			especificacoes: adminEspecificacoes.value
