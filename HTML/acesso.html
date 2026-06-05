@@ -37,7 +37,16 @@
 			<form id="guestLoginForm" class="admin-form" autocomplete="off">
 				<label>
 					Seu nome
-					<select id="guestName" required>
+					<div id="guestNamePicker" class="guest-name-picker">
+						<button id="guestNamePickerToggle" class="guest-name-toggle" type="button" aria-haspopup="listbox" aria-expanded="false">
+							<span id="guestNamePickerLabel">Selecione seu nome</span>
+						</button>
+						<div id="guestNamePickerPanel" class="guest-name-panel" hidden>
+							<input id="guestNameSearch" type="search" placeholder="Buscar seu nome..." autocomplete="off">
+							<div id="guestNameOptions" class="guest-name-options" role="listbox" aria-label="Lista de convidados"></div>
+						</div>
+					</div>
+					<select id="guestName" class="guest-name-native" required aria-hidden="true" tabindex="-1">
 						<option value="">Carregando convidados...</option>
 					</select>
 				</label>

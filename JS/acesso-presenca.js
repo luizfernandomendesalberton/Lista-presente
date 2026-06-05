@@ -1,6 +1,12 @@
 const appVersionEl = document.getElementById("appVersion");
 const guestLoginForm = document.getElementById("guestLoginForm");
 const guestNameSelect = document.getElementById("guestName");
+const guestNamePicker = document.getElementById("guestNamePicker");
+const guestNamePickerToggle = document.getElementById("guestNamePickerToggle");
+const guestNamePickerLabel = document.getElementById("guestNamePickerLabel");
+const guestNamePickerPanel = document.getElementById("guestNamePickerPanel");
+const guestNameSearch = document.getElementById("guestNameSearch");
+const guestNameOptions = document.getElementById("guestNameOptions");
 const guestPasswordInput = document.getElementById("guestPassword");
 const guestLoginStatus = document.getElementById("guestLoginStatus");
 const adminDirectLoginForm = document.getElementById("adminDirectLoginForm");
@@ -30,9 +36,284 @@ const presencaConfirmYes = document.getElementById("presencaConfirmYes");
 const PRESENCA_RULES_HIDE_KEY = "lista_casamento_hide_presenca_rules";
 const ADMIN_TAB_SESSION_KEY = "lista_casamento_admin_tab_session";
 let presencaConfirmResolver = null;
+let guestOptionsState = [];
+let guestActiveOptionIndex = -1;
 
 const isLoginPage = Boolean(guestLoginForm);
 const isPresencaPage = Boolean(gruposList);
+
+function normalizeSearchText(value) {
+	return String(value || "")
+		.normalize("NFKD")
+		.replace(/[\u0300-\u036f]/g, "")
+		.toLowerCase()
+		.trim();
+}
+
+function getGuestOptionButtons() {
+	if (!guestNameOptions) {
+		return [];
+	}
+
+	return Array.from(guestNameOptions.querySelectorAll(".guest-name-option"));
+}
+
+function setGuestActiveOption(index) {
+	const options = getGuestOptionButtons();
+	if (!options.length) {
+		guestActiveOptionIndex = -1;
+		return;
+	}
+
+	const boundedIndex = Math.max(0, Math.min(index, options.length - 1));
+	guestActiveOptionIndex = boundedIndex;
+
+	options.forEach((option, currentIndex) => {
+		option.classList.toggle("is-active", currentIndex === boundedIndex);
+	});
+
+	const activeOption = options[boundedIndex];
+	if (activeOption) {
+		activeOption.scrollIntoView({ block: "nearest" });
+	}
+}
+
+function moveGuestActiveOption(step) {
+	const options = getGuestOptionButtons();
+	if (!options.length) {
+		return;
+	}
+
+	if (guestActiveOptionIndex < 0) {
+		setGuestActiveOption(step > 0 ? 0 : options.length - 1);
+		return;
+	}
+
+	let nextIndex = guestActiveOptionIndex + step;
+	if (nextIndex < 0) {
+		nextIndex = options.length - 1;
+	}
+	if (nextIndex >= options.length) {
+		nextIndex = 0;
+	}
+
+	setGuestActiveOption(nextIndex);
+}
+
+function pickActiveGuestOption() {
+	const options = getGuestOptionButtons();
+	if (!options.length) {
+		return false;
+	}
+
+	const index = guestActiveOptionIndex >= 0 ? guestActiveOptionIndex : 0;
+	const option = options[index];
+	if (!option) {
+		return false;
+	}
+
+	option.click();
+	return true;
+}
+
+function setGuestPickerOpen(isOpen) {
+	if (!guestNamePicker || !guestNamePickerToggle || !guestNamePickerPanel) {
+		return;
+	}
+
+	guestNamePicker.classList.toggle("is-open", isOpen);
+	guestNamePickerPanel.hidden = !isOpen;
+	guestNamePickerToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+
+	if (isOpen && guestNameSearch) {
+		if (guestNameSearch.value) {
+			renderGuestNameOptions(guestNameSearch.value);
+		}
+		setGuestActiveOption(0);
+		guestNameSearch.focus();
+	} else {
+		guestActiveOptionIndex = -1;
+	}
+}
+
+function updateGuestPickerLabel() {
+	if (!guestNamePickerLabel || !guestNameSelect) {
+		return;
+	}
+
+	const selected = guestNameSelect.value.trim();
+	guestNamePickerLabel.textContent = selected || "Selecione seu nome";
+}
+
+function setSelectedGuestName(nome) {
+	if (!guestNameSelect) {
+		return;
+	}
+
+	guestNameSelect.value = String(nome || "").trim();
+	updateGuestPickerLabel();
+}
+
+function renderGuestNameOptions(searchText = "") {
+	if (!guestNameOptions) {
+		return;
+	}
+
+	const normalizedSearch = normalizeSearchText(searchText);
+	const filtered = guestOptionsState.filter((guest) => {
+		if (!normalizedSearch) {
+			return true;
+		}
+
+		const byName = normalizeSearchText(guest.nome).includes(normalizedSearch);
+		const byGroup = normalizeSearchText(guest.grupo).includes(normalizedSearch);
+		return byName || byGroup;
+	});
+
+	guestNameOptions.innerHTML = "";
+	if (!filtered.length) {
+		guestActiveOptionIndex = -1;
+		const emptyState = document.createElement("p");
+		emptyState.className = "guest-name-empty";
+		emptyState.textContent = "Nenhum convidado encontrado.";
+		guestNameOptions.appendChild(emptyState);
+		return;
+	}
+
+	let currentGroup = "";
+	let currentGroupContainer = null;
+
+	for (const guest of filtered) {
+		const groupName = String(guest.grupo || "Sem grupo").trim() || "Sem grupo";
+		if (groupName !== currentGroup) {
+			currentGroup = groupName;
+
+			const groupSection = document.createElement("section");
+			groupSection.className = "guest-name-group";
+
+			const groupTitle = document.createElement("h4");
+			groupTitle.textContent = groupName;
+			groupSection.appendChild(groupTitle);
+
+			currentGroupContainer = document.createElement("div");
+			currentGroupContainer.className = "guest-name-group-options";
+			groupSection.appendChild(currentGroupContainer);
+
+			guestNameOptions.appendChild(groupSection);
+		}
+
+		if (!currentGroupContainer) {
+			continue;
+		}
+
+		const optionButton = document.createElement("button");
+		optionButton.type = "button";
+		optionButton.className = "guest-name-option";
+		optionButton.textContent = String(guest.nome || "").trim();
+
+		if (guest.presenca_confirmada) {
+			optionButton.classList.add("is-confirmed");
+		}
+
+		if (guest.tipo === "noivos") {
+			optionButton.classList.add("is-noivos");
+		}
+
+		if (guestNameSelect && guestNameSelect.value.trim() === optionButton.textContent) {
+			optionButton.classList.add("is-selected");
+		}
+
+		optionButton.addEventListener("click", () => {
+			setSelectedGuestName(optionButton.textContent || "");
+			renderGuestNameOptions(guestNameSearch ? guestNameSearch.value : "");
+			setGuestPickerOpen(false);
+			if (guestPasswordInput) {
+				guestPasswordInput.focus();
+			}
+		});
+
+		currentGroupContainer.appendChild(optionButton);
+	}
+
+	const selectedIndex = getGuestOptionButtons().findIndex((option) => option.classList.contains("is-selected"));
+	setGuestActiveOption(selectedIndex >= 0 ? selectedIndex : 0);
+}
+
+function initGuestNamePicker() {
+	if (!guestNamePicker || !guestNamePickerToggle || !guestNamePickerPanel || !guestNameOptions) {
+		return;
+	}
+
+	guestNamePickerToggle.addEventListener("click", () => {
+		setGuestPickerOpen(guestNamePickerPanel.hidden);
+	});
+
+	if (guestNameSearch) {
+		guestNameSearch.addEventListener("input", () => {
+			renderGuestNameOptions(guestNameSearch.value);
+		});
+
+		guestNameSearch.addEventListener("keydown", (event) => {
+			if (event.key === "ArrowDown") {
+				event.preventDefault();
+				moveGuestActiveOption(1);
+				return;
+			}
+
+			if (event.key === "ArrowUp") {
+				event.preventDefault();
+				moveGuestActiveOption(-1);
+				return;
+			}
+
+			if (event.key === "Enter") {
+				event.preventDefault();
+				pickActiveGuestOption();
+				return;
+			}
+
+			if (event.key === "Escape") {
+				event.preventDefault();
+				setGuestPickerOpen(false);
+				guestNamePickerToggle.focus();
+			}
+		});
+	}
+
+	guestNamePickerToggle.addEventListener("keydown", (event) => {
+		if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
+			event.preventDefault();
+			setGuestPickerOpen(true);
+		}
+	});
+
+	if (guestNameOptions) {
+		guestNameOptions.addEventListener("keydown", (event) => {
+			if (event.key === "ArrowDown") {
+				event.preventDefault();
+				moveGuestActiveOption(1);
+				return;
+			}
+
+			if (event.key === "ArrowUp") {
+				event.preventDefault();
+				moveGuestActiveOption(-1);
+				return;
+			}
+
+			if (event.key === "Enter") {
+				event.preventDefault();
+				pickActiveGuestOption();
+			}
+		});
+	}
+
+	document.addEventListener("click", (event) => {
+		if (!guestNamePicker.contains(event.target)) {
+			setGuestPickerOpen(false);
+		}
+	});
+}
 
 function animateLoginPanel(panel) {
 	if (!panel) {
@@ -61,7 +342,11 @@ function setLoginMode(mode) {
 	showAdminAccessBtn.setAttribute("aria-selected", isGuestMode ? "false" : "true");
 
 	if (isGuestMode && guestNameSelect) {
-		guestNameSelect.focus();
+		if (guestNamePickerToggle) {
+			guestNamePickerToggle.focus();
+		} else {
+			guestNameSelect.focus();
+		}
 	}
 	if (!isGuestMode && adminDirectEmailInput) {
 		adminDirectEmailInput.focus();
@@ -149,6 +434,7 @@ async function loadGuestOptions() {
 		}
 
 		const guests = Array.isArray(data.convidados) ? data.convidados : [];
+		guestOptionsState = guests;
 		guestNameSelect.innerHTML = '<option value="">Selecione seu nome</option>';
 
 		let currentGroup = "";
@@ -179,8 +465,12 @@ async function loadGuestOptions() {
 		}
 
 		closeGroup();
+		renderGuestNameOptions(guestNameSearch ? guestNameSearch.value : "");
+		updateGuestPickerLabel();
 	} catch (error) {
 		guestNameSelect.innerHTML = '<option value="">Falha ao carregar convidados</option>';
+		guestOptionsState = [];
+		renderGuestNameOptions("");
 		if (guestLoginStatus) {
 			guestLoginStatus.textContent = error.message;
 		}
@@ -630,6 +920,7 @@ async function initLoginPage() {
 	}
 
 	setLoginMode("guest");
+	initGuestNamePicker();
 	await loadGuestOptions();
 	if (showGuestAccessBtn) {
 		showGuestAccessBtn.addEventListener("click", () => {
@@ -741,6 +1032,10 @@ async function initPage() {
 }
 
 document.addEventListener("keydown", (event) => {
+	if (event.key === "Escape" && guestNamePickerPanel && !guestNamePickerPanel.hidden) {
+		setGuestPickerOpen(false);
+	}
+
 	if (event.key === "Escape" && presencaConfirmModal && !presencaConfirmModal.hidden) {
 		closePresencaConfirmModal(false);
 	}
