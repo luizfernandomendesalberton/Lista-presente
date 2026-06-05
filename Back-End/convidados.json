@@ -1,17 +1,6 @@
 [
   {
     "id": 1,
-    "nome": "Ana Paula Noiva",
-    "nome_key": "ana paula noiva",
-    "grupo": "Noivos",
-    "tipo": "noivos",
-    "criado_em": "",
-    "presenca_confirmada": true,
-    "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-06-04T23:16:49.659927+00:00"
-  },
-  {
-    "id": 2,
     "nome": "Noivo Luiz Fernando",
     "nome_key": "noivo luiz fernando",
     "grupo": "Noivos",
@@ -22,18 +11,18 @@
     "presenca_confirmada_em": "2026-06-04T23:16:49.659927+00:00"
   },
   {
-    "id": 3,
-    "nome": "Vo Fridolina",
-    "nome_key": "vo fridolina",
-    "grupo": "Grupo 01",
-    "tipo": "convidado",
+    "id": 2,
+    "nome": "Ana Paula Noiva",
+    "nome_key": "ana paula noiva",
+    "grupo": "Noivos",
+    "tipo": "noivos",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-06-04T23:16:49.659927+00:00"
   },
   {
-    "id": 4,
+    "id": 3,
     "nome": "Vo Lucas",
     "nome_key": "vo lucas",
     "grupo": "Grupo 01",
@@ -44,9 +33,20 @@
     "presenca_confirmada_em": ""
   },
   {
+    "id": 4,
+    "nome": "Vo Fridolina",
+    "nome_key": "vo fridolina",
+    "grupo": "Grupo 01",
+    "tipo": "convidado",
+    "criado_em": "",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
     "id": 5,
-    "nome": "Tia Marlete",
-    "nome_key": "tia marlete",
+    "nome": "Tio Joao",
+    "nome_key": "tio joao",
     "grupo": "Grupo 02",
     "tipo": "convidado",
     "criado_em": "",
@@ -56,8 +56,8 @@
   },
   {
     "id": 6,
-    "nome": "Tio Joao",
-    "nome_key": "tio joao",
+    "nome": "Tia Marlete",
+    "nome_key": "tia marlete",
     "grupo": "Grupo 02",
     "tipo": "convidado",
     "criado_em": "",
@@ -100,8 +100,8 @@
   },
   {
     "id": 10,
-    "nome": "Mae Zenita",
-    "nome_key": "mae zenita",
+    "nome": "Aloisio",
+    "nome_key": "aloisio",
     "grupo": "Grupo 03",
     "tipo": "convidado",
     "criado_em": "",
@@ -111,8 +111,8 @@
   },
   {
     "id": 11,
-    "nome": "Aloisio",
-    "nome_key": "aloisio",
+    "nome": "Mae Zenita",
+    "nome_key": "mae zenita",
     "grupo": "Grupo 03",
     "tipo": "convidado",
     "criado_em": "",
@@ -265,8 +265,8 @@
   },
   {
     "id": 25,
-    "nome": "Pai",
-    "nome_key": "pai",
+    "nome": "Eli C.A",
+    "nome_key": "eli c.a",
     "grupo": "Grupo 11",
     "tipo": "convidado",
     "criado_em": "",
@@ -276,8 +276,8 @@
   },
   {
     "id": 26,
-    "nome": "Mae",
-    "nome_key": "mae",
+    "nome": "Alessandra S.M",
+    "nome_key": "alessandra s.m",
     "grupo": "Grupo 11",
     "tipo": "convidado",
     "criado_em": "",
