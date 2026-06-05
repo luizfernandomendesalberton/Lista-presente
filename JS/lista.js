@@ -1194,6 +1194,7 @@ async function syncAdminSession() {
 		}
 
 		setAdminMode(false);
+		window.location.href = "/";
 		return;
 	}
 
@@ -1213,6 +1214,7 @@ async function syncAdminSession() {
 		if (adminStatus) {
 			adminStatus.textContent = "Não foi possível validar sua sessão de administrador.";
 		}
+		window.location.href = "/";
 	}
 }
 
