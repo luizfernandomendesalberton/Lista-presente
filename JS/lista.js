@@ -1514,6 +1514,7 @@ function renderPresentes() {
 	presentes.forEach((presente, index) => {
 		const node = template.content.cloneNode(true);
 		const card = node.querySelector(".card");
+		const mediaWrap = node.querySelector(".media-wrap");
 		const fotoEl = node.querySelector(".presente-foto");
 		const videoEl = node.querySelector(".presente-video");
 		const embedEl = node.querySelector(".presente-embed");
@@ -1540,29 +1541,27 @@ function renderPresentes() {
 		categoriaEl.textContent = presente.categoria || "Geral";
 		const fallbackImageUrl = "https://images.unsplash.com/photo-1513883049090-d0b7439799bf?auto=format&fit=crop&w=900&q=80";
 		const videoUrl = String(presente.video_url || "").trim();
+		const produtoUrl = String(presente.produto_url || "").trim();
 		const youtubeEmbedUrl = getYouTubeEmbedUrl(videoUrl);
 
-		const setupProdutoLink = (mediaEl) => {
-			if (!mediaEl) {
-				return;
-			}
+		if (mediaWrap) {
+			mediaWrap.classList.toggle("has-link", Boolean(produtoUrl));
 
-			if (presente.produto_url) {
-				mediaEl.style.cursor = "pointer";
-				mediaEl.title = "Abrir página do produto";
-				mediaEl.addEventListener("click", () => {
-					window.open(presente.produto_url, "_blank", "noopener,noreferrer");
-				});
-			} else {
-				mediaEl.style.cursor = "default";
-				mediaEl.title = "";
+			if (produtoUrl) {
+				const mediaLinkOverlay = document.createElement("a");
+				mediaLinkOverlay.className = "media-link-overlay";
+				mediaLinkOverlay.href = produtoUrl;
+				mediaLinkOverlay.target = "_blank";
+				mediaLinkOverlay.rel = "noopener noreferrer";
+				mediaLinkOverlay.title = "Abrir página do produto";
+				mediaLinkOverlay.setAttribute("aria-label", `Abrir página do produto ${presente.nome}`);
+				mediaWrap.appendChild(mediaLinkOverlay);
 			}
-		};
+		}
 
 		fotoEl.hidden = false;
 		fotoEl.src = presente.foto_url || fallbackImageUrl;
 		fotoEl.alt = `Foto do presente ${presente.nome}`;
-		setupProdutoLink(fotoEl);
 		fotoEl.addEventListener("error", () => {
 			fotoEl.src = fallbackImageUrl;
 		});
@@ -1587,7 +1586,6 @@ function renderPresentes() {
 				fotoEl.hidden = true;
 				videoEl.src = videoUrl;
 				videoEl.setAttribute("aria-label", `Vídeo do presente ${presente.nome}`);
-				setupProdutoLink(videoEl);
 				videoEl.addEventListener("error", () => {
 					videoEl.hidden = true;
 					fotoEl.hidden = false;
