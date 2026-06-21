@@ -302,6 +302,15 @@ def get_guest_from_session(convidados=None):
 	return next((item for item in all_convidados if item.get("nome_key") == name_key), None)
 
 
+def get_convidado_group_name(convidado):
+	return str((convidado or {}).get("grupo") or "Sem grupo").strip() or "Sem grupo"
+
+
+def get_convidados_in_group(convidados, grupo_nome):
+	group_name = get_convidado_group_name({"grupo": grupo_nome})
+	return [item for item in convidados if get_convidado_group_name(item) == group_name]
+
+
 def can_access_presentes():
 	if is_session_admin():
 		return True
@@ -313,7 +322,10 @@ def can_access_presentes():
 	if not convidado:
 		return False
 
-	return bool(convidado.get("presenca_confirmada"))
+	grupo_nome = get_convidado_group_name(convidado)
+	all_convidados = load_convidados()
+	membros_grupo = get_convidados_in_group(all_convidados, grupo_nome)
+	return any(bool(membro.get("presenca_confirmada")) for membro in membros_grupo)
 
 
 def build_convidado_payload(convidado):
@@ -1382,16 +1394,16 @@ def confirmar_presenca():
 			if not convidado:
 				return jsonify({"erro": "Nome não encontrado na lista de convidados."}), 404
 
-			session_name_key = get_current_guest_name_key()
-			if session_name_key and session_name_key != nome_key and not is_session_admin():
-				return jsonify({"erro": "Esta sessão já está vinculada a outro nome."}), 403
-
-			session["guest_name_key"] = nome_key
-			session["guest_nome"] = convidado.get("nome")
+			session_guest = get_guest_from_session(convidados)
+			if not is_session_admin() and session_guest:
+				session_group = get_convidado_group_name(session_guest)
+				target_group = get_convidado_group_name(convidado)
+				if session_group != target_group:
+					return jsonify({"erro": "Você só pode confirmar convidados do seu próprio grupo."}), 403
 
 			confirmation_time = utc_now().isoformat()
-			grupo_nome = str(convidado.get("grupo") or "Sem grupo").strip() or "Sem grupo"
-			membros_grupo = [item for item in convidados if (item.get("grupo") or "Sem grupo") == grupo_nome]
+			grupo_nome = get_convidado_group_name(convidado)
+			membros_grupo = get_convidados_in_group(convidados, grupo_nome)
 
 			if bool(convidado.get("presenca_confirmada")):
 				return jsonify({"erro": "Este convidado já confirmou presença. Para alterar, fale com os noivos (admin)."}), 409

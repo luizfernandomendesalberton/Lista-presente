@@ -573,10 +573,10 @@ async function confirmPresence(nome, vaiAoEvento) {
 	}
 
 	const actionLabel = vaiAoEvento ? "confirmar presença" : "marcar como não vai";
-	const confirmMessage = `Deseja ${actionLabel} para este convidado? A resposta será salva apenas para o nome selecionado.`;
+	const confirmMessage = `Deseja ${actionLabel} para este convidado? Você só pode confirmar pessoas do seu próprio grupo.`;
 	const confirmed = await askPresencaConfirmation(actionLabel, confirmMessage, {
 		title: "Confirmar Escolha",
-		subtitle: `Você escolheu ${actionLabel} para esta pessoa.`,
+		subtitle: `Você pode confirmar qualquer membro do seu grupo.`,
 		confirmLabel: "Continuar",
 		cancelLabel: "Cancelar",
 	});
@@ -585,7 +585,7 @@ async function confirmPresence(nome, vaiAoEvento) {
 	}
 
 	const finalMessage = vaiAoEvento
-		? "Última confirmação: deseja salvar agora que este convidado vai ao evento?"
+		? "Última confirmação: deseja salvar agora a presença deste convidado?"
 		: "Última confirmação: deseja salvar agora que este convidado não vai ao evento?";
 	const finalConfirmed = await askPresencaConfirmation(actionLabel, finalMessage, {
 		title: "Confirmação Final",
