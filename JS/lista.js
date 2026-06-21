@@ -644,6 +644,23 @@ function getConvidadoStatusLabel(status) {
 }
 
 
+function getGroupPresenceSummary(convidados) {
+	const summary = new Map();
+
+	(convidados || []).forEach((convidado) => {
+		const groupName = String(convidado.grupo || "Sem grupo").trim() || "Sem grupo";
+		const current = summary.get(groupName) || { total: 0, confirmados: 0 };
+		current.total += 1;
+		if (convidado.status_presenca === "confirmado") {
+			current.confirmados += 1;
+		}
+		summary.set(groupName, current);
+	});
+
+	return summary;
+}
+
+
 function setConvidadoEditingMode(convidado) {
 	if (!hasAdminConvidadosUI || !adminConvidadoForm) {
 		return;
@@ -704,9 +721,17 @@ function renderAdminConvidados(convidados) {
 		return;
 	}
 
+	const groupSummary = getGroupPresenceSummary(convidados);
+
 	convidados.forEach((convidado) => {
 		const card = document.createElement("article");
 		card.className = "convidado-admin-card";
+
+		if (convidado.status_presenca === "confirmado") {
+			card.classList.add("is-confirmed");
+		} else if (convidado.status_presenca === "nao_vai") {
+			card.classList.add("is-declined");
+		}
 
 		const main = document.createElement("div");
 		main.className = "convidado-admin-main";
@@ -718,6 +743,15 @@ function renderAdminConvidados(convidados) {
 		const info = document.createElement("p");
 		info.textContent = `Grupo: ${convidado.grupo || "Sem grupo"} | Tipo: ${convidado.tipo || "convidado"} | Presença: ${getConvidadoStatusLabel(convidado.status_presenca)}`;
 		main.appendChild(info);
+
+		const groupName = String(convidado.grupo || "Sem grupo").trim() || "Sem grupo";
+		const groupInfo = groupSummary.get(groupName);
+		if (groupInfo) {
+			const groupStatus = document.createElement("p");
+			groupStatus.className = "convidado-admin-group-status";
+			groupStatus.textContent = `Grupo ${groupName}: ${groupInfo.confirmados}/${groupInfo.total} confirmados`;
+			main.appendChild(groupStatus);
+		}
 
 		if (convidado.presenca_confirmada_em) {
 			const time = document.createElement("p");

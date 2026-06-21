@@ -573,10 +573,10 @@ async function confirmPresence(nome, vaiAoEvento) {
 	}
 
 	const actionLabel = vaiAoEvento ? "confirmar presença" : "marcar como não vai";
-	const confirmMessage = `Deseja ${actionLabel}? Esta escolha será aplicada para todo o grupo/família e depois só os noivos (admin) podem alterar.`;
+	const confirmMessage = `Deseja ${actionLabel} para este convidado? A resposta será salva apenas para o nome selecionado.`;
 	const confirmed = await askPresencaConfirmation(actionLabel, confirmMessage, {
 		title: "Confirmar Escolha",
-		subtitle: `Você escolheu ${actionLabel}.`,
+		subtitle: `Você escolheu ${actionLabel} para esta pessoa.`,
 		confirmLabel: "Continuar",
 		cancelLabel: "Cancelar",
 	});
@@ -585,8 +585,8 @@ async function confirmPresence(nome, vaiAoEvento) {
 	}
 
 	const finalMessage = vaiAoEvento
-		? "Última confirmação: deseja salvar agora que TODO o grupo/família vai ao evento?"
-		: "Última confirmação: deseja salvar agora que TODO o grupo/família não vai ao evento?";
+		? "Última confirmação: deseja salvar agora que este convidado vai ao evento?"
+		: "Última confirmação: deseja salvar agora que este convidado não vai ao evento?";
 	const finalConfirmed = await askPresencaConfirmation(actionLabel, finalMessage, {
 		title: "Confirmação Final",
 		subtitle: "Esta ação será gravada agora e ficará bloqueada para edição nesta tela.",
@@ -619,8 +619,8 @@ async function confirmPresence(nome, vaiAoEvento) {
 
 		if (data.grupo) {
 			presencaStatus.textContent = vaiAoEvento
-				? `Grupo ${data.grupo} confirmado (${data.grupo_confirmados}/${data.grupo_total}).`
-				: `Grupo ${data.grupo} marcado como nao vai (${data.grupo_confirmados}/${data.grupo_total}).`;
+				? `Presença registrada para ${nome} no grupo ${data.grupo} (${data.grupo_confirmados}/${data.grupo_total} confirmados no grupo).`
+				: `Resposta registrada para ${nome} no grupo ${data.grupo} (${data.grupo_confirmados}/${data.grupo_total} no grupo).`;
 		} else {
 			presencaStatus.textContent = vaiAoEvento
 				? `Presenca confirmada para ${nome}.`

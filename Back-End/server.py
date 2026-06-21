@@ -1393,18 +1393,15 @@ def confirmar_presenca():
 			grupo_nome = str(convidado.get("grupo") or "Sem grupo").strip() or "Sem grupo"
 			membros_grupo = [item for item in convidados if (item.get("grupo") or "Sem grupo") == grupo_nome]
 
-			# After first RSVP, the group can only be changed by admins in the admin panel.
-			if any(bool(membro.get("presenca_confirmada")) for membro in membros_grupo):
-				return jsonify({"erro": "Este grupo já confirmou presença. Para alterar, fale com os noivos (admin)."}), 409
+			if bool(convidado.get("presenca_confirmada")):
+				return jsonify({"erro": "Este convidado já confirmou presença. Para alterar, fale com os noivos (admin)."}), 409
 
-			# RSVP is group-based: one confirmation updates all members in the same family group.
-			for membro in membros_grupo:
-				membro["presenca_confirmada"] = True
-				membro["vai_ao_evento"] = vai_ao_evento
-				membro["presenca_confirmada_em"] = confirmation_time
+			convidado["presenca_confirmada"] = True
+			convidado["vai_ao_evento"] = vai_ao_evento
+			convidado["presenca_confirmada_em"] = confirmation_time
 
 			total_no_grupo = len(membros_grupo)
-			confirmados_no_grupo = total_no_grupo
+			confirmados_no_grupo = sum(1 for membro in membros_grupo if bool(membro.get("presenca_confirmada")))
 			save_convidados(convidados)
 
 	try:
@@ -1422,7 +1419,7 @@ def confirmar_presenca():
 
 	return jsonify(
 		{
-			"mensagem": f"Presença do grupo '{grupo_nome}' confirmada com sucesso.",
+			"mensagem": f"Presença de '{convidado.get('nome')}' confirmada com sucesso.",
 			"convidado": convidado,
 			"grupo": grupo_nome,
 			"grupo_total": total_no_grupo,
