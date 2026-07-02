@@ -50,24 +50,6 @@
   },
   {
     "id": 4,
-    "nome": "Cooktop",
-    "descricao": "Cooktop 4 Bocas Ultra Chama Preto Trempe de Chapa Bivolt Chamalux",
-    "categoria": "Cozinha",
-    "preco": 350.0,
-    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_681666-MLA99452205166_112025-F.webp",
-    "video_url": "",
-    "produto_url": "https://www.mercadolivre.com.br/cooktop-4-bocas-ultra-chama-preto-trempe-de-chapa-bivolt-chamalux/p/MLB16084579?product_trigger_id=MLB46446146&pdp_filters=item_id%3AMLB4699248675&applied_product_filters=MLB16084579&from=gshop&picker=true&matt_tool=16151386&matt_word=&matt_source=google&matt_campaign_id=22090354208&matt_ad_group_id=197094183971&matt_match_type=&matt_network=g&matt_device=c&matt_creative=792355616856&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735098639&matt_product_id=MLB16084579-product&matt_product_partition_id=2455356920535&matt_target_id=pla-2455356920535&cq_src=google_ads&cq_cmp=22090354208&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=22090354208&gbraid=0AAAAAD93qcCOiUqzlLAH4ik0pwTvzZK3U&gclid=CjwKCAjwrNrQBhBjEiwAoR4VO4kK7TYvq6EgWlBEpIfPQAO4HnH1OAutoN3bhG8jx2TFpCj6kMvrfBoCndAQAvD_BwE&quantity=1",
-    "especificacoes": [
-      "Tipo de ignição: automático.",
-      "Quantidade de bocas: 4.",
-      "Materiais da superfície: vidro temperado.",
-      "Tipo de montagem: de embutir.",
-      "Tipos de alimentação: gás."
-    ],
-    "reservado": false
-  },
-  {
-    "id": 5,
     "nome": "Jogo Refratário Marinex",
     "descricao": "Jogo Refratário 3 Assadeiras Marinex Retangulares Nadir Cor Vidro",
     "categoria": "Cozinha",
@@ -84,7 +66,7 @@
     "reservado": false
   },
   {
-    "id": 6,
+    "id": 5,
     "nome": "Conjunto De Travessas Marinex",
     "descricao": "Conjunto De Travessas Refratárias Em Vidro 10 Peças Marinex Transparente",
     "categoria": "Cozinha",
@@ -102,7 +84,7 @@
     "reservado": false
   },
   {
-    "id": 7,
+    "id": 6,
     "nome": "Jogo Bowl inox",
     "descricao": "Jogo Bowl Conjunto Bacia Profissional Ke Home 6 Pçs Aço Inox 304 14-30cm",
     "categoria": "Cozinha",
@@ -120,7 +102,7 @@
     "reservado": false
   },
   {
-    "id": 8,
+    "id": 7,
     "nome": "Lavadora de alta pressão",
     "descricao": "Lavadora de Alta Pressão Vonder LAV 1300 – 1300 Libras, Compacta, Potente, Ideal para Carros, Quintais e Limpezas Pesadas",
     "categoria": "Geral",
@@ -140,7 +122,7 @@
     "reservado": false
   },
   {
-    "id": 9,
+    "id": 8,
     "nome": "Boleira",
     "descricao": "Boleira 5 Em 1 Ruvolo Com Suporte Tampa E Pé De Vidro Mônaco Transparente",
     "categoria": "Cozinha",
@@ -156,7 +138,7 @@
     "reservado": false
   },
   {
-    "id": 10,
+    "id": 9,
     "nome": "Aquecedor a Óleo",
     "descricao": "Aquecedor a Óleo Mondial Preto/Prata 1500W A-06",
     "categoria": "Eletroportáteis",
@@ -175,7 +157,7 @@
     "reservado": false
   },
   {
-    "id": 11,
+    "id": 10,
     "nome": "Secadora de Roupas",
     "descricao": "Secadora de Roupa Mueller Solaris 8Kg 220V",
     "categoria": "Utilidades Domésticas",
@@ -193,7 +175,7 @@
     "reservado": false
   },
   {
-    "id": 12,
+    "id": 11,
     "nome": "Ferro de passar",
     "descricao": "Electrolux Efficient Esi10 a vapor e ferro seco, cor azul",
     "categoria": "Utilidades Domésticas",
@@ -215,14 +197,14 @@
     "reservado": false
   },
   {
-    "id": 13,
+    "id": 12,
     "nome": "Forno elétrico",
-    "descricao": "Forno Elétrico de Bancada Fischer Gourmet Grill 44 litros",
+    "descricao": "Forno Elétrico de Bancada Fischer Gourmet Grill 44 litros Inox",
     "categoria": "Cozinha",
     "preco": 900.0,
     "foto_url": "https://www.fischer.com.br/media/catalog/product/cache/e564debae7c8cb1075438c695f7d9d19/g/o/gourmet_107.png",
     "video_url": "",
-    "produto_url": "https://www.fischer.com.br/forno-eletrico-fischer-gourmet-grill-bancada-44l/p?color=5443",
+    "produto_url": "https://www.fischer.com.br/forno-eletrico-fischer-gourmet-grill-bancada-44l/p?color=5443&Voltagem=5474",
     "especificacoes": [
       "até 120 minutos com aviso sonoro",
       "temperatura de 50 a 320ºC"
@@ -230,7 +212,7 @@
     "reservado": false
   },
   {
-    "id": 14,
+    "id": 13,
     "nome": "Micro-ondas",
     "descricao": "Micro-ondas Electrolux 36L cor Inox Efficient com Descongelamento Assistido ME36S",
     "categoria": "Cozinha",
@@ -250,22 +232,7 @@
     "reservado": false
   },
   {
-    "id": 15,
-    "nome": "Fritadeira elétrica",
-    "descricao": "Fritadeira Elétrica Wap Air Fryer Oven Digital Black Inox 12 Litros com Revestimento Antiaderente",
-    "categoria": "Cozinha",
-    "preco": 500.0,
-    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_898071-MLA99545431524_122025-F.webp",
-    "video_url": "",
-    "produto_url": "https://www.mercadolivre.com.br/fritadeira-eletrica-wap-air-fryer-oven-digital-black-inox-12-litros-com-revestimento-antiaderente/p/MLB42225245?product_trigger_id=MLB42225245&attributes=COLOR%3APreto%2CVOLTAGE%3AMLB42225245&pdp_filters=item_id%3AMLB6233880886&applied_product_filters=MLB42225245&from=gshop&picker=true&matt_tool=80488341&matt_word=&matt_source=google&matt_campaign_id=22090193747&matt_ad_group_id=194474625514&matt_match_type=&matt_network=g&matt_device=c&matt_creative=792355615578&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735125422&matt_product_id=MLB42225245-product&matt_product_partition_id=2456246915228&matt_target_id=pla-2456246915228&cq_src=google_ads&cq_cmp=22090193747&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=22090193747&gbraid=0AAAAAD93qcCT-y_mxai67GR5-295rh5-u&gclid=CjwKCAjwrNrQBhBjEiwAoR4VOy4w_gZUBBoybTKi7RJWdzWqpEvx3b7KwWyJ2hFXqiKvZDtDdiLacBoCd08QAvD_BwE&quantity=1",
-    "especificacoes": [
-      "Assa, cozinha, reaquece e frita sem óleo",
-      "Prepara várias receitas simultaneamente"
-    ],
-    "reservado": false
-  },
-  {
-    "id": 16,
+    "id": 14,
     "nome": "Mixer",
     "descricao": "Mixer Power Oster Black Inox 3 em 1 - 220V",
     "categoria": "Cozinha",
@@ -280,7 +247,7 @@
     "reservado": false
   },
   {
-    "id": 17,
+    "id": 15,
     "nome": "Chaleira elétrica",
     "descricao": "Chaleira Elétrica Oster Inox 2L Ultra - 220V",
     "categoria": "Cozinha",
@@ -296,22 +263,7 @@
     "reservado": false
   },
   {
-    "id": 18,
-    "nome": "Panela de pressão",
-    "descricao": "Panela de Pressão Tramontina Vancouver Effect em Alumínio com Revestimento Interno e Externo em Antiaderente Starflon Max Preto 20 cm 4,5 L",
-    "categoria": "Cozinha",
-    "preco": 200.0,
-    "foto_url": "https://assets.tramontina.com.br/upload/tramon/imagens/CUT/20591420PDM001G.jpg",
-    "video_url": "",
-    "produto_url": "https://www.tramontina.com.br/panela-de-pressao-tramontina-vancouver-effect-em-aluminio-com-revestimento-interno-e-externo-em-antiaderente-starflon-max-preto-20-cm-4-5-l/20591420.html?gad_source=1&gad_campaignid=23630228876&gbraid=0AAAAAC9EDsJZybOGKlrepq9-JKsAKvwhi&gclid=CjwKCAjwrNrQBhBjEiwAoR4VOwjwDC9dLnPmOvqN9mivccLefoDW-h09EWQUJLI7BCEZraSUSTqLHhoCJyAQAvD_BwE",
-    "especificacoes": [
-      "Corpo de alumínio com espessura de 3,2 mm que proporciona cozimento rápido e uniforme",
-      "Com revestimento interno e externo de antiaderente Starflon Max que não gruda, é fácil de limpar, mais durável e não é prejudicial à saúde"
-    ],
-    "reservado": false
-  },
-  {
-    "id": 19,
+    "id": 16,
     "nome": "Máquina de Lavar Roupas",
     "descricao": "Máquina de Lavar Electrolux 15kg Branca Essential Care com Cesto Inox e Jet&Clean (LED15) - 220V",
     "categoria": "Utilidades Domésticas",
@@ -328,22 +280,7 @@
     "reservado": false
   },
   {
-    "id": 20,
-    "nome": "Geladeira",
-    "descricao": "Geladeira Electrolux Frost Free com AutoSense 432L Efficient Duplex Inox Look (TF70S)",
-    "categoria": "Cozinha",
-    "preco": 3134.98,
-    "foto_url": "https://electrolux.vtexassets.com/arquivos/ids/288220-540-540?v=639045982969030000&width=540&height=540&aspect=true&format=auto",
-    "video_url": "",
-    "produto_url": "https://loja.electrolux.com.br/geladeira-electrolux-frost-free-432l-efficient-autosense-duplex-inox-look--tf70s-/p",
-    "especificacoes": [
-      "Freezer 128L para conservar alimentos de diferentes tamanhos",
-      "Capacidade total de armazenamento 432 L"
-    ],
-    "reservado": false
-  },
-  {
-    "id": 21,
+    "id": 17,
     "nome": "Guarda-Roupa",
     "descricao": "Guarda-Roupa Casal 8 Portas Batentes Rustic/Crema/Rustic Venus Madesa",
     "categoria": "Móveis",
@@ -359,7 +296,7 @@
     "reservado": false
   },
   {
-    "id": 22,
+    "id": 18,
     "nome": "Mesa de Cabeceira",
     "descricao": "Kit 2 Mesinhas De Cabeceiras Verona Retrô Moderno Acabamento Brilhante C/2 Gavetas - Mega Móveis Cor Off/nature",
     "categoria": "Móveis",
@@ -375,7 +312,7 @@
     "reservado": false
   },
   {
-    "id": 23,
+    "id": 19,
     "nome": "Cômoda",
     "descricao": "Cômoda 4 Gavetas C/ Sapateira Cor Off White Web Home Móveis",
     "categoria": "Móveis",
@@ -391,7 +328,7 @@
     "reservado": false
   },
   {
-    "id": 24,
+    "id": 20,
     "nome": "Coifa",
     "descricao": "Coifa e Depurador Philco Pco60g Glass",
     "categoria": "Cozinha",
@@ -407,7 +344,7 @@
     "criado_em": "2026-06-01T18:53:32.264287+00:00"
   },
   {
-    "id": 25,
+    "id": 21,
     "nome": "Aspirador de Pó",
     "descricao": "Electrolux Aspirador água pó potente função sopro limpeza profunda 1400W 18L total 11L util protetor termico A10N1 220V",
     "categoria": "Utilidades Domésticas",
@@ -426,39 +363,7 @@
     "criado_em": "2026-06-01T18:56:43.803883+00:00"
   },
   {
-    "id": 26,
-    "nome": "Toalha de Mesa",
-    "descricao": "Toalha De Mesa 6 Lugares Retangular Rústica Luxo 2,00x1,40 Cor Avelã",
-    "categoria": "Cozinha",
-    "preco": 40.0,
-    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_816887-MLA110921239931_042026-F.webp",
-    "video_url": "",
-    "produto_url": "https://www.mercadolivre.com.br/toalha-de-mesa-6-lugares-retangular-rustica-luxo-200x140-cor-avel/p/MLB68666900?product_trigger_id=MLB68654516&pdp_filters=item_id%3AMLB6673489918&applied_product_filters=MLB68666900&picker=true&quantity=1",
-    "especificacoes": [
-      "Nome do desenho: Lisa.",
-      "A composição em tecido Oxford permite o uso do ferro de passar para a remoção de marcas de dobras e vincos no tecido.",
-      "O material em tecido Oxford oferece uma superfície resistente que suporta o uso frequente em refeições diárias."
-    ],
-    "reservado": false,
-    "criado_em": "2026-06-01T19:02:47.368674+00:00"
-  },
-  {
-    "id": 27,
-    "nome": "Toalha de Mesa",
-    "descricao": "Toalha De Mesa 6 Lugares Em Tecido Jacquard Retangular",
-    "categoria": "Cozinha",
-    "preco": 46.0,
-    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_994743-MLB75060160451_032024-F-toalha-de-mesa-6-lugares-em-tecido-jacquard-retangular.webp",
-    "video_url": "",
-    "produto_url": "https://produto.mercadolivre.com.br/MLB-4510695220-toalha-de-mesa-6-lugares-em-tecido-jacquard-retangular-_JM?attributes=PATTERN_NAME%3ATWVkYWxow6Nv%2CCOLOR_SECONDARY_COLOR%3AQnJhbmNv&picker=true&matt_tool=94638677&matt_internal_campaign_id=356630736&matt_word=&matt_source=google&matt_campaign_id=23317056192&matt_ad_group_id=194360389359&matt_match_type=&matt_network=g&matt_device=c&matt_creative=804028627875&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=238487477&matt_product_id=MLB4510695220&matt_product_partition_id=2670668094952&matt_target_id=pla-2670668094952&cq_src=google_ads&cq_cmp=23317056192&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=23317056192&gbraid=0AAAAAD93qcB2aEVZqWp3D0KMqDxD9QuEh&gclid=Cj0KCQjw2_TQBhCnARIsAF3-XhzGR4SabUUGmbN9ArQbCAfYPfm1g4CBCGj-X7HmLTuABLqfuMEsZ5oaAvLCEALw_wcB&quantity=1",
-    "especificacoes": [
-      "Cor: Branco"
-    ],
-    "reservado": false,
-    "criado_em": "2026-06-01T19:05:51.295996+00:00"
-  },
-  {
-    "id": 28,
+    "id": 22,
     "nome": "Conjunto de Assadeiras",
     "descricao": "Conjunto de torrefação preto de 3 peças Tramontina Brasil 20099/090",
     "categoria": "Cozinha",
@@ -475,7 +380,7 @@
     "criado_em": "2026-06-03T19:32:39.626746+00:00"
   },
   {
-    "id": 29,
+    "id": 23,
     "nome": "Protetor de Colchão",
     "descricao": "Protetor de Colchão Queen Impermeável Essence Branco",
     "categoria": "Cama, Mesa e Banho",
@@ -494,7 +399,7 @@
     "criado_em": "2026-06-03T19:44:44.096644+00:00"
   },
   {
-    "id": 30,
+    "id": 24,
     "nome": "Potes de Vidro com Tampa",
     "descricao": "Conjunto 10 Potes Vidro Hermético Marmita Mantimentos 640ml",
     "categoria": "Cozinha",
@@ -513,7 +418,7 @@
     "criado_em": "2026-06-03T19:59:40.458120+00:00"
   },
   {
-    "id": 31,
+    "id": 25,
     "nome": "Garrafa Térmica",
     "descricao": "Garrafa Térmica 1,8L Termolar Lúmina Inox",
     "categoria": "Cozinha",
@@ -529,7 +434,7 @@
     "criado_em": "2026-06-03T20:02:54.749490+00:00"
   },
   {
-    "id": 32,
+    "id": 26,
     "nome": "Lava-Louças",
     "descricao": "Lava-Louças Electrolux 14 Serviços Inox com Programa Lava e Seca 220v LS14E",
     "categoria": "Cozinha",
@@ -544,7 +449,7 @@
     "criado_em": "2026-06-03T20:09:22.061706+00:00"
   },
   {
-    "id": 33,
+    "id": 27,
     "nome": "Waffle Maker",
     "descricao": "MONDIAL Waffle Maker, Preto/Inox, 1200W, 220V - GW-01",
     "categoria": "Cozinha",
@@ -558,5 +463,154 @@
     ],
     "reservado": false,
     "criado_em": "2026-06-03T20:17:16.548329+00:00"
+  },
+  {
+    "id": 28,
+    "nome": "Fogão",
+    "descricao": "Cooktop a Gás Fischer 4 Bocas Fit Line Trempe Esmaltada Aramado",
+    "categoria": "Cozinha",
+    "preco": 375.12,
+    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_609133-MLA100033485209_122025-F.webp",
+    "video_url": "",
+    "produto_url": "https://www.mercadolivre.com.br/cooktop-a-gas-fischer-4-bocas-fit-line-trempe-esmaltada-aramado/p/MLB42641505?pdp_filters=item_id%3AMLB3973750523&from=gshop&matt_tool=22683844&matt_word=&matt_source=google&matt_campaign_id=22090193735&matt_ad_group_id=194474625114&matt_match_type=&matt_network=g&matt_device=c&matt_creative=792355615392&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735098639&matt_product_id=MLB42641505-product&matt_product_partition_id=2647613913032&matt_target_id=pla-2647613913032&cq_src=google_ads&cq_cmp=22090193735&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=22090193735&gbraid=0AAAAAD93qcAlnK3yK-nE1FBUrO4xGp6PR&gclid=CjwKCAjw0o3SBhBVEiwAh28-jVCTDid0zV_gHcb_uXkHW2LOuHsfmeJDt456ANIA5N1DojNeq7ryOxoCeEgQAvD_BwE",
+    "especificacoes": [
+      "Voltagem: 127/220V.",
+      "Tipo de ignição: automático.",
+      "Quantidade de bocas: 4.",
+      "Tipo de gás: liquefeito (glp/lp).",
+      "Tipo de controle: manípulos.",
+      "Materiais da superfície: vidro temperado.",
+      "Tipo de montagem: de embutir."
+    ],
+    "reservado": false,
+    "criado_em": "2026-06-30T20:06:31.548544+00:00"
+  },
+  {
+    "id": 29,
+    "nome": "Panela Elétrica",
+    "descricao": "Panela Pressão Elétrica 6 Litros Multifunções Painel Digital Antiaderente Agratto Appd01i",
+    "categoria": "Cozinha",
+    "preco": 390.0,
+    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_731809-MLA99368737040_112025-F.webp",
+    "video_url": "",
+    "produto_url": "https://www.mercadolivre.com.br/panela-presso-eletrica-6-litros-multifuncoes-painel-digital-antiaderente-agratto-appd01i/p/MLB47375021?product_trigger_id=MLB47330293&attributes=COLOR%3AInox%2CVOLTAGE%3AMLB47375021&pdp_filters=item_id%3AMLB6285300318&applied_product_filters=MLB47330293&from=gshop&picker=true&matt_tool=80488341&matt_word=&matt_source=google&matt_campaign_id=22090193747&matt_ad_group_id=194474625754&matt_match_type=&matt_network=g&matt_device=c&matt_creative=792355615587&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735125422&matt_product_id=MLB47330293-product&matt_product_partition_id=2452779771342&matt_target_id=pla-2452779771342&cq_src=google_ads&cq_cmp=22090193747&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=22090193747&gbraid=0AAAAAD93qcAMNcZ1w_g-9uBQP7usp1Uuj&gclid=Cj0KCQjw9ZLSBhCcARIsAEhGKgNmoG9vtul-tXbIyHjSX9TKDrX48P2fBqMAxzMGf1V8PfCIXf7va20aAuJBEALw_wcB&quantity=1",
+    "especificacoes": [
+      "Frequência: 60Hz.",
+      "Potência de 1 kW para um cozimento eficiente e rápido.",
+      "Capacidade de 6 litros, ideal para grandes preparações.",
+      "Desligamento automático para maior segurança durante o cozimento.",
+      "Função de manter aquecido preserva o sabor e qualidade dos alimentos."
+    ],
+    "reservado": false,
+    "criado_em": "2026-07-01T17:10:59.512058+00:00"
+  },
+  {
+    "id": 30,
+    "nome": "Jogo de Cama Queen",
+    "descricao": "Jogo de cama Harmony branco/cinza 4 peças - Jolitex",
+    "categoria": "Cama, Mesa e Banho",
+    "preco": 245.0,
+    "foto_url": "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80",
+    "video_url": "",
+    "produto_url": "",
+    "especificacoes": [
+      "Produto disponível na loja Casa Geovane"
+    ],
+    "reservado": false,
+    "criado_em": "2026-07-01T18:04:24.959247+00:00"
+  },
+  {
+    "id": 31,
+    "nome": "Geladeira",
+    "descricao": "Geladeira Electrolux Frost Free Inverter 490L Experience Inverse cor Inox Look (IB51S) - 220V",
+    "categoria": "Cozinha",
+    "preco": 4100.0,
+    "foto_url": "https://electrolux.vtexassets.com/arquivos/ids/283973-800-800?v=638959740451900000&width=800&height=800&aspect=true&format=auto",
+    "video_url": "",
+    "produto_url": "https://loja.electrolux.com.br/geladeira-electrolux-frost-free-inverter-490l-experience-inverse-inox-look--ib51s-/p?skuId=310129557",
+    "especificacoes": [
+      "490L",
+      "Inox"
+    ],
+    "reservado": false,
+    "criado_em": "2026-07-01T18:12:16.440250+00:00"
+  },
+  {
+    "id": 32,
+    "nome": "Jogo de Refratárias",
+    "descricao": "Jogo de 3 Refratárias Bake Branca",
+    "categoria": "Cozinha",
+    "preco": 230.0,
+    "foto_url": "https://oxfordporcelanas.vtexassets.com/arquivos/ids/161603-1200-1200?v=636487674489870000&width=1200&height=1200&aspect=true",
+    "video_url": "",
+    "produto_url": "https://www.oxfordporcelanas.com.br/refrataria-bake-branca-conjunto/p",
+    "especificacoes": [
+      "Resistente a micro-ondas",
+      "Resistente a lava-louças",
+      "Resistente a forno",
+      "Branco",
+      "Porcelana",
+      "Refratária"
+    ],
+    "reservado": false,
+    "criado_em": "2026-07-01T18:22:12.351206+00:00"
+  },
+  {
+    "id": 33,
+    "nome": "Frigideira",
+    "descricao": "Frigideira Antiaderente Cerâmica 28cm Aristus Tampa Com Borda De Silicone Cabo Antitérmico Compatível Com Fogão A Gás E Indução Revestimento Premium Linha Luxury Induction - All Black",
+    "categoria": "Cozinha",
+    "preco": 182.0,
+    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_970340-MLA96418227930_102025-F.webp",
+    "video_url": "",
+    "produto_url": "https://www.mercadolivre.com.br/frigideira-antiaderente-cermica-28cm-aristus-tampa-com-borda-de-silicone-cabo-antitermico-compativel-com-fogo-a-gas-e-induco-revestimento-premium-linha-luxury-induction-all-black/p/MLB60215301?product_trigger_id=MLB60194453&pdp_filters=item_id%3AMLB4261592121&applied_product_filters=MLB60194453&from=gshop&picker=true&matt_tool=63172158&matt_word=&matt_source=google&matt_campaign_id=23351281889&matt_ad_group_id=195616624928&matt_match_type=&matt_network=g&matt_device=c&matt_creative=787871583116&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735098639&matt_product_id=MLB60194453-product&matt_product_partition_id=2388009210146&matt_target_id=pla-2388009210146&cq_src=google_ads&cq_cmp=23351281889&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=23351281889&gbraid=0AAAAAD93qcBQ-6V7xCZHoToLKjawxgYy0&gclid=Cj0KCQjw9ZLSBhCcARIsAEhGKgNbvLMjbhR1r3TDrxJnAq1Yk_gqwEXB081sqTqDtoZMwRHvOEYAWlkaAijMEALw_wcB&quantity=1",
+    "especificacoes": [
+      "Corpo fabricado em cerâmica.",
+      "Cabo fabricado em baquelite antitérmico.",
+      "Com um diâmetro de 28cm.",
+      "Suas dimensões são: 48cm x 28cm x 6cm.",
+      "Seu peso é de 1710kg.",
+      "Com superfície antiaderente.",
+      "Inclui tampa."
+    ],
+    "reservado": false,
+    "criado_em": "2026-07-01T18:27:28.959914+00:00"
+  },
+  {
+    "id": 34,
+    "nome": "Travesseiro",
+    "descricao": "Travesseiro Altenburg Antistress 50cm x 70cm",
+    "categoria": "Cama, Mesa e Banho",
+    "preco": 140.0,
+    "foto_url": "https://altenburg.vtexassets.com/arquivos/ids/184697-1200-1200?v=638998153371370000&width=1200&height=1200&aspect=true",
+    "video_url": "",
+    "produto_url": "https://www.altenburg.com.br/travesseiro-altenburg-antistress-50cm-x-70cm/p",
+    "especificacoes": [
+      "Capa com fios de carbono",
+      "Blend de fibras sono e saúde",
+      "Não alérgico",
+      "2 travesseiros"
+    ],
+    "reservado": false,
+    "criado_em": "2026-07-01T18:31:16.660646+00:00"
+  },
+  {
+    "id": 35,
+    "nome": "Air Fryer",
+    "descricao": "Air Fryer Oven Electrolux por Rita Lobo 12L Digital Grafite Experience 1700W (EAF85)",
+    "categoria": "Cozinha",
+    "preco": 630.0,
+    "foto_url": "https://electrolux.vtexassets.com/arquivos/ids/281816-800-800?v=638905259401170000&width=800&height=800&aspect=true&format=auto",
+    "video_url": "",
+    "produto_url": "https://loja.electrolux.com.br/air-fryer-oven-5-em-1-electrolux-por-rita-lobo-12l-experience--eaf85-/p?skuId=310130037",
+    "especificacoes": [
+      "AirFry",
+      "Gratinar",
+      "Reaquecer",
+      "Desidratar",
+      "Assar"
+    ],
+    "reservado": false,
+    "criado_em": "2026-07-01T18:53:19.058064+00:00"
   }
 ]

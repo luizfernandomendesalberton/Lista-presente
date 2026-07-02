@@ -8,7 +8,7 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-06-21T16:37:57.883192+00:00"
+    "presenca_confirmada_em": "2026-06-21T20:26:12.136824+00:00"
   },
   {
     "id": 2,
@@ -19,12 +19,12 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-06-21T16:38:01.765987+00:00"
+    "presenca_confirmada_em": "2026-06-21T20:26:19.035222+00:00"
   },
   {
     "id": 3,
-    "nome": "Vo Lucas",
-    "nome_key": "vo lucas",
+    "nome": "Lucas",
+    "nome_key": "lucas",
     "grupo": "Grupo 01",
     "tipo": "convidado",
     "criado_em": "",
@@ -34,8 +34,8 @@
   },
   {
     "id": 4,
-    "nome": "Vo Fridolina",
-    "nome_key": "vo fridolina",
+    "nome": "Fridolina",
+    "nome_key": "fridolina",
     "grupo": "Grupo 01",
     "tipo": "convidado",
     "criado_em": "",
@@ -45,8 +45,8 @@
   },
   {
     "id": 5,
-    "nome": "Tio Joao",
-    "nome_key": "tio joao",
+    "nome": "João (tio)",
+    "nome_key": "joao (tio)",
     "grupo": "Grupo 02",
     "tipo": "convidado",
     "criado_em": "",
@@ -56,8 +56,8 @@
   },
   {
     "id": 6,
-    "nome": "Tia Marlete",
-    "nome_key": "tia marlete",
+    "nome": "Marlete",
+    "nome_key": "marlete",
     "grupo": "Grupo 02",
     "tipo": "convidado",
     "criado_em": "",
@@ -111,18 +111,18 @@
   },
   {
     "id": 11,
-    "nome": "Mae Zenita",
-    "nome_key": "mae zenita",
+    "nome": "Zenita",
+    "nome_key": "zenita",
     "grupo": "Grupo 03",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-06-30T14:03:22.407520+00:00"
   },
   {
     "id": 12,
-    "nome": "Alessio",
+    "nome": "Aléssio",
     "nome_key": "alessio",
     "grupo": "Grupo 04",
     "tipo": "convidado",
@@ -265,8 +265,8 @@
   },
   {
     "id": 25,
-    "nome": "Eli C.A",
-    "nome_key": "eli c.a",
+    "nome": "Eli",
+    "nome_key": "eli",
     "grupo": "Grupo 11",
     "tipo": "convidado",
     "criado_em": "",
@@ -276,8 +276,8 @@
   },
   {
     "id": 26,
-    "nome": "Alessandra S.M",
-    "nome_key": "alessandra s.m",
+    "nome": "Alessandra",
+    "nome_key": "alessandra",
     "grupo": "Grupo 11",
     "tipo": "convidado",
     "criado_em": "",
@@ -287,8 +287,8 @@
   },
   {
     "id": 27,
-    "nome": "Luiza M.A",
-    "nome_key": "luiza m.a",
+    "nome": "Luiza",
+    "nome_key": "luiza",
     "grupo": "Grupo 12",
     "tipo": "convidado",
     "criado_em": "",
@@ -298,8 +298,8 @@
   },
   {
     "id": 28,
-    "nome": "Joao",
-    "nome_key": "joao",
+    "nome": "João (cunhado)",
+    "nome_key": "joao (cunhado)",
     "grupo": "Grupo 12",
     "tipo": "convidado",
     "criado_em": "",
@@ -353,8 +353,8 @@
   },
   {
     "id": 33,
-    "nome": "Vovo",
-    "nome_key": "vovo",
+    "nome": "Santina (avó)",
+    "nome_key": "santina (avo)",
     "grupo": "Grupo 15",
     "tipo": "convidado",
     "criado_em": "",
