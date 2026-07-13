@@ -203,6 +203,7 @@ body.metrics-page .bg-shape {
 		max-width: 620px;
 		height: auto;
 		min-height: 0;
+		align-self: center;
 	}
 
 	body.login-page .panel {
@@ -229,7 +230,7 @@ body.metrics-page .bg-shape {
 
 	body.login-page .login-mode-panel {
 		overflow: visible;
-		align-self: start;
+		align-self: center;
 		height: auto;
 		min-height: 0;
 	}
