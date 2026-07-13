@@ -152,6 +152,92 @@ body.metrics-page .bg-shape {
 	box-shadow: none;
 }
 
+@media (min-width: 701px) and (max-height: 860px) {
+	body.login-page {
+		padding: 8px 0 12px;
+	}
+
+	body.login-page .container {
+		width: min(1040px, 94vw);
+		gap: 12px;
+	}
+
+	body.login-page .hero {
+		padding: 14px 16px;
+		border-radius: 22px;
+	}
+
+	body.login-page .tag {
+		padding: 6px 12px;
+		font-size: 0.68rem;
+	}
+
+	body.login-page .app-version {
+		margin-top: 6px;
+		font-size: 0.72rem;
+	}
+
+	body.login-page h1 {
+		margin: 6px 0 4px;
+		font-size: clamp(1.75rem, 4.2vw, 2.6rem);
+	}
+
+	body.login-page .subtitle {
+		max-width: 680px;
+		font-size: 0.93rem;
+		line-height: 1.25;
+	}
+
+	body.login-page .admin-tip {
+		margin-bottom: 6px;
+	}
+
+	body.login-page .guest-auth-panel {
+		max-width: 620px;
+	}
+
+	body.login-page .panel {
+		padding: 14px;
+		border-radius: 22px;
+	}
+
+	body.login-page .panel-head {
+		margin-bottom: 8px;
+	}
+
+	body.login-page .panel-head h2 {
+		font-size: 1.12rem;
+	}
+
+	body.login-page .login-mode-switch {
+		gap: 6px;
+	}
+
+	body.login-page .login-mode-btn {
+		padding: 8px 10px;
+	}
+
+	body.login-page .admin-form {
+		padding: 10px;
+		gap: 8px;
+	}
+
+	body.login-page .admin-form label {
+		padding: 8px 9px 9px;
+		gap: 3px;
+	}
+
+	body.login-page .admin-form label input,
+	body.login-page .admin-form label select,
+	body.login-page .admin-form label textarea {
+		padding: 8px 9px;
+	}
+
+	body.login-page .status {
+		margin: 4px 0 0;
+	}
+}
+
 @media (max-width: 700px) {
 	.install-pwa-card {
 		left: 8px;
