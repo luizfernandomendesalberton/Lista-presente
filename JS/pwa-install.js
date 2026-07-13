@@ -35,23 +35,26 @@
   }
 
   function updateInstallUI() {
-    if (!installText || !installButton) {
+    if (!installCard || !installText || !installButton) {
       return;
     }
 
-    if (deferredPromptEvent) {
-      installText.textContent = "Deseja instalar este app no seu celular ou computador para acesso rapido?";
-      installButton.disabled = false;
-      installButton.textContent = "Instalar app";
+    if (!deferredPromptEvent) {
+      installCard.hidden = true;
       return;
     }
 
-    installText.textContent = "Estamos preparando a instalacao. Aguarde alguns segundos ou abra esta pagina no Chrome/Edge para habilitar o app instalado.";
-    installButton.disabled = true;
-    installButton.textContent = "Instalacao indisponivel";
+    installCard.hidden = false;
+    installText.textContent = "Instalar app para acesso rapido?";
+    installButton.disabled = false;
+    installButton.textContent = "Instalar";
   }
 
   function createInstallPrompt() {
+    if (installCard) {
+      return;
+    }
+
     if (shouldHidePrompt()) {
       return;
     }
@@ -59,10 +62,11 @@
     installCard = document.createElement("section");
     installCard.className = "install-pwa-card";
     installCard.setAttribute("aria-label", "Instalacao do aplicativo");
+    installCard.hidden = true;
 
     const title = document.createElement("h2");
     title.className = "install-pwa-title";
-    title.textContent = "Instalar app";
+    title.textContent = "Alerta";
 
     installText = document.createElement("p");
     installText.className = "install-pwa-text";
@@ -72,13 +76,13 @@
 
     installButton = document.createElement("button");
     installButton.type = "button";
-    installButton.textContent = "Instalar app";
-    installButton.disabled = true;
+    installButton.textContent = "Instalar";
+    installButton.disabled = false;
 
     const dismissButton = document.createElement("button");
     dismissButton.type = "button";
     dismissButton.className = "btn-secondary";
-    dismissButton.textContent = "Agora nao";
+    dismissButton.textContent = "Fechar";
 
     actions.appendChild(installButton);
     actions.appendChild(dismissButton);
@@ -112,6 +116,7 @@
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
     deferredPromptEvent = event;
+    createInstallPrompt();
     updateInstallUI();
   });
 
@@ -127,7 +132,5 @@
         // Ignore registration errors to avoid breaking app flows.
       });
     }
-
-    createInstallPrompt();
   });
 })();

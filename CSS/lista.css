@@ -90,40 +90,48 @@ body.metrics-page .bg-shape {
 }
 
 .install-pwa-card {
-	width: min(430px, calc(100vw - 24px));
-	padding: 12px 14px;
-	border-radius: 14px;
+	width: min(320px, calc(100vw - 20px));
+	padding: 10px 12px;
+	border-radius: 12px;
 	border: 1px solid rgba(255, 255, 255, 0.82);
-	background: linear-gradient(110deg, rgba(162, 63, 90, 0.95), rgba(111, 42, 64, 0.96));
-	box-shadow: 0 14px 30px rgba(68, 26, 41, 0.28);
+	background: linear-gradient(110deg, rgba(162, 63, 90, 0.9), rgba(111, 42, 64, 0.92));
+	box-shadow: 0 10px 24px rgba(68, 26, 41, 0.24);
+	backdrop-filter: blur(6px);
 	color: #fff;
 	position: fixed;
-	right: 12px;
-	bottom: 12px;
-	z-index: 1200;
+	top: 10px;
+	right: 10px;
+	z-index: 2000;
 	animation: revealUp 0.45s both ease;
 }
 
 .install-pwa-title {
 	margin: 0;
-	font-size: 0.95rem;
+	font-size: 0.8rem;
 	font-family: "Prata", serif;
 	font-weight: 400;
+	opacity: 0.9;
 }
 
 .install-pwa-text {
-	margin: 7px 0 10px;
+	margin: 4px 0 8px;
 	line-height: 1.35;
-	font-size: 0.88rem;
+	font-size: 0.82rem;
 	max-width: 62ch;
 	color: rgba(255, 255, 255, 0.92);
 }
 
 .install-pwa-actions {
 	display: flex;
-	gap: 10px;
+	gap: 6px;
 	flex-wrap: wrap;
 	align-items: center;
+}
+
+.install-pwa-actions button {
+	min-height: 34px;
+	padding: 8px 10px;
+	font-size: 0.78rem;
 }
 
 .install-pwa-card .btn-secondary {
@@ -148,20 +156,20 @@ body.metrics-page .bg-shape {
 	.install-pwa-card {
 		left: 8px;
 		right: 8px;
-		bottom: 8px;
+		top: 8px;
 		width: auto;
-		padding: 11px 12px;
+		padding: 9px 10px;
 	}
 
 	.install-pwa-actions {
-		gap: 8px;
+		gap: 6px;
 	}
 
 	.install-pwa-actions button {
 		width: auto;
 		flex: 1 1 0;
 		min-width: 0;
-		min-height: 40px;
+		min-height: 34px;
 	}
 }
 
