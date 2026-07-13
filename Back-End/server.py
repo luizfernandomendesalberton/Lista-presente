@@ -47,6 +47,7 @@ load_dotenv_file()
 HTML_DIR = ROOT_DIR / "HTML"
 CSS_DIR = ROOT_DIR / "CSS"
 JS_DIR = ROOT_DIR / "JS"
+IMAGE_DIR = ROOT_DIR / "image"
 RUNTIME_DATA_DIR = Path(os.getenv("RUNTIME_DATA_DIR", str(BACKEND_DIR / "runtime-data")))
 PRESENTES_SEED_FILE = BACKEND_DIR / "presentes.json"
 DATA_FILE = Path(os.getenv("DATA_FILE_PATH", str(RUNTIME_DATA_DIR / "presentes.json")))
@@ -1229,6 +1230,36 @@ def css_files(filename):
 def js_files(filename):
 	response = send_from_directory(JS_DIR, filename)
 	response.headers["Cache-Control"] = "no-store, max-age=0"
+	return response
+
+
+@app.route("/image/<path:filename>", methods=["GET"])
+def image_files(filename):
+	response = send_from_directory(IMAGE_DIR, filename)
+	response.headers["Cache-Control"] = "public, max-age=86400"
+	return response
+
+
+@app.route("/manifest.webmanifest", methods=["GET"])
+def pwa_manifest():
+	response = send_from_directory(HTML_DIR, "manifest.webmanifest")
+	response.headers["Content-Type"] = "application/manifest+json"
+	response.headers["Cache-Control"] = "no-store, max-age=0"
+	return response
+
+
+@app.route("/sw.js", methods=["GET"])
+def pwa_service_worker():
+	response = send_from_directory(JS_DIR, "sw.js")
+	response.headers["Content-Type"] = "application/javascript; charset=utf-8"
+	response.headers["Cache-Control"] = "no-store, max-age=0"
+	return response
+
+
+@app.route("/offline.html", methods=["GET"])
+def offline_page():
+	response = send_from_directory(HTML_DIR, "offline.html")
+	response.headers["Cache-Control"] = "public, max-age=300"
 	return response
 
 

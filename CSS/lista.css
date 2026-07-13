@@ -89,6 +89,60 @@ body.metrics-page .bg-shape {
 	gap: 20px;
 }
 
+.install-pwa-card {
+	width: min(1140px, 93vw);
+	margin: 0 auto 16px;
+	padding: 14px 16px;
+	border-radius: 18px;
+	border: 1px solid rgba(255, 255, 255, 0.82);
+	background: linear-gradient(110deg, rgba(162, 63, 90, 0.95), rgba(111, 42, 64, 0.96));
+	box-shadow: 0 18px 34px rgba(68, 26, 41, 0.28);
+	color: #fff;
+	position: relative;
+	z-index: 5;
+	animation: revealUp 0.45s both ease;
+}
+
+.install-pwa-title {
+	margin: 0;
+	font-size: 1rem;
+	font-family: "Prata", serif;
+	font-weight: 400;
+}
+
+.install-pwa-text {
+	margin: 8px 0 12px;
+	line-height: 1.35;
+	font-size: 0.94rem;
+	max-width: 62ch;
+	color: rgba(255, 255, 255, 0.92);
+}
+
+.install-pwa-actions {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.install-pwa-card .btn-secondary {
+	background: rgba(255, 255, 255, 0.16);
+	border-color: rgba(255, 255, 255, 0.42);
+	color: #fff;
+}
+
+.install-pwa-card .btn-secondary:hover {
+	background: rgba(255, 255, 255, 0.24);
+	color: #fff;
+}
+
+.install-pwa-card button:disabled {
+	opacity: 0.72;
+	cursor: not-allowed;
+	transform: none;
+	box-shadow: none;
+}
+
 .hero {
 	text-align: center;
 	padding: 26px;
