@@ -87,12 +87,7 @@
     installCard.appendChild(installText);
     installCard.appendChild(actions);
 
-    const container = document.querySelector("main.container");
-    if (container && container.parentNode) {
-      container.parentNode.insertBefore(installCard, container);
-    } else {
-      document.body.prepend(installCard);
-    }
+    document.body.appendChild(installCard);
 
     installButton.addEventListener("click", async () => {
       if (!deferredPromptEvent) {
