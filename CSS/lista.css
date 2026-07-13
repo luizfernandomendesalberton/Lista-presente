@@ -223,7 +223,8 @@ body.metrics-page .bg-shape {
 	}
 
 	body.login-page .login-mode-panel {
-		overflow: auto;
+		overflow: visible;
+		align-self: start;
 	}
 
 	body.login-page .admin-form {
