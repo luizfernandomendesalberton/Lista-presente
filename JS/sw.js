@@ -1,4 +1,4 @@
-const CACHE_NAME = "lista-casamento-pwa-v1";
+const CACHE_NAME = "lista-casamento-pwa-v2";
 const OFFLINE_URL = "/offline.html";
 
 const CORE_ASSETS = [
@@ -41,13 +41,33 @@ self.addEventListener("fetch", (event) => {
   }
 
   const requestUrl = new URL(request.url);
+  const path = requestUrl.pathname;
   if (requestUrl.origin !== self.location.origin) {
+    return;
+  }
+
+  if (path.startsWith("/api/")) {
     return;
   }
 
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request).catch(() => caches.match(OFFLINE_URL))
+    );
+    return;
+  }
+
+  if (path.startsWith("/CSS/") || path.startsWith("/JS/") || path === "/manifest.webmanifest" || path === "/sw.js") {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(request))
     );
     return;
   }

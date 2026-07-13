@@ -128,7 +128,7 @@
 
   window.addEventListener("load", () => {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => {
+      navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" }).catch(() => {
         // Ignore registration errors to avoid breaking app flows.
       });
     }
