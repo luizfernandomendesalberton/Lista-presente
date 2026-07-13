@@ -154,16 +154,15 @@ body.metrics-page .bg-shape {
 
 @media (min-width: 701px) {
 	body.login-page {
-		height: 100vh;
+		min-height: 100vh;
 		padding: 8px 0;
-		overflow: hidden;
+		overflow-x: hidden;
+		overflow-y: auto;
 	}
 
 	body.login-page .container {
 		width: min(1080px, 94vw);
-		height: calc(100vh - 16px);
 		gap: 10px;
-		grid-template-rows: auto auto minmax(0, 1fr);
 	}
 
 	body.login-page .hero {
@@ -256,7 +255,6 @@ body.metrics-page .bg-shape {
 
 	body.login-page .container {
 		width: min(1020px, 94vw);
-		height: calc(100vh - 12px);
 		gap: 8px;
 	}
 
