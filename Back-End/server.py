@@ -61,6 +61,10 @@ ADMIN_SYNC_FILE = Path(os.getenv("ADMIN_SYNC_FILE_PATH", str(RUNTIME_DATA_DIR / 
 DEFAULT_IMAGE_URL = "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80"
 PRODUCT_SYNC_INTERVAL_MINUTES = max(5, int(os.getenv("PRODUCT_SYNC_INTERVAL_MINUTES", "180")))
 PRODUCT_SYNC_TIMEOUT_SECONDS = max(2, int(os.getenv("PRODUCT_SYNC_TIMEOUT_SECONDS", "12")))
+PRODUCT_SYNC_MIN_PRICE = max(1.0, float(os.getenv("PRODUCT_SYNC_MIN_PRICE", "20")))
+PRODUCT_SYNC_MAX_PRICE = max(PRODUCT_SYNC_MIN_PRICE, float(os.getenv("PRODUCT_SYNC_MAX_PRICE", "20000")))
+PRODUCT_SYNC_MIN_RATIO = max(0.05, float(os.getenv("PRODUCT_SYNC_MIN_RATIO", "0.60")))
+PRODUCT_SYNC_MAX_RATIO = max(1.0, float(os.getenv("PRODUCT_SYNC_MAX_RATIO", "2.50")))
 PRODUCT_SYNC_USER_AGENT = os.getenv(
 	"PRODUCT_SYNC_USER_AGENT",
 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
@@ -451,23 +455,126 @@ def join_multi_urls(urls):
 	return "; ".join(clean)
 
 
+def parse_price_number(number_text):
+	if not number_text:
+		return None
+
+	raw = str(number_text).strip().replace(" ", "")
+	if not raw:
+		return None
+
+	if "," in raw:
+		normalized = raw.replace(".", "").replace(",", ".")
+	else:
+		normalized = raw.replace(".", "")
+
+	try:
+		value = float(Decimal(normalized))
+	except (InvalidOperation, ValueError):
+		return None
+
+	# Some stores expose cents grouped with dot (e.g., 50.274 meaning 502.74).
+	if "," not in raw and "." in raw and value > PRODUCT_SYNC_MAX_PRICE:
+		cents_fix = value / 100.0
+		if PRODUCT_SYNC_MIN_PRICE <= cents_fix <= PRODUCT_SYNC_MAX_PRICE:
+			value = cents_fix
+
+	return round(value, 2)
+
+
 def parse_price_from_text(text):
 	if not text:
 		return None
 
 	clean = str(text).replace("\xa0", " ")
-	match = re.search(r"(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*(?:,\d{2})|\d+(?:[\.,]\d{2}))", clean)
+	match = re.search(r"(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*(?:,\d{2})|\d+(?:,\d{2})|\d+(?:\.\d{2}))", clean)
 	if not match:
 		return None
 
-	number_text = match.group(1).replace(".", "").replace(",", ".")
-	try:
-		return float(Decimal(number_text))
-	except (InvalidOperation, ValueError):
-		return None
+	return parse_price_number(match.group(1))
+
+
+def collect_price_candidates(text):
+	if not text:
+		return []
+
+	clean = str(text).replace("\xa0", " ")
+	pattern = re.compile(r"(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*(?:,\d{2})|\d+(?:,\d{2})|\d+(?:\.\d{2}))")
+	candidates = []
+
+	for match in pattern.finditer(clean):
+		number_raw = match.group(1)
+		price = parse_price_number(number_raw)
+		if price is None:
+			continue
+
+		start = max(0, match.start() - 40)
+		end = min(len(clean), match.end() + 40)
+		context = clean[start:end].lower()
+		prefix = clean[max(0, match.start() - 8): match.start()].lower()
+		left_hint = clean[max(0, match.start() - 14): match.start()].lower()
+
+		score = 10
+		if "r$" in context:
+			score += 25
+		if any(keyword in context for keyword in ["à vista", "a vista", "preço", "preco", "price", "valor"]):
+			score += 25
+		if re.search(r"por\s*r?\$?\s*$", left_hint):
+			score += 20
+		if re.search(r"de\s*r?\$?\s*$", left_hint):
+			score -= 20
+		if any(keyword in context for keyword in ["parcel", "parcela", "sem juros", "economize", "desconto", "% off", "off"]):
+			score -= 30
+		if re.search(r"\d+\s*x\s*$", prefix):
+			score -= 45
+		if price < PRODUCT_SYNC_MIN_PRICE or price > PRODUCT_SYNC_MAX_PRICE:
+			score -= 80
+
+		candidates.append({"price": round(price, 2), "score": score})
+
+	return candidates
+
+
+def choose_best_price(candidates):
+	if not candidates:
+		return None, None
+
+	# Merge duplicated prices and keep best score per value.
+	best_by_price = {}
+	for item in candidates:
+		price = round(float(item.get("price") or 0), 2)
+		score = int(item.get("score") or 0)
+		if price <= 0:
+			continue
+
+		if price not in best_by_price or score > best_by_price[price]:
+			best_by_price[price] = score
+
+	if not best_by_price:
+		return None, None
+
+	ordered = sorted(best_by_price.items(), key=lambda pair: (pair[1], pair[0]), reverse=True)
+	best_price, best_score = ordered[0]
+	if best_score < 15:
+		return None, None
+
+	return float(best_price), int(best_score)
+
+
+def is_reasonable_price_transition(current_price, new_price):
+	if current_price is None or current_price <= 0:
+		return True
+
+	if current_price < PRODUCT_SYNC_MIN_PRICE or current_price > PRODUCT_SYNC_MAX_PRICE:
+		return True
+
+	ratio = float(new_price) / float(current_price)
+	return PRODUCT_SYNC_MIN_RATIO <= ratio <= PRODUCT_SYNC_MAX_RATIO
 
 
 def extract_price_from_html(soup):
+	collected_candidates = []
+
 	meta_candidates = [
 		("meta", {"property": "product:price:amount"}, "content"),
 		("meta", {"name": "product:price:amount"}, "content"),
@@ -480,7 +587,7 @@ def extract_price_from_html(soup):
 		if node and node.get(field):
 			price = parse_price_from_text(node.get(field))
 			if price is not None:
-				return round(price, 2)
+				collected_candidates.append({"price": round(price, 2), "score": 100})
 
 	json_ld_nodes = soup.find_all("script", attrs={"type": "application/ld+json"})
 	for node in json_ld_nodes:
@@ -501,7 +608,7 @@ def extract_price_from_html(soup):
 				if isinstance(offers, dict):
 					price = parse_price_from_text(offers.get("price") or offers.get("lowPrice") or offers.get("highPrice"))
 					if price is not None:
-						return round(price, 2)
+						collected_candidates.append({"price": round(price, 2), "score": 95})
 				elif isinstance(offers, list):
 					for item in offers:
 						queue.append(item)
@@ -521,16 +628,16 @@ def extract_price_from_html(soup):
 		".valor",
 	]
 	for selector in selectors:
-		node = soup.select_one(selector)
-		if node:
-			price = parse_price_from_text(node.get_text(" ", strip=True))
-			if price is not None:
-				return round(price, 2)
+		nodes = soup.select(selector)
+		for node in nodes[:8]:
+			collected_candidates.extend(collect_price_candidates(node.get_text(" ", strip=True)))
 
 	full_text = soup.get_text(" ", strip=True)
-	price = parse_price_from_text(full_text)
-	if price is not None:
-		return round(price, 2)
+	collected_candidates.extend(collect_price_candidates(full_text))
+
+	best_price, _score = choose_best_price(collected_candidates)
+	if best_price is not None:
+		return round(best_price, 2)
 
 	return None
 
@@ -632,8 +739,10 @@ def sync_single_presente_metadata(presente):
 				collected_images.append(image)
 
 	if collected_price is not None and round(float(presente.get("preco") or 0), 2) != collected_price:
-		presente["preco"] = collected_price
-		updated = True
+		current_price = round(float(presente.get("preco") or 0), 2)
+		if is_reasonable_price_transition(current_price, collected_price):
+			presente["preco"] = collected_price
+			updated = True
 
 	if collected_images:
 		joined_images = join_multi_urls(collected_images[:4])
