@@ -502,7 +502,7 @@ def collect_price_candidates(text):
 	pattern = re.compile(r"(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*(?:,\d{2})|\d+(?:,\d{2})|\d+(?:\.\d{2}))")
 	candidates = []
 
-	for match in pattern.finditer(clean):
+	for index, match in enumerate(pattern.finditer(clean)):
 		number_raw = match.group(1)
 		price = parse_price_number(number_raw)
 		if price is None:
@@ -530,7 +530,7 @@ def collect_price_candidates(text):
 		if price < PRODUCT_SYNC_MIN_PRICE or price > PRODUCT_SYNC_MAX_PRICE:
 			score -= 80
 
-		candidates.append({"price": round(price, 2), "score": score})
+		candidates.append({"price": round(price, 2), "score": score, "position": index, "offset": match.start()})
 
 	return candidates
 
@@ -544,17 +544,25 @@ def choose_best_price(candidates):
 	for item in candidates:
 		price = round(float(item.get("price") or 0), 2)
 		score = int(item.get("score") or 0)
+		position = int(item.get("position") or 0)
+		offset = int(item.get("offset") or 0)
 		if price <= 0:
 			continue
 
-		if price not in best_by_price or score > best_by_price[price]:
-			best_by_price[price] = score
+		current = best_by_price.get(price)
+		candidate = {"score": score, "position": position, "offset": offset}
+		if not current or score > current["score"] or (score == current["score"] and offset < current["offset"]):
+			best_by_price[price] = candidate
 
 	if not best_by_price:
 		return None, None
 
-	ordered = sorted(best_by_price.items(), key=lambda pair: (pair[1], pair[0]), reverse=True)
-	best_price, best_score = ordered[0]
+	ordered = sorted(
+		best_by_price.items(),
+		key=lambda pair: (-pair[1]["score"], pair[1]["offset"], pair[1]["position"], pair[0]),
+	)
+	best_price, best_meta = ordered[0]
+	best_score = best_meta["score"]
 	if best_score < 15:
 		return None, None
 
@@ -1951,11 +1959,6 @@ def listar_presentes():
 	if not can_access_presentes():
 		return jsonify({"erro": "Confirme sua presença para acessar a lista de presentes."}), 403
 
-	try:
-		sync_presentes_metadata(force=False)
-	except Exception:
-		app.logger.exception("Falha ao sincronizar metadados dos produtos")
-
 	return jsonify(load_presentes())
 
 
@@ -2472,6 +2475,11 @@ def criar_presente():
 				}
 			)
 
+			try:
+				sync_single_presente_metadata(novo)
+			except Exception:
+				app.logger.exception("Falha ao sincronizar metadados do produto durante cadastro")
+
 			presentes.append(novo)
 			save_presentes(presentes)
 
@@ -2515,6 +2523,11 @@ def atualizar_presente(presente_id):
 			presente["produto_url"] = join_multi_urls(normalize_multi_urls(payload.get("produto_url")))
 			presente["especificacoes"] = normalize_especificacoes(payload.get("especificacoes") or [])
 			presente["metadata_synced_at"] = ""
+
+			try:
+				sync_single_presente_metadata(presente)
+			except Exception:
+				app.logger.exception("Falha ao sincronizar metadados do produto durante atualização")
 
 			save_presentes(presentes)
 

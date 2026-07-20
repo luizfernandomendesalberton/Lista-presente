@@ -57,6 +57,55 @@ body.metrics-page .bg-shape {
 	opacity: 0.22;
 }
 
+.sync-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 3000;
+	display: grid;
+	place-items: center;
+	padding: 20px;
+	background: rgba(51, 32, 28, 0.34);
+	backdrop-filter: blur(6px);
+}
+
+.sync-overlay-card {
+	min-width: min(360px, 92vw);
+	padding: 24px 26px;
+	border-radius: 22px;
+	background: rgba(255, 252, 248, 0.96);
+	border: 1px solid rgba(232, 219, 200, 0.92);
+	box-shadow: 0 24px 70px rgba(45, 25, 18, 0.2);
+	display: grid;
+	justify-items: center;
+	gap: 14px;
+	text-align: center;
+}
+
+.sync-overlay-card p {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--wine-dark);
+}
+
+.sync-spinner {
+	width: 52px;
+	height: 52px;
+	border-radius: 50%;
+	border: 5px solid rgba(162, 63, 90, 0.16);
+	border-top-color: var(--wine);
+	animation: spinLoader 0.8s linear infinite;
+}
+
+@keyframes spinLoader {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
 .bg-shape {
 	position: fixed;
 	z-index: -1;
