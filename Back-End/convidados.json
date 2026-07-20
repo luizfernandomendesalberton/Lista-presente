@@ -691,5 +691,38 @@
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
+  },
+  {
+    "id": 64,
+    "nome": "Emily",
+    "nome_key": "emily",
+    "grupo": "Grupo 24",
+    "tipo": "convidado",
+    "criado_em": "2026-07-19T15:12:48.307212+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 65,
+    "nome": "Helena",
+    "nome_key": "helena",
+    "grupo": "Grupo 26",
+    "tipo": "convidado",
+    "criado_em": "2026-07-20T21:35:39.745450+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 66,
+    "nome": "Ramires",
+    "nome_key": "ramires",
+    "grupo": "Grupo 26",
+    "tipo": "convidado",
+    "criado_em": "2026-07-20T21:35:56.567698+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
   }
 ]

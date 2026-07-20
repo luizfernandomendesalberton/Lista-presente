@@ -7,10 +7,12 @@ import threading
 import tempfile
 import unicodedata
 import uuid
+import requests
 from datetime import UTC
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
+from bs4 import BeautifulSoup
 from email.mime.text import MIMEText
 from filelock import FileLock
 from pathlib import Path
@@ -57,6 +59,12 @@ PIX_CONTRIB_FILE = Path(os.getenv("PIX_CONTRIB_FILE_PATH", str(RUNTIME_DATA_DIR 
 UNRESERVE_LOG_FILE = Path(os.getenv("UNRESERVE_LOG_FILE_PATH", str(RUNTIME_DATA_DIR / "desmarcacoes_reserva.json")))
 ADMIN_SYNC_FILE = Path(os.getenv("ADMIN_SYNC_FILE_PATH", str(RUNTIME_DATA_DIR / "admin_sync_state.json")))
 DEFAULT_IMAGE_URL = "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80"
+PRODUCT_SYNC_INTERVAL_MINUTES = max(5, int(os.getenv("PRODUCT_SYNC_INTERVAL_MINUTES", "180")))
+PRODUCT_SYNC_TIMEOUT_SECONDS = max(2, int(os.getenv("PRODUCT_SYNC_TIMEOUT_SECONDS", "12")))
+PRODUCT_SYNC_USER_AGENT = os.getenv(
+	"PRODUCT_SYNC_USER_AGENT",
+	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+)
 
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
@@ -412,6 +420,258 @@ def normalize_especificacoes(raw):
 	return []
 
 
+def split_multi_values(raw_value):
+	if isinstance(raw_value, list):
+		parts = []
+		for item in raw_value:
+			parts.extend(split_multi_values(item))
+		return parts
+
+	text = str(raw_value or "").strip()
+	if not text:
+		return []
+
+	parts = [part.strip() for part in text.split(";")]
+	return [part for part in parts if part]
+
+
+def normalize_multi_urls(raw_value, limit=4):
+	urls = []
+	for candidate in split_multi_values(raw_value):
+		if re.match(r"^https?://", candidate, flags=re.IGNORECASE):
+			urls.append(candidate)
+
+	# Preserve order and remove duplicates.
+	unique = list(dict.fromkeys(urls))
+	return unique[: max(1, limit)]
+
+
+def join_multi_urls(urls):
+	clean = [str(item).strip() for item in (urls or []) if str(item).strip()]
+	return "; ".join(clean)
+
+
+def parse_price_from_text(text):
+	if not text:
+		return None
+
+	clean = str(text).replace("\xa0", " ")
+	match = re.search(r"(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*(?:,\d{2})|\d+(?:[\.,]\d{2}))", clean)
+	if not match:
+		return None
+
+	number_text = match.group(1).replace(".", "").replace(",", ".")
+	try:
+		return float(Decimal(number_text))
+	except (InvalidOperation, ValueError):
+		return None
+
+
+def extract_price_from_html(soup):
+	meta_candidates = [
+		("meta", {"property": "product:price:amount"}, "content"),
+		("meta", {"name": "product:price:amount"}, "content"),
+		("meta", {"property": "og:price:amount"}, "content"),
+		("meta", {"name": "og:price:amount"}, "content"),
+	]
+
+	for tag, attrs, field in meta_candidates:
+		node = soup.find(tag, attrs=attrs)
+		if node and node.get(field):
+			price = parse_price_from_text(node.get(field))
+			if price is not None:
+				return round(price, 2)
+
+	json_ld_nodes = soup.find_all("script", attrs={"type": "application/ld+json"})
+	for node in json_ld_nodes:
+		raw_json = node.string or node.get_text() or ""
+		if not raw_json.strip():
+			continue
+
+		try:
+			parsed = json.loads(raw_json)
+		except Exception:
+			continue
+
+		queue = parsed if isinstance(parsed, list) else [parsed]
+		while queue:
+			current = queue.pop(0)
+			if isinstance(current, dict):
+				offers = current.get("offers")
+				if isinstance(offers, dict):
+					price = parse_price_from_text(offers.get("price") or offers.get("lowPrice") or offers.get("highPrice"))
+					if price is not None:
+						return round(price, 2)
+				elif isinstance(offers, list):
+					for item in offers:
+						queue.append(item)
+
+				for value in current.values():
+					if isinstance(value, (dict, list)):
+						queue.append(value)
+			elif isinstance(current, list):
+				queue.extend(current)
+
+	selectors = [
+		"[itemprop='price']",
+		".price",
+		".product-price",
+		".woocommerce-Price-amount",
+		".price-sales",
+		".valor",
+	]
+	for selector in selectors:
+		node = soup.select_one(selector)
+		if node:
+			price = parse_price_from_text(node.get_text(" ", strip=True))
+			if price is not None:
+				return round(price, 2)
+
+	full_text = soup.get_text(" ", strip=True)
+	price = parse_price_from_text(full_text)
+	if price is not None:
+		return round(price, 2)
+
+	return None
+
+
+def extract_images_from_html(soup):
+	images = []
+	meta_props = [
+		("meta", {"property": "og:image"}, "content"),
+		("meta", {"name": "og:image"}, "content"),
+		("meta", {"property": "twitter:image"}, "content"),
+		("meta", {"name": "twitter:image"}, "content"),
+	]
+
+	for tag, attrs, field in meta_props:
+		node = soup.find(tag, attrs=attrs)
+		if node and node.get(field):
+			images.append(node.get(field).strip())
+
+	json_ld_nodes = soup.find_all("script", attrs={"type": "application/ld+json"})
+	for node in json_ld_nodes:
+		raw_json = node.string or node.get_text() or ""
+		if not raw_json.strip():
+			continue
+
+		try:
+			parsed = json.loads(raw_json)
+		except Exception:
+			continue
+
+		queue = parsed if isinstance(parsed, list) else [parsed]
+		while queue:
+			current = queue.pop(0)
+			if isinstance(current, dict):
+				image_value = current.get("image")
+				if isinstance(image_value, str):
+					images.append(image_value.strip())
+				elif isinstance(image_value, list):
+					for img in image_value:
+						if isinstance(img, str):
+							images.append(img.strip())
+
+				for value in current.values():
+					if isinstance(value, (dict, list)):
+						queue.append(value)
+			elif isinstance(current, list):
+				queue.extend(current)
+
+	for img in soup.find_all("img")[:24]:
+		candidate = (img.get("src") or img.get("data-src") or "").strip()
+		if candidate:
+			images.append(candidate)
+
+	valid = []
+	for image_url in images:
+		if re.match(r"^https?://", image_url, flags=re.IGNORECASE):
+			valid.append(image_url)
+
+	return list(dict.fromkeys(valid))[:4]
+
+
+def fetch_product_metadata(url):
+	headers = {
+		"User-Agent": PRODUCT_SYNC_USER_AGENT,
+		"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+		"Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.7,en;q=0.6",
+	}
+	response = requests.get(url, timeout=PRODUCT_SYNC_TIMEOUT_SECONDS, headers=headers)
+	response.raise_for_status()
+
+	soup = BeautifulSoup(response.text, "html.parser")
+	price = extract_price_from_html(soup)
+	images = extract_images_from_html(soup)
+	return {
+		"price": price,
+		"images": images,
+	}
+
+
+def sync_single_presente_metadata(presente):
+	product_urls = normalize_multi_urls(presente.get("produto_url"))
+	if not product_urls:
+		return False
+
+	updated = False
+	collected_images = normalize_multi_urls(presente.get("foto_url"))
+	collected_price = None
+
+	for url in product_urls:
+		try:
+			metadata = fetch_product_metadata(url)
+		except Exception:
+			continue
+
+		if collected_price is None and metadata.get("price") is not None:
+			collected_price = round(float(metadata["price"]), 2)
+
+		for image in metadata.get("images") or []:
+			if image not in collected_images:
+				collected_images.append(image)
+
+	if collected_price is not None and round(float(presente.get("preco") or 0), 2) != collected_price:
+		presente["preco"] = collected_price
+		updated = True
+
+	if collected_images:
+		joined_images = join_multi_urls(collected_images[:4])
+		if joined_images and joined_images != str(presente.get("foto_url") or "").strip():
+			presente["foto_url"] = joined_images
+			updated = True
+
+	if updated:
+		presente["metadata_synced_at"] = utc_now().isoformat()
+
+	return updated
+
+
+def sync_presentes_metadata(force=False):
+	with PRESENTES_LOCK:
+		with PRESENTES_FILE_LOCK:
+			presentes = load_presentes()
+			now_dt = utc_now()
+			changed = False
+
+			for presente in presentes:
+				if presente.get("reservado"):
+					continue
+
+				if not force:
+					last_sync = parse_iso_utc(presente.get("metadata_synced_at"))
+					if last_sync and (now_dt - last_sync).total_seconds() < PRODUCT_SYNC_INTERVAL_MINUTES * 60:
+						continue
+
+				if sync_single_presente_metadata(presente):
+					changed = True
+
+			if changed:
+				save_presentes(presentes)
+
+			return changed
+
+
 def normalize_presente(raw, forced_id=None):
 	presente_id = forced_id if forced_id is not None else raw.get("id")
 	preco = normalize_preco(raw.get("preco"))
@@ -426,10 +686,14 @@ def normalize_presente(raw, forced_id=None):
 		"preco": round(preco, 2),
 		"foto_url": str(raw.get("foto_url") or DEFAULT_IMAGE_URL).strip() or DEFAULT_IMAGE_URL,
 		"video_url": str(raw.get("video_url") or "").strip(),
-		"produto_url": str(raw.get("produto_url") or "").strip(),
+		"produto_url": join_multi_urls(normalize_multi_urls(raw.get("produto_url"))),
 		"especificacoes": normalize_especificacoes(raw.get("especificacoes")),
 		"reservado": bool(raw.get("reservado", False)),
 	}
+
+	image_urls = normalize_multi_urls(raw.get("foto_url"))
+	if image_urls:
+		normalized["foto_url"] = join_multi_urls(image_urls)
 
 	if raw.get("reservado_por_nome"):
 		normalized["reservado_por_nome"] = str(raw.get("reservado_por_nome")).strip()
@@ -439,6 +703,8 @@ def normalize_presente(raw, forced_id=None):
 		normalized["reservado_em"] = str(raw.get("reservado_em")).strip()
 	if raw.get("criado_em"):
 		normalized["criado_em"] = str(raw.get("criado_em")).strip()
+	if raw.get("metadata_synced_at"):
+		normalized["metadata_synced_at"] = str(raw.get("metadata_synced_at")).strip()
 
 	return normalized
 
@@ -1576,6 +1842,11 @@ def listar_presentes():
 	if not can_access_presentes():
 		return jsonify({"erro": "Confirme sua presença para acessar a lista de presentes."}), 403
 
+	try:
+		sync_presentes_metadata(force=False)
+	except Exception:
+		app.logger.exception("Falha ao sincronizar metadados dos produtos")
+
 	return jsonify(load_presentes())
 
 
@@ -2087,6 +2358,7 @@ def criar_presente():
 					"produto_url": payload.get("produto_url") or "",
 					"especificacoes": payload.get("especificacoes") or [],
 					"criado_em": utc_now().isoformat(),
+					"metadata_synced_at": "",
 					"reservado": False,
 				}
 			)
@@ -2128,10 +2400,12 @@ def atualizar_presente(presente_id):
 			presente["descricao"] = str(payload.get("descricao") or "").strip()
 			presente["categoria"] = str(payload.get("categoria") or "Geral").strip() or "Geral"
 			presente["preco"] = round(preco, 2)
-			presente["foto_url"] = str(payload.get("foto_url") or DEFAULT_IMAGE_URL).strip() or DEFAULT_IMAGE_URL
+			foto_urls = normalize_multi_urls(payload.get("foto_url"))
+			presente["foto_url"] = join_multi_urls(foto_urls) if foto_urls else DEFAULT_IMAGE_URL
 			presente["video_url"] = str(payload.get("video_url") or "").strip()
-			presente["produto_url"] = str(payload.get("produto_url") or "").strip()
+			presente["produto_url"] = join_multi_urls(normalize_multi_urls(payload.get("produto_url")))
 			presente["especificacoes"] = normalize_especificacoes(payload.get("especificacoes") or [])
+			presente["metadata_synced_at"] = ""
 
 			save_presentes(presentes)
 
@@ -2259,6 +2533,25 @@ def desreservar_presente(presente_id):
 	)
 
 	return jsonify({"mensagem": "Reserva removida com sucesso.", "presente": presente})
+
+
+@app.route("/api/admin/presentes/sync", methods=["POST", "OPTIONS"])
+def sync_presentes_admin():
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	changed = sync_presentes_metadata(force=True)
+	return jsonify(
+		{
+			"mensagem": "Sincronização concluída.",
+			"alterado": bool(changed),
+			"intervalo_minutos": PRODUCT_SYNC_INTERVAL_MINUTES,
+		}
+	)
 
 
 if __name__ == "__main__":

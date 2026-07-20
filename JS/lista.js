@@ -2,6 +2,7 @@ const listaEl = document.getElementById("listaPresentes");
 const statusEl = document.getElementById("statusGeral");
 const template = document.getElementById("presenteTemplate");
 const btnAtualizar = document.getElementById("btnAtualizar");
+const btnSyncProdutos = document.getElementById("btnSyncProdutos");
 const btnPixDonation = document.getElementById("btnPixDonation");
 const filtroBusca = document.getElementById("filtroBusca");
 const filtroCategoria = document.getElementById("filtroCategoria");
@@ -212,6 +213,25 @@ function getYouTubeEmbedUrl(rawUrl) {
 	});
 
 	return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+}
+
+
+function splitMultiValues(rawValue) {
+	const text = String(rawValue || "").trim();
+	if (!text) {
+		return [];
+	}
+
+	return text
+		.split(";")
+		.map((item) => item.trim())
+		.filter(Boolean);
+}
+
+
+function normalizeHttpUrls(rawValue) {
+	const urls = splitMultiValues(rawValue).filter((item) => /^https?:\/\//i.test(item));
+	return [...new Set(urls)];
 }
 
 
@@ -1558,6 +1578,7 @@ function renderPresentes() {
 		const descricaoEl = node.querySelector(".presente-descricao");
 		const especificacoesEl = node.querySelector(".presente-especificacoes");
 		const statusPresenteEl = node.querySelector(".presente-status");
+		const cardMain = node.querySelector(".card-main");
 		const inputNome = node.querySelector(".input-nome");
 		const inputEmail = node.querySelector(".input-email");
 		const inputCheck = node.querySelector(".input-check");
@@ -1575,7 +1596,10 @@ function renderPresentes() {
 		categoriaEl.textContent = presente.categoria || "Geral";
 		const fallbackImageUrl = "https://images.unsplash.com/photo-1513883049090-d0b7439799bf?auto=format&fit=crop&w=900&q=80";
 		const videoUrl = String(presente.video_url || "").trim();
-		const produtoUrl = String(presente.produto_url || "").trim();
+		const produtoUrls = normalizeHttpUrls(presente.produto_url);
+		const produtoUrl = produtoUrls.length ? produtoUrls[0] : "";
+		const fotoUrls = normalizeHttpUrls(presente.foto_url);
+		const fotoUrl = fotoUrls.length ? fotoUrls[0] : "";
 		const youtubeEmbedUrl = getYouTubeEmbedUrl(videoUrl);
 
 		if (mediaWrap) {
@@ -1594,7 +1618,7 @@ function renderPresentes() {
 		}
 
 		fotoEl.hidden = false;
-		fotoEl.src = presente.foto_url || fallbackImageUrl;
+		fotoEl.src = fotoUrl || fallbackImageUrl;
 		fotoEl.alt = `Foto do presente ${presente.nome}`;
 		fotoEl.addEventListener("error", () => {
 			fotoEl.src = fallbackImageUrl;
@@ -1623,7 +1647,7 @@ function renderPresentes() {
 				videoEl.addEventListener("error", () => {
 					videoEl.hidden = true;
 					fotoEl.hidden = false;
-					fotoEl.src = presente.foto_url || fallbackImageUrl;
+					fotoEl.src = fotoUrl || fallbackImageUrl;
 				});
 
 				const autoplayAttempt = videoEl.play();
@@ -1655,6 +1679,20 @@ function renderPresentes() {
 			const li = document.createElement("li");
 			li.textContent = "Sem especificacoes adicionais.";
 			especificacoesEl.appendChild(li);
+		}
+
+		if (cardMain && produtoUrls.length) {
+			const linksWrap = document.createElement("div");
+			linksWrap.className = "produto-links-inline";
+			produtoUrls.forEach((url, indexUrl) => {
+				const link = document.createElement("a");
+				link.href = url;
+				link.target = "_blank";
+				link.rel = "noopener noreferrer";
+				link.textContent = `Loja ${indexUrl + 1}`;
+				linksWrap.appendChild(link);
+			});
+			cardMain.appendChild(linksWrap);
 		}
 
 		if (presente.reservado) {
@@ -1732,6 +1770,12 @@ function renderPresentes() {
 					}
 				});
 			}
+		}
+
+		if (isAdminPage && produtoUrls.length > 1 && statusPresenteEl) {
+			const extraLinks = document.createElement("span");
+			extraLinks.textContent = ` ${produtoUrls.length} links e ${Math.max(fotoUrls.length, 1)} foto(s) configurados.`;
+			statusPresenteEl.appendChild(extraLinks);
 		}
 
 		listaEl.appendChild(node);
@@ -1994,9 +2038,9 @@ if (isAdminPage) {
 			nome: adminNome.value.trim(),
 			preco: Number(adminPreco.value),
 			categoria: adminCategoria.value.trim() || "Geral",
-			foto_url: adminFoto.value.trim(),
+			foto_url: normalizeHttpUrls(adminFoto.value.trim()).join("; "),
 			video_url: adminVideo ? adminVideo.value.trim() : "",
-			produto_url: adminProdutoUrl.value.trim(),
+			produto_url: normalizeHttpUrls(adminProdutoUrl.value.trim()).join("; "),
 			descricao: adminDescricao.value.trim(),
 			especificacoes: adminEspecificacoes.value
 				.split("\n")
@@ -2053,6 +2097,47 @@ if (btnAtualizar) {
 		}
 
 		await carregarMetricasAdmin();
+	});
+}
+if (btnSyncProdutos) {
+	btnSyncProdutos.addEventListener("click", async () => {
+		if (!isAdminPage || !adminAuthenticated) {
+			if (adminStatus) {
+				adminStatus.textContent = "Faça login para sincronizar produtos.";
+			}
+			return;
+		}
+
+		if (adminStatus) {
+			adminStatus.textContent = "Sincronizando preços e fotos dos links de produto...";
+		}
+
+		try {
+			const response = await fetch("/api/admin/presentes/sync", {
+				method: "POST",
+				credentials: "same-origin",
+				headers: {
+					...getAdminHeaders(),
+				},
+			});
+
+			const result = await response.json();
+			if (!response.ok) {
+				throw new Error(result.erro || "Falha ao sincronizar produtos.");
+			}
+
+			if (adminStatus) {
+				adminStatus.textContent = result.alterado
+					? "Sincronização concluída com atualizações de preço/foto."
+					: "Sincronização concluída sem alterações.";
+			}
+
+			await carregarPresentes();
+		} catch (error) {
+			if (adminStatus) {
+				adminStatus.textContent = error.message;
+			}
+		}
 	});
 }
 if (btnPixDonation) {

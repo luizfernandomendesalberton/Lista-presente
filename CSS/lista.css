@@ -652,6 +652,26 @@ h1 {
 	gap: 8px;
 }
 
+.produto-links-inline {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.produto-links-inline a {
+	font-size: 0.82rem;
+	padding: 4px 8px;
+	border-radius: 999px;
+	background: rgba(162, 63, 90, 0.12);
+	color: #7b2b45;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.produto-links-inline a:hover {
+	background: rgba(162, 63, 90, 0.2);
+}
+
 .presente-nome {
 	margin: 0;
 	font-size: 1.18rem;
