@@ -3,6 +3,8 @@ const statusEl = document.getElementById("statusGeral");
 const template = document.getElementById("presenteTemplate");
 const btnAtualizar = document.getElementById("btnAtualizar");
 const btnSyncProdutos = document.getElementById("btnSyncProdutos");
+const syncProdutosOverlay = document.getElementById("syncProdutosOverlay");
+const syncProdutosMensagem = document.getElementById("syncProdutosMensagem");
 const btnPixDonation = document.getElementById("btnPixDonation");
 const filtroBusca = document.getElementById("filtroBusca");
 const filtroCategoria = document.getElementById("filtroCategoria");
@@ -232,6 +234,22 @@ function splitMultiValues(rawValue) {
 function normalizeHttpUrls(rawValue) {
 	const urls = splitMultiValues(rawValue).filter((item) => /^https?:\/\//i.test(item));
 	return [...new Set(urls)];
+}
+
+
+function setSyncProdutosLoading(isLoading, message = "Atualizando produtos...") {
+	if (syncProdutosMensagem) {
+		syncProdutosMensagem.textContent = message;
+	}
+
+	if (syncProdutosOverlay) {
+		syncProdutosOverlay.hidden = !isLoading;
+	}
+
+	if (btnSyncProdutos) {
+		btnSyncProdutos.disabled = isLoading;
+		btnSyncProdutos.textContent = isLoading ? "Sincronizando..." : "Sincronizar Produtos";
+	}
 }
 
 
@@ -2108,18 +2126,27 @@ if (btnSyncProdutos) {
 			return;
 		}
 
+		setSyncProdutosLoading(true, "Atualizando preços e fotos dos produtos...");
 		if (adminStatus) {
 			adminStatus.textContent = "Sincronizando preços e fotos dos links de produto...";
 		}
 
+		let timeoutId = null;
+
 		try {
+			const controller = new AbortController();
+			timeoutId = window.setTimeout(() => controller.abort(), 45000);
+
 			const response = await fetch("/api/admin/presentes/sync", {
 				method: "POST",
 				credentials: "same-origin",
+				signal: controller.signal,
 				headers: {
 					...getAdminHeaders(),
 				},
 			});
+			window.clearTimeout(timeoutId);
+			timeoutId = null;
 
 			const result = await response.json();
 			if (!response.ok) {
@@ -2135,8 +2162,15 @@ if (btnSyncProdutos) {
 			await carregarPresentes();
 		} catch (error) {
 			if (adminStatus) {
-				adminStatus.textContent = error.message;
+				adminStatus.textContent = error && error.name === "AbortError"
+					? "A sincronização demorou demais e foi interrompida. Tente novamente."
+					: error.message;
 			}
+		} finally {
+			if (timeoutId) {
+				window.clearTimeout(timeoutId);
+			}
+			setSyncProdutosLoading(false);
 		}
 	});
 }
