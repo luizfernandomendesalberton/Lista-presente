@@ -68,6 +68,10 @@ body.metrics-page .bg-shape {
 	backdrop-filter: blur(6px);
 }
 
+.sync-overlay[hidden] {
+	display: none !important;
+}
+
 .sync-overlay-card {
 	min-width: min(360px, 92vw);
 	padding: 24px 26px;
