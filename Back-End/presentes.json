@@ -22,7 +22,7 @@
     "nome": "Jogo de faca",
     "descricao": "Jogo de Facas Tramontina Plenus 10 peças, lâminas em aço inox.",
     "categoria": "Cozinha",
-    "preco": 152.0,
+    "preco": 111.15,
     "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_790612-MLB53299366450_012023-F.webp; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/23498065PDM001G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/23498065IXM001G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/23498065PRM001G.jpg",
     "video_url": "",
     "produto_url": "https://www.tramontina.com.br/jogo-de-facas-tramontina-plenus-com-laminas-em-aco-inox-e-cabos-de-polipropileno-preto-10-pecas/23498065.html",
@@ -32,7 +32,7 @@
       "Comprimento da lâmina de 17,8 cm."
     ],
     "reservado": false,
-    "metadata_synced_at": "2026-07-21T23:55:28.843652+00:00"
+    "metadata_synced_at": "2026-07-22T00:13:19.836068+00:00"
   },
   {
     "id": 3,
@@ -57,7 +57,7 @@
     "descricao": "Conjunto De Travessas Refratárias Em Vidro 10 Peças Marinex Transparente",
     "categoria": "Cozinha",
     "preco": 250.0,
-    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_864379-MLA97682375226_112025-F.webp",
+    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_864379-MLA97682375226_112025-F.webp; https://http2.mlstatic.com/frontend-assets/ui-navigation/5.21.22/mercadolibre/logo__small@2x.png",
     "video_url": "",
     "produto_url": "https://www.mercadolivre.com.br/conjunto-de-travessas-refratarias-marinex-vidro-10-pecas-cor-transparente/p/MLB27410965?pdp_filters=item_id%3AMLB5546183068&from=gshop&matt_tool=22783954&matt_word=&matt_source=google&matt_campaign_id=23351282105&matt_ad_group_id=193694047367&matt_match_type=&matt_network=g&matt_device=c&matt_creative=787871588777&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735128761&matt_product_id=MLB27410965-product&matt_product_partition_id=2389601385506&matt_target_id=pla-2389601385506&cq_src=google_ads&cq_cmp=23351282105&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=23351282105&gbraid=0AAAAAD93qcBN6BU2gMXcJnnSWBT7we-S6&gclid=Cj0KCQjw6_HSBhCpARIsANvVltYTwh2TbiP_OtUnF24yDhsWkQ51vDJKUSaoBZXDh6dPu6WYaxbM8OAaAmIVEALw_wcB",
     "especificacoes": [
@@ -67,7 +67,8 @@
       "Podem ser lavadas na lava-louças, facilitando significativamente o processo de limpeza e economizando tempo.",
       "O conjunto inclui diferentes formatos como retangular e oval, permitindo adaptações a qualquer tipo de receita."
     ],
-    "reservado": false
+    "reservado": false,
+    "metadata_synced_at": "2026-07-22T00:13:22.576770+00:00"
   },
   {
     "id": 5,
@@ -75,7 +76,7 @@
     "descricao": "Jogo Bowl Conjunto Bacia Profissional Ke Home 6 Pçs Aço Inox 304 14-30cm",
     "categoria": "Cozinha",
     "preco": 160.0,
-    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_665829-MLA95643543168_102025-F.webp",
+    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_665829-MLA95643543168_102025-F.webp; https://http2.mlstatic.com/frontend-assets/ui-navigation/5.21.22/mercadolibre/logo__small@2x.png",
     "video_url": "",
     "produto_url": "https://www.mercadolivre.com.br/jogo-bowl-conjunto-bacia-profissional-ke-home-6-pcs-aco-inox-304-14-30cm/p/MLB26386487?pdp_filters=item_id%3AMLB6233000368&from=gshop&matt_tool=13891073&matt_word=&matt_source=google&matt_campaign_id=22090193717&matt_ad_group_id=174661962604&matt_match_type=&matt_network=g&matt_device=c&matt_creative=727914179503&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735098639&matt_product_id=MLB26386487-product&matt_product_partition_id=2389547296265&matt_target_id=pla-2389547296265&cq_src=google_ads&cq_cmp=22090193717&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=22090193717&gbraid=0AAAAAD93qcDA8ppnE2H9NnF01v49bixmc&gclid=CjwKCAjwrNrQBhBjEiwAoR4VO-KRwr0_ymJJdWeyDz8Qfh5Og4DkhqQWRVOORFouLxP2KESdjF1rWRoCBX0QAvD_BwE",
     "especificacoes": [
@@ -85,7 +86,8 @@
       "Apto para lava-louças, facilitando a limpeza.",
       "Design liso com marcação de medidas, prático e funcional."
     ],
-    "reservado": false
+    "reservado": false,
+    "metadata_synced_at": "2026-07-22T00:13:22.685342+00:00"
   },
   {
     "id": 6,
@@ -93,7 +95,7 @@
     "descricao": "Lavadora de Alta Pressão Vonder LAV 1300 – 1300 Libras, Compacta, Potente, Ideal para Carros, Quintais e Limpezas Pesadas",
     "categoria": "Geral",
     "preco": 550.0,
-    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_637522-MLA99502265756_112025-F.webp",
+    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_637522-MLA99502265756_112025-F.webp; https://http2.mlstatic.com/frontend-assets/ui-navigation/5.21.22/mercadolibre/logo__small@2x.png",
     "video_url": "",
     "produto_url": "https://www.mercadolivre.com.br/lavadora-alta-presso-lav1300-1300-lbfpol-220-v-vonder-amarelo-60-hz/p/MLB63481764?product_trigger_id=MLB28530537&attributes=COLOR%3AAmarelo%2CVOLTAGE%3AMLB63481764&pdp_filters=item_id%3AMLB4290332992&applied_product_filters=MLB28530537&from=gshop&picker=true&matt_tool=56938998&matt_word=&matt_source=google&matt_campaign_id=22090193672&matt_ad_group_id=174661944364&matt_match_type=&matt_network=g&matt_device=c&matt_creative=727914178231&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735098639&matt_product_id=MLB28530537-product&matt_product_partition_id=2417612878284&matt_target_id=pla-2417612878284&cq_src=google_ads&cq_cmp=22090193672&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=22090193672&gbraid=0AAAAAD93qcAuONiVpNB9Y3XszhzlXczb9&gclid=CjwKCAjwrNrQBhBjEiwAoR4VO4IlHMvw4B6Q5Uo8IXrj1_QlpDHX7ISyUceVue5vvF4ZHeZLQ9BLWhoCvzQQAvD_BwE&offer_type=OFFICIAL_STORE&quantity=1",
     "especificacoes": [
@@ -105,7 +107,8 @@
       "Com sistema de autostop para maior praticidade.",
       "Portátil e leve, pesando apenas 4,2 kg."
     ],
-    "reservado": false
+    "reservado": false,
+    "metadata_synced_at": "2026-07-22T00:13:22.856291+00:00"
   },
   {
     "id": 7,
@@ -155,7 +158,7 @@
     "nome": "Forno elétrico",
     "descricao": "Forno Elétrico de Bancada Fischer Gourmet Grill 44 litros Inox",
     "categoria": "Cozinha",
-    "preco": 1219.0,
+    "preco": 949.0,
     "foto_url": "https://www.fischer.com.br/media/catalog/product/cache/e564debae7c8cb1075438c695f7d9d19/g/o/gourmet_107.png; https://www.fischer.com.br/media/catalog/product/cache/b6e2c720395375ba60e563e9be3bd0d9/g/o/gourmet_100.png; https://www.fischer.com.br/pub/media/catalog/product/g/o/gourmet_100.png; https://www.fischer.com.br/media/catalog/product/g/o/gourmet_119.png",
     "video_url": "",
     "produto_url": "https://www.fischer.com.br/forno-eletrico-fischer-gourmet-grill-bancada-44l/p?color=5443&Voltagem=5474",
@@ -164,7 +167,7 @@
       "temperatura de 50 a 320ºC"
     ],
     "reservado": false,
-    "metadata_synced_at": "2026-07-21T23:48:56.148878+00:00"
+    "metadata_synced_at": "2026-07-22T00:13:26.860717+00:00"
   },
   {
     "id": 10,
@@ -223,7 +226,7 @@
     "nome": "Guarda-Roupa",
     "descricao": "Guarda-Roupa Casal 8 Portas Batentes Rustic/Crema/Rustic Venus Madesa",
     "categoria": "Móveis",
-    "preco": 2059.99,
+    "preco": 1812.8,
     "foto_url": "https://www.madesa.com/cdn/shop/files/02-1107K94GL1-perspectiva-fundo-infinito.png?v=1771668739&width=1000; http://www.madesa.com/cdn/shop/files/02-1107K94GL1-perspectiva-fundo-infinito.png?v=1771668739; https://www.madesa.com/cdn/shop/files/02-1107K94GL1-perspectiva-fundo-infinito.png?v=1771668739&width=1920",
     "video_url": "",
     "produto_url": "https://www.madesa.com/products/guarda-roupa-casal-8-portas-batentes-rustic-crema-rustic-venus-madesa",
@@ -233,7 +236,7 @@
       "217 cm de altura"
     ],
     "reservado": false,
-    "metadata_synced_at": "2026-07-21T23:51:24.621295+00:00"
+    "metadata_synced_at": "2026-07-22T00:13:29.597039+00:00"
   },
   {
     "id": 14,
@@ -241,7 +244,7 @@
     "descricao": "Kit 2 Mesinhas De Cabeceiras Verona Retrô Moderno Acabamento Brilhante C/2 Gavetas - Mega Móveis Cor Off/nature",
     "categoria": "Móveis",
     "preco": 360.0,
-    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_777135-MLA99989798255_112025-F.webp",
+    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_777135-MLA99989798255_112025-F.webp; https://http2.mlstatic.com/frontend-assets/ui-navigation/5.21.22/mercadolibre/logo__small@2x.png",
     "video_url": "",
     "produto_url": "https://www.mercadolivre.com.br/kit-2-mesinhas-de-cabeceiras-verona-retr-moderno-acabamento-brilhante-c2-gavetas-mega-moveis-cor-offnature/p/MLB50495953?product_trigger_id=MLB50496652&pdp_filters=item_id%3AMLB4046245899&applied_product_filters=MLB50495953&from=gshop&picker=true&matt_tool=57455671&matt_word=&matt_source=google&matt_campaign_id=23440873626&matt_ad_group_id=194474619354&matt_match_type=&matt_network=g&matt_device=c&matt_creative=792396421438&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735128761&matt_product_id=MLB50495953-product&matt_product_partition_id=2392713156421&matt_target_id=pla-2392713156421&cq_src=google_ads&cq_cmp=23440873626&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=23440873626&gbraid=0AAAAAD93qcDhJOtlB4dqRwHJMdWc5vA6h&gclid=Cj0KCQjwz9_QBhD_ARIsADnSCfAHDCjHGT6cnIdQD7Gpd_y8EjIarbtKa7FL07z5He-zHSkS57InklYaArajEALw_wcB&quantity=1#reviews",
     "especificacoes": [
@@ -249,7 +252,8 @@
       "Fabricada em madeira para maior durabilidade.",
       "Possui 2 gavetas com corrediças de plástico."
     ],
-    "reservado": false
+    "reservado": false,
+    "metadata_synced_at": "2026-07-22T00:13:29.758656+00:00"
   },
   {
     "id": 15,
@@ -257,7 +261,7 @@
     "descricao": "Cômoda 4 Gavetas C/ Sapateira Cor Off White Web Home Móveis",
     "categoria": "Móveis",
     "preco": 600.0,
-    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_875411-MLA95636644326_102025-F.webp",
+    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_875411-MLA95636644326_102025-F.webp; https://http2.mlstatic.com/frontend-assets/ui-navigation/5.21.22/mercadolibre/logo__small@2x.png",
     "video_url": "",
     "produto_url": "https://www.mercadolivre.com.br/cmoda-4-gavetas-c-sapateira-cor-off-white-web-home-moveis/p/MLB51400397?product_trigger_id=MLB51385986&pdp_filters=item_id%3AMLB4361049269&applied_product_filters=MLB51400397&picker=true&quantity=1",
     "especificacoes": [
@@ -265,7 +269,8 @@
       "Dimensões de 44 cm de profundidade.",
       "Inclui 1 porta para organização adicional."
     ],
-    "reservado": false
+    "reservado": false,
+    "metadata_synced_at": "2026-07-22T00:13:29.894584+00:00"
   },
   {
     "id": 16,
@@ -424,7 +429,7 @@
     "descricao": "Frigideira Antiaderente Cerâmica 28cm Aristus Tampa Com Borda De Silicone Cabo Antitérmico Compatível Com Fogão A Gás E Indução Revestimento Premium Linha Luxury Induction - All Black",
     "categoria": "Cozinha",
     "preco": 250.0,
-    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_970340-MLA96418227930_102025-F.webp",
+    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_970340-MLA96418227930_102025-F.webp; https://http2.mlstatic.com/frontend-assets/ui-navigation/5.21.22/mercadolibre/logo__small@2x.png",
     "video_url": "",
     "produto_url": "https://www.mercadolivre.com.br/frigideira-antiaderente-cermica-28cm-aristus-tampa-com-borda-de-silicone-cabo-antitermico-compativel-com-fogo-a-gas-e-induco-revestimento-premium-linha-luxury-induction-all-black/p/MLB60215301?product_trigger_id=MLB60194453&pdp_filters=item_id%3AMLB4261592121&applied_product_filters=MLB60194453&from=gshop&picker=true&matt_tool=63172158&matt_word=&matt_source=google&matt_campaign_id=23351281889&matt_ad_group_id=195616624928&matt_match_type=&matt_network=g&matt_device=c&matt_creative=787871583116&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735098639&matt_product_id=MLB60194453-product&matt_product_partition_id=2388009210146&matt_target_id=pla-2388009210146&cq_src=google_ads&cq_cmp=23351281889&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=23351281889&gbraid=0AAAAAD93qcBQ-6V7xCZHoToLKjawxgYy0&gclid=Cj0KCQjw9ZLSBhCcARIsAEhGKgNbvLMjbhR1r3TDrxJnAq1Yk_gqwEXB081sqTqDtoZMwRHvOEYAWlkaAijMEALw_wcB&quantity=1",
     "especificacoes": [
@@ -437,7 +442,8 @@
       "Inclui tampa."
     ],
     "reservado": false,
-    "criado_em": "2026-07-01T18:27:28.959914+00:00"
+    "criado_em": "2026-07-01T18:27:28.959914+00:00",
+    "metadata_synced_at": "2026-07-22T00:13:32.540079+00:00"
   },
   {
     "id": 25,
@@ -578,7 +584,7 @@
     "nome": "Caçarola Tramontina",
     "descricao": "Caçarola Tramontina Paris em Alumínio com Revestimento Interno e Externo em Antiaderente Starflon Max Chumbo com Tampa de Vidro 22 cm 3,8 L",
     "categoria": "Panelas",
-    "preco": 240.0,
+    "preco": 176.13,
     "foto_url": "https://assets.tramontina.com.br/upload/tramon/imagens/CUT/28524622PDM001G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/28524622IXM002G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/28524622IXM001G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/28524616PRM001G.jpg",
     "video_url": "",
     "produto_url": "https://www.tramontina.com.br/cacarola-tramontina-paris-em-aluminio-com-revestimento-interno-e-externo-em-antiaderente-starflon-max-chumbo-com-tampa-de-vidro-22-cm-3-8-l/28524622.html",
@@ -587,6 +593,20 @@
       "É produzida em alumínio com espessura de 1,8 milímetros e revestimento interno e externo de antiaderente Starflon Max, características que juntas, proporcionam um cozimento rápido e uniforme dos alimentos, evitam que eles grudem em sua superfície e a tornam fácil de limpar."
     ],
     "reservado": false,
-    "criado_em": "2026-07-19T18:51:57.198140+00:00"
+    "criado_em": "2026-07-19T18:51:57.198140+00:00",
+    "metadata_synced_at": "2026-07-22T00:13:39.917689+00:00"
+  },
+  {
+    "id": 34,
+    "nome": "Cama e Colchão",
+    "descricao": "Guldi Box Joe Linho e Guldi Dream",
+    "categoria": "Cama, Mesa e Banho",
+    "preco": 3898.38,
+    "foto_url": "https://www.guldi.com.br/wp-content/uploads/2026/05/Mobly-Base-para-Cama-Box-Queen-Joe-Linho-2836x158x19829-Bege-4956-908308-2.jpg; https://www.guldi.com.br/wp-content/uploads/2023/04/Guldi-PDP-Dream-2-still-queen.png",
+    "video_url": "",
+    "produto_url": "https://www.guldi.com.br/produto/base-para-cama-box-joe-linho/?attribute_pa_tamanho=queen&attribute_pa_cor=bege; https://www.guldi.com.br/produto/guldi-dream/?attribute_pa_tamanho=queen",
+    "especificacoes": [],
+    "reservado": false,
+    "criado_em": "2026-07-22T18:48:08.179137+00:00"
   }
 ]

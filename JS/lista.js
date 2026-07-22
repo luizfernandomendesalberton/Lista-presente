@@ -118,6 +118,42 @@ const BRL = new Intl.NumberFormat("pt-BR", {
 
 let presentesState = [];
 let convidadosState = [];
+let cardMediaTimers = [];
+
+
+function clearCardMediaTimers() {
+	cardMediaTimers.forEach((timerId) => {
+		window.clearInterval(timerId);
+	});
+	cardMediaTimers = [];
+}
+
+
+function startCardPhotoSlideshow(fotoEl, fotoUrls, presenteNome, fallbackImageUrl) {
+	if (!(fotoEl instanceof HTMLImageElement)) {
+		return;
+	}
+
+	if (!Array.isArray(fotoUrls) || fotoUrls.length <= 1) {
+		return;
+	}
+
+	let currentIndex = 0;
+	const setCurrentPhoto = () => {
+		const nextUrl = fotoUrls[currentIndex] || fallbackImageUrl;
+		fotoEl.src = nextUrl;
+		fotoEl.alt = `Foto ${currentIndex + 1} do presente ${presenteNome}`;
+	};
+
+	setCurrentPhoto();
+
+	const timerId = window.setInterval(() => {
+		currentIndex = (currentIndex + 1) % fotoUrls.length;
+		setCurrentPhoto();
+	}, 3000);
+
+	cardMediaTimers.push(timerId);
+}
 
 
 function setAdminTabSessionFlag() {
@@ -1573,6 +1609,8 @@ function renderPresentes() {
 		return;
 	}
 
+	clearCardMediaTimers();
+
 	const presentes = getFilteredPresentes();
 	listaEl.innerHTML = "";
 
@@ -1615,22 +1653,32 @@ function renderPresentes() {
 		const fallbackImageUrl = "https://images.unsplash.com/photo-1513883049090-d0b7439799bf?auto=format&fit=crop&w=900&q=80";
 		const videoUrl = String(presente.video_url || "").trim();
 		const produtoUrls = normalizeHttpUrls(presente.produto_url);
-		const produtoUrl = produtoUrls.length ? produtoUrls[0] : "";
 		const fotoUrls = normalizeHttpUrls(presente.foto_url);
 		const fotoUrl = fotoUrls.length ? fotoUrls[0] : "";
 		const youtubeEmbedUrl = getYouTubeEmbedUrl(videoUrl);
 
 		if (mediaWrap) {
-			mediaWrap.classList.toggle("has-link", Boolean(produtoUrl));
+			mediaWrap.classList.toggle("has-link", Boolean(produtoUrls.length));
 
-			if (produtoUrl) {
-				const mediaLinkOverlay = document.createElement("a");
+			if (produtoUrls.length) {
+				const mediaLinkOverlay = document.createElement("button");
 				mediaLinkOverlay.className = "media-link-overlay";
-				mediaLinkOverlay.href = produtoUrl;
-				mediaLinkOverlay.target = "_blank";
-				mediaLinkOverlay.rel = "noopener noreferrer";
-				mediaLinkOverlay.title = "Abrir página do produto";
-				mediaLinkOverlay.setAttribute("aria-label", `Abrir página do produto ${presente.nome}`);
+				mediaLinkOverlay.type = "button";
+				mediaLinkOverlay.title = produtoUrls.length > 1 ? "Abrir páginas do produto" : "Abrir página do produto";
+				mediaLinkOverlay.setAttribute(
+					"aria-label",
+					produtoUrls.length > 1
+						? `Abrir ${produtoUrls.length} páginas do produto ${presente.nome}`
+						: `Abrir página do produto ${presente.nome}`,
+				);
+				mediaLinkOverlay.addEventListener("click", (event) => {
+					event.preventDefault();
+					event.stopPropagation();
+
+					produtoUrls.forEach((url) => {
+						window.open(url, "_blank", "noopener,noreferrer");
+					});
+				});
 				mediaWrap.appendChild(mediaLinkOverlay);
 			}
 		}
@@ -1641,6 +1689,10 @@ function renderPresentes() {
 		fotoEl.addEventListener("error", () => {
 			fotoEl.src = fallbackImageUrl;
 		});
+
+		if (!videoUrl && !youtubeEmbedUrl) {
+			startCardPhotoSlideshow(fotoEl, fotoUrls, presente.nome || "Presente", fallbackImageUrl);
+		}
 
 		if (embedEl) {
 			embedEl.hidden = true;

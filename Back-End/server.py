@@ -745,7 +745,7 @@ def sync_single_presente_metadata(presente):
 
 	updated = False
 	collected_images = normalize_multi_urls(presente.get("foto_url"))
-	collected_price = None
+	collected_prices = []
 
 	for url in product_urls:
 		try:
@@ -753,12 +753,21 @@ def sync_single_presente_metadata(presente):
 		except Exception:
 			continue
 
-		if collected_price is None and metadata.get("price") is not None:
-			collected_price = round(float(metadata["price"]), 2)
+		if metadata.get("price") is not None:
+			parsed_price = round(float(metadata["price"]), 2)
+			if PRODUCT_SYNC_MIN_PRICE <= parsed_price <= PRODUCT_SYNC_MAX_PRICE:
+				collected_prices.append(parsed_price)
 
 		for image in metadata.get("images") or []:
 			if image not in collected_images:
 				collected_images.append(image)
+
+	collected_price = None
+	if collected_prices:
+		if len(product_urls) == 1:
+			collected_price = round(collected_prices[0], 2)
+		elif len(collected_prices) == len(product_urls):
+			collected_price = round(sum(collected_prices), 2)
 
 	if collected_price is not None and round(float(presente.get("preco") or 0), 2) != collected_price:
 		current_price = round(float(presente.get("preco") or 0), 2)
