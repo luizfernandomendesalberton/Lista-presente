@@ -515,18 +515,28 @@ def collect_price_candidates(text):
 		left_hint = clean[max(0, match.start() - 14): match.start()].lower()
 
 		score = 10
-		if "r$" in context:
+		has_currency = "r$" in context
+		has_price_keyword = any(keyword in context for keyword in ["preço", "preco", "price", "valor"])
+		has_cash_keyword = any(keyword in context for keyword in ["à vista", "a vista", "avista", "pix"])
+		has_installment_keyword = any(keyword in context for keyword in ["parcel", "parcela", "sem juros"])
+		has_discount_keyword = any(keyword in context for keyword in ["economize", "desconto", "% off", " off "])
+
+		if has_currency:
 			score += 25
-		if any(keyword in context for keyword in ["à vista", "a vista", "preço", "preco", "price", "valor"]):
-			score += 25
-		if re.search(r"por\s*r?\$?\s*$", left_hint):
+		if has_price_keyword:
 			score += 20
+		if has_cash_keyword:
+			score += 60
+		if re.search(r"por\s*r?\$?\s*$", left_hint):
+			score += 28
 		if re.search(r"de\s*r?\$?\s*$", left_hint):
-			score -= 20
-		if any(keyword in context for keyword in ["parcel", "parcela", "sem juros", "economize", "desconto", "% off", "off"]):
 			score -= 30
-		if re.search(r"\d+\s*x\s*$", prefix):
-			score -= 45
+		if re.search(r"\d+\s*x\s*de\s*r?\$?\s*$", left_hint) or re.search(r"\d+\s*x\s*$", prefix):
+			score -= 65
+		if has_installment_keyword:
+			score -= 35
+		if has_discount_keyword:
+			score -= 8
 		if price < PRODUCT_SYNC_MIN_PRICE or price > PRODUCT_SYNC_MAX_PRICE:
 			score -= 80
 
@@ -559,7 +569,7 @@ def choose_best_price(candidates):
 
 	ordered = sorted(
 		best_by_price.items(),
-		key=lambda pair: (-pair[1]["score"], pair[1]["offset"], pair[1]["position"], pair[0]),
+		key=lambda pair: (-pair[1]["score"], pair[0], pair[1]["offset"], pair[1]["position"]),
 	)
 	best_price, best_meta = ordered[0]
 	best_score = best_meta["score"]
@@ -595,7 +605,8 @@ def extract_price_from_html(soup):
 		if node and node.get(field):
 			price = parse_price_from_text(node.get(field))
 			if price is not None:
-				collected_candidates.append({"price": round(price, 2), "score": 100})
+				# Meta tags can contain list/catalog price and not current promo value.
+				collected_candidates.append({"price": round(price, 2), "score": 72})
 
 	json_ld_nodes = soup.find_all("script", attrs={"type": "application/ld+json"})
 	for node in json_ld_nodes:
@@ -616,7 +627,7 @@ def extract_price_from_html(soup):
 				if isinstance(offers, dict):
 					price = parse_price_from_text(offers.get("price") or offers.get("lowPrice") or offers.get("highPrice"))
 					if price is not None:
-						collected_candidates.append({"price": round(price, 2), "score": 95})
+						collected_candidates.append({"price": round(price, 2), "score": 68})
 				elif isinstance(offers, list):
 					for item in offers:
 						queue.append(item)
@@ -628,17 +639,20 @@ def extract_price_from_html(soup):
 				queue.extend(current)
 
 	selectors = [
-		"[itemprop='price']",
-		".price",
-		".product-price",
-		".woocommerce-Price-amount",
-		".price-sales",
-		".valor",
+		("[itemprop='price']", 20),
+		(".price", 8),
+		(".product-price", 15),
+		(".woocommerce-Price-amount", 18),
+		(".price-sales", 32),
+		(".valor", 12),
+		("[class*='avista']", 35),
 	]
-	for selector in selectors:
+	for selector, bonus in selectors:
 		nodes = soup.select(selector)
 		for node in nodes[:8]:
-			collected_candidates.extend(collect_price_candidates(node.get_text(" ", strip=True)))
+			for candidate in collect_price_candidates(node.get_text(" ", strip=True)):
+				candidate["score"] = int(candidate.get("score") or 0) + int(bonus)
+				collected_candidates.append(candidate)
 
 	full_text = soup.get_text(" ", strip=True)
 	collected_candidates.extend(collect_price_candidates(full_text))
