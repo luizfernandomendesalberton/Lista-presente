@@ -513,13 +513,23 @@ def collect_price_candidates(text):
 		context = clean[start:end].lower()
 		prefix = clean[max(0, match.start() - 8): match.start()].lower()
 		left_hint = clean[max(0, match.start() - 14): match.start()].lower()
+		context_excerpt = f"{context} {prefix} {left_hint}".lower()
 
 		score = 10
+		kind = "neutral"
 		has_currency = "r$" in context
 		has_price_keyword = any(keyword in context for keyword in ["preço", "preco", "price", "valor"])
 		has_cash_keyword = any(keyword in context for keyword in ["à vista", "a vista", "avista", "pix"])
 		has_installment_keyword = any(keyword in context for keyword in ["parcel", "parcela", "sem juros"])
 		has_discount_keyword = any(keyword in context for keyword in ["economize", "desconto", "% off", " off "])
+		has_reference_keyword = any(
+			keyword in context_excerpt
+			for keyword in ["preço original", "preco original", "preço normal", "preco normal", "valor original", "valor normal", "riscado", "de r$", "preço de", "preco de", "antes"]
+		)
+		has_offer_keyword = any(
+			keyword in context_excerpt
+			for keyword in ["à vista", "a vista", "avista", "pix", "sem juros", "% off", "parcel", "parcela", "desconto"]
+		)
 
 		if has_currency:
 			score += 25
@@ -527,20 +537,27 @@ def collect_price_candidates(text):
 			score += 20
 		if has_cash_keyword:
 			score += 60
-		if re.search(r"por\s*r?\$?\s*$", left_hint):
-			score += 28
 		if re.search(r"de\s*r?\$?\s*$", left_hint):
-			score -= 30
+			score += 40
+			kind = "reference"
+		if re.search(r"por\s*r?\$?\s*$", left_hint):
+			score -= 18
+			kind = "offer"
 		if re.search(r"\d+\s*x\s*de\s*r?\$?\s*$", left_hint) or re.search(r"\d+\s*x\s*$", prefix):
 			score -= 65
 		if has_installment_keyword:
 			score -= 35
 		if has_discount_keyword:
 			score -= 8
+		if has_reference_keyword:
+			score += 30
+			kind = "reference"
+		if has_offer_keyword and kind != "reference":
+			kind = "offer"
 		if price < PRODUCT_SYNC_MIN_PRICE or price > PRODUCT_SYNC_MAX_PRICE:
 			score -= 80
 
-		candidates.append({"price": round(price, 2), "score": score, "position": index, "offset": match.start()})
+		candidates.append({"price": round(price, 2), "score": score, "position": index, "offset": match.start(), "kind": kind})
 
 	return candidates
 
@@ -549,9 +566,13 @@ def choose_best_price(candidates):
 	if not candidates:
 		return None, None
 
+	reference_candidates = [item for item in candidates if str(item.get("kind") or "").lower() == "reference"]
+	pool = reference_candidates if reference_candidates else candidates
+	prefer_higher_price = bool(reference_candidates)
+
 	# Merge duplicated prices and keep best score per value.
 	best_by_price = {}
-	for item in candidates:
+	for item in pool:
 		price = round(float(item.get("price") or 0), 2)
 		score = int(item.get("score") or 0)
 		position = int(item.get("position") or 0)
@@ -569,7 +590,7 @@ def choose_best_price(candidates):
 
 	ordered = sorted(
 		best_by_price.items(),
-		key=lambda pair: (-pair[1]["score"], pair[0], pair[1]["offset"], pair[1]["position"]),
+		key=lambda pair: (-pair[1]["score"], -pair[0] if prefer_higher_price else pair[0], pair[1]["offset"], pair[1]["position"]),
 	)
 	best_price, best_meta = ordered[0]
 	best_score = best_meta["score"]
@@ -592,6 +613,23 @@ def is_reasonable_price_transition(current_price, new_price):
 
 def extract_price_from_html(soup):
 	collected_candidates = []
+	reference_selectors = [
+		("s", 95),
+		("del", 95),
+		(".old-price", 90),
+		(".old_price", 90),
+		(".price-old", 90),
+		(".preco-antigo", 90),
+		(".preco-anterior", 90),
+		(".valor-antigo", 90),
+		(".list-price", 90),
+		(".price-list", 90),
+		("[class*='old']", 82),
+		("[class*='strike']", 82),
+		("[data-testid*='old']", 82),
+		("[data-testid*='preco-antigo']", 82),
+		("[data-test*='old']", 82),
+	]
 
 	meta_candidates = [
 		("meta", {"property": "product:price:amount"}, "content"),
@@ -606,7 +644,15 @@ def extract_price_from_html(soup):
 			price = parse_price_from_text(node.get(field))
 			if price is not None:
 				# Meta tags can contain list/catalog price and not current promo value.
-				collected_candidates.append({"price": round(price, 2), "score": 72})
+				collected_candidates.append({"price": round(price, 2), "score": 72, "kind": "neutral"})
+
+	for selector, bonus in reference_selectors:
+		nodes = soup.select(selector)
+		for node in nodes[:8]:
+			for candidate in collect_price_candidates(node.get_text(" ", strip=True)):
+				candidate["score"] = int(candidate.get("score") or 0) + int(bonus)
+				candidate["kind"] = "reference"
+				collected_candidates.append(candidate)
 
 	json_ld_nodes = soup.find_all("script", attrs={"type": "application/ld+json"})
 	for node in json_ld_nodes:
@@ -627,7 +673,7 @@ def extract_price_from_html(soup):
 				if isinstance(offers, dict):
 					price = parse_price_from_text(offers.get("price") or offers.get("lowPrice") or offers.get("highPrice"))
 					if price is not None:
-						collected_candidates.append({"price": round(price, 2), "score": 68})
+						collected_candidates.append({"price": round(price, 2), "score": 68, "kind": "neutral"})
 				elif isinstance(offers, list):
 					for item in offers:
 						queue.append(item)
