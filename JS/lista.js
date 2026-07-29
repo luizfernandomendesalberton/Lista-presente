@@ -17,7 +17,7 @@ const pixNomeInput = document.getElementById("pixNome");
 const pixValorInput = document.getElementById("pixValor");
 const pixStatus = document.getElementById("pixStatus");
 const pixResult = document.getElementById("pixResult");
-const pixQrCanvas = document.getElementById("pixQrCanvas");
+const pixQrImage = document.getElementById("pixQrImage");
 const pixResumo = document.getElementById("pixResumo");
 const pixPayload = document.getElementById("pixPayload");
 const pixCopyBtn = document.getElementById("pixCopyBtn");
@@ -491,23 +491,12 @@ function openPixModal(referenceName = "") {
 
 
 async function renderPixQrCode(payload) {
-	if (!pixQrCanvas || !payload) {
+	if (!pixQrImage || !payload) {
 		return;
 	}
 
-	const qrLib = window.QRCode;
-	if (!qrLib || typeof qrLib.toCanvas !== "function") {
-		throw new Error("Biblioteca de QR Code indisponível no navegador.");
-	}
-
-	await qrLib.toCanvas(pixQrCanvas, payload, {
-		width: 280,
-		margin: 1,
-		color: {
-			dark: "#1b2a34",
-			light: "#ffffff",
-		},
-	});
+	pixQrImage.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(payload)}`;
+	pixQrImage.hidden = false;
 }
 
 
@@ -551,7 +540,7 @@ async function gerarPix(event) {
 			throw new Error(result.erro || "Não foi possível gerar o PIX agora.");
 		}
 
-		await renderPixQrCode(result.pix_payload);
+		await renderPixQrCode(result.pix_qr_svg || result.pix_payload);
 
 		if (pixPayload) {
 			pixPayload.value = result.pix_payload || "";

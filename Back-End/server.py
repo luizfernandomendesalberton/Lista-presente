@@ -7,6 +7,7 @@ import threading
 import tempfile
 import unicodedata
 import uuid
+import qrcode
 import requests
 from datetime import UTC
 from datetime import timedelta
@@ -16,6 +17,7 @@ from bs4 import BeautifulSoup
 from email.mime.text import MIMEText
 from filelock import FileLock
 from pathlib import Path
+from qrcode.image.svg import SvgImage
 
 from flask import Flask, Response, jsonify, redirect, request, send_from_directory, session
 
@@ -1007,6 +1009,22 @@ def build_pix_payload(pix_key, amount, txid):
 	payload_for_crc = f"{base_payload}6304"
 	crc = crc16_ccitt(payload_for_crc)
 	return f"{payload_for_crc}{crc}"
+
+
+def build_pix_qr_svg(payload):
+	qr = qrcode.QRCode(
+		version=None,
+		error_correction=qrcode.constants.ERROR_CORRECT_M,
+		box_size=10,
+		border=2,
+	)
+	qr.add_data(payload)
+	qr.make(fit=True)
+	image = qr.make_image(image_factory=SvgImage)
+	svg_bytes = image.to_string()
+	if isinstance(svg_bytes, bytes):
+		return svg_bytes.decode("utf-8")
+	return str(svg_bytes)
 
 
 def get_admin_users():
@@ -2093,6 +2111,7 @@ def gerar_pix():
 	txid = f"{txid_prefix[:18]}{txid_seed}"[:25]
 
 	pix_payload = build_pix_payload(pix_key, round(float(valor), 2), txid)
+	pix_qr_svg = build_pix_qr_svg(pix_payload)
 
 	try:
 		send_pix_notification_email(nome, round(float(valor), 2), referencia)
@@ -2120,6 +2139,7 @@ def gerar_pix():
 			"referencia": referencia,
 			"pix_key": pix_key,
 			"pix_payload": pix_payload,
+			"pix_qr_svg": pix_qr_svg,
 			"txid": txid,
 			"email_status": email_status,
 			"contribuicao": contribution,

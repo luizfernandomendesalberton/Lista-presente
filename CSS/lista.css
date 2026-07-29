@@ -1271,6 +1271,16 @@ button:hover {
 	padding-top: 12px;
 }
 
+.pix-qr-image {
+	width: 280px;
+	height: 280px;
+	max-width: 100%;
+	background: #fff;
+	border-radius: 16px;
+	box-shadow: 0 12px 28px rgba(67, 45, 31, 0.12);
+	object-fit: contain;
+}
+
 .pix-resumo {
 	margin: 0;
 	text-align: center;
