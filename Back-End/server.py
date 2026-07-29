@@ -630,6 +630,35 @@ def extract_price_from_html(soup):
 		("[data-testid*='preco-antigo']", 82),
 		("[data-test*='old']", 82),
 	]
+	full_text = soup.get_text(" ", strip=True)
+	top_text = full_text[:6000]
+
+	price_pair_patterns = [
+		re.compile(
+			r"de\s*r?\$\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2})|\d+(?:,\d{2})|\d+(?:\.\d{2})).{0,120}?por\s*r?\$\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2})|\d+(?:,\d{2})|\d+(?:\.\d{2}))",
+			flags=re.IGNORECASE | re.DOTALL,
+		),
+		re.compile(
+			r"r?\$\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2})|\d+(?:,\d{2})|\d+(?:\.\d{2})).{0,40}?r?\$\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2})|\d+(?:,\d{2})|\d+(?:\.\d{2}))",
+			flags=re.IGNORECASE | re.DOTALL,
+		),
+	]
+
+	for pattern in price_pair_patterns:
+		for match in pattern.finditer(top_text):
+			first_price = parse_price_number(match.group(1))
+			second_price = parse_price_number(match.group(2))
+			if first_price is None or second_price is None:
+				continue
+
+			reference_price = first_price if first_price >= second_price else second_price
+			collected_candidates.append({
+				"price": round(reference_price, 2),
+				"score": 112,
+				"position": 0,
+				"offset": match.start(),
+				"kind": "reference",
+			})
 
 	meta_candidates = [
 		("meta", {"property": "product:price:amount"}, "content"),
@@ -699,8 +728,6 @@ def extract_price_from_html(soup):
 			for candidate in collect_price_candidates(node.get_text(" ", strip=True)):
 				candidate["score"] = int(candidate.get("score") or 0) + int(bonus)
 				collected_candidates.append(candidate)
-
-	full_text = soup.get_text(" ", strip=True)
 	collected_candidates.extend(collect_price_candidates(full_text))
 
 	best_price, _score = choose_best_price(collected_candidates)
