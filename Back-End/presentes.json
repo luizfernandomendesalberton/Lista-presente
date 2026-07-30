@@ -22,7 +22,7 @@
     "nome": "Jogo de faca",
     "descricao": "Jogo de Facas Tramontina Plenus 10 peças, lâminas em aço inox.",
     "categoria": "Cozinha",
-    "preco": 111.15,
+    "preco": 152.0,
     "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_790612-MLB53299366450_012023-F.webp; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/23498065PDM001G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/23498065IXM001G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/23498065PRM001G.jpg",
     "video_url": "",
     "produto_url": "https://www.tramontina.com.br/jogo-de-facas-tramontina-plenus-com-laminas-em-aco-inox-e-cabos-de-polipropileno-preto-10-pecas/23498065.html",
@@ -31,8 +31,7 @@
       "Punho de polipropileno.",
       "Comprimento da lâmina de 17,8 cm."
     ],
-    "reservado": false,
-    "metadata_synced_at": "2026-07-22T00:13:19.836068+00:00"
+    "reservado": false
   },
   {
     "id": 3,
@@ -75,7 +74,7 @@
     "nome": "Jogo Bowl inox",
     "descricao": "Jogo Bowl Conjunto Bacia Profissional Ke Home 6 Pçs Aço Inox 304 14-30cm",
     "categoria": "Cozinha",
-    "preco": 160.0,
+    "preco": 190.0,
     "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_665829-MLA95643543168_102025-F.webp; https://http2.mlstatic.com/frontend-assets/ui-navigation/5.21.22/mercadolibre/logo__small@2x.png",
     "video_url": "",
     "produto_url": "https://www.mercadolivre.com.br/jogo-bowl-conjunto-bacia-profissional-ke-home-6-pcs-aco-inox-304-14-30cm/p/MLB26386487?pdp_filters=item_id%3AMLB6233000368&from=gshop&matt_tool=13891073&matt_word=&matt_source=google&matt_campaign_id=22090193717&matt_ad_group_id=174661962604&matt_match_type=&matt_network=g&matt_device=c&matt_creative=727914179503&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735098639&matt_product_id=MLB26386487-product&matt_product_partition_id=2389547296265&matt_target_id=pla-2389547296265&cq_src=google_ads&cq_cmp=22090193717&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=22090193717&gbraid=0AAAAAD93qcDA8ppnE2H9NnF01v49bixmc&gclid=CjwKCAjwrNrQBhBjEiwAoR4VO-KRwr0_ymJJdWeyDz8Qfh5Og4DkhqQWRVOORFouLxP2KESdjF1rWRoCBX0QAvD_BwE",
@@ -86,8 +85,7 @@
       "Apto para lava-louças, facilitando a limpeza.",
       "Design liso com marcação de medidas, prático e funcional."
     ],
-    "reservado": false,
-    "metadata_synced_at": "2026-07-22T00:13:22.685342+00:00"
+    "reservado": false
   },
   {
     "id": 6,
@@ -572,7 +570,7 @@
     "nome": "Jogo de Panelas",
     "descricao": "Jogo de Panelas Tramontina Linz em Alumínio com Revestimento Interno e Externo em Antiaderente Starflon Max Preto 10 Peças",
     "categoria": "Panelas",
-    "preco": 562.59,
+    "preco": 660.0,
     "foto_url": "https://assets.tramontina.com.br/upload/tramon/imagens/CUT/28299007PRM001G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/28299007PDM001G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/28299007IXP001G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/28299007IXM006G.jpg",
     "video_url": "",
     "produto_url": "https://www.tramontina.com.br/jogo-de-panelas-tramontina-linz-em-aluminio-com-revestimento-interno-e-externo-em-antiaderente-starflon-max-preto-10-pecas/28299007.html",
@@ -582,15 +580,14 @@
       "Revestimento interno e externo de antiaderente Starflon Max que não gruda, é fácil de limpar, mais durável e não é prejudicial à saúde, pois é livre de PFOA."
     ],
     "reservado": false,
-    "criado_em": "2026-07-19T18:47:32.078857+00:00",
-    "metadata_synced_at": "2026-07-21T23:55:42.429340+00:00"
+    "criado_em": "2026-07-19T18:47:32.078857+00:00"
   },
   {
     "id": 33,
     "nome": "Caçarola Tramontina",
     "descricao": "Caçarola Tramontina Paris em Alumínio com Revestimento Interno e Externo em Antiaderente Starflon Max Chumbo com Tampa de Vidro 22 cm 3,8 L",
     "categoria": "Panelas",
-    "preco": 176.13,
+    "preco": 240.0,
     "foto_url": "https://assets.tramontina.com.br/upload/tramon/imagens/CUT/28524622PDM001G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/28524622IXM002G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/28524622IXM001G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/CUT/28524616PRM001G.jpg",
     "video_url": "",
     "produto_url": "https://www.tramontina.com.br/cacarola-tramontina-paris-em-aluminio-com-revestimento-interno-e-externo-em-antiaderente-starflon-max-chumbo-com-tampa-de-vidro-22-cm-3-8-l/28524622.html",
@@ -599,8 +596,7 @@
       "É produzida em alumínio com espessura de 1,8 milímetros e revestimento interno e externo de antiaderente Starflon Max, características que juntas, proporcionam um cozimento rápido e uniforme dos alimentos, evitam que eles grudem em sua superfície e a tornam fácil de limpar."
     ],
     "reservado": false,
-    "criado_em": "2026-07-19T18:51:57.198140+00:00",
-    "metadata_synced_at": "2026-07-22T00:13:39.917689+00:00"
+    "criado_em": "2026-07-19T18:51:57.198140+00:00"
   },
   {
     "id": 34,
@@ -621,7 +617,7 @@
     "nome": "Liquidificador",
     "descricao": "Liquidificador Britânia 3L 1200W 6 lâminas Inox BLQ1380P",
     "categoria": "Cozinha",
-    "preco": 150.0,
+    "preco": 210.0,
     "foto_url": "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80; https://philco.vtexassets.com/arquivos/ids/194749/Liq-BLQ1380P-inox.jpg?v=637728505098070000; https://britania.vtexassets.com/assets/vtex/assets-builder/britania.store-theme/4.4.0/imgs/svg/logo___21a5ba6ecd55ce002a832411993b1d2a.svg; https://philco.vtexassets.com/arquivos/ids/194749-150-auto?v=637728505098070000&width=150&height=auto&aspect=true",
     "video_url": "",
     "produto_url": "https://www.britania.com.br/liquidificador-blq1380p-inox-127v-033101286/p",
@@ -631,15 +627,14 @@
     "reservado": true,
     "reservado_por_nome": "Cartório 2ª Vara Orleans",
     "reservado_em": "2026-07-29T17:57:48.610778+00:00",
-    "criado_em": "2026-07-29T17:57:13.991282+00:00",
-    "metadata_synced_at": "2026-07-29T17:57:15.028156+00:00"
+    "criado_em": "2026-07-29T17:57:13.991282+00:00"
   },
   {
     "id": 36,
     "nome": "Batedeira",
     "descricao": "Batedeira Britânia Pérola 550 500W 4 velocidades + Turbo 4,3L - 220V",
     "categoria": "Cozinha",
-    "preco": 110.0,
+    "preco": 170.0,
     "foto_url": "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80; https://philco.vtexassets.com/arquivos/ids/270866/Bat-Perola-550-PR-Turbo_5.jpg?v=638985649747500000; https://britania.vtexassets.com/assets/vtex/assets-builder/britania.store-theme/4.4.0/imgs/svg/logo___21a5ba6ecd55ce002a832411993b1d2a.svg; https://philco.vtexassets.com/arquivos/ids/270866-150-auto?v=638985649747500000&width=150&height=auto&aspect=true",
     "video_url": "",
     "produto_url": "https://www.britania.com.br/batedeira-britania-perola-550-500w-4-velocidades-turbo/p?skuId=21973",
@@ -654,15 +649,14 @@
     "reservado": true,
     "reservado_por_nome": "Cartório 2ª Vara Orleans",
     "reservado_em": "2026-07-29T17:59:50.984325+00:00",
-    "criado_em": "2026-07-29T17:59:23.774993+00:00",
-    "metadata_synced_at": "2026-07-29T17:59:24.835753+00:00"
+    "criado_em": "2026-07-29T17:59:23.774993+00:00"
   },
   {
     "id": 37,
     "nome": "Sanduicheira e Grill",
     "descricao": "Sanduicheira e Grill Britânia Inox 2 em 1 750W BGR25B - 220V",
     "categoria": "Cozinha",
-    "preco": 160.0,
+    "preco": 180.0,
     "foto_url": "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80; https://philco.vtexassets.com/arquivos/ids/258635/BGR25B_02.jpg.jpg?v=638955453331600000; https://britania.vtexassets.com/assets/vtex/assets-builder/britania.store-theme/4.4.0/imgs/svg/logo___21a5ba6ecd55ce002a832411993b1d2a.svg; https://philco.vtexassets.com/arquivos/ids/258635-150-auto?v=638955453331600000&width=150&height=auto&aspect=true",
     "video_url": "",
     "produto_url": "https://www.britania.com.br/sanduicheira-e-grill-britania-bgr25b-2-em-1-066701206/p?skuId=24671",
@@ -676,7 +670,6 @@
     "reservado": true,
     "reservado_por_nome": "Cartório 2ª Vara Orleans",
     "reservado_em": "2026-07-29T18:03:26.943363+00:00",
-    "criado_em": "2026-07-29T18:03:03.602102+00:00",
-    "metadata_synced_at": "2026-07-29T18:03:04.904514+00:00"
+    "criado_em": "2026-07-29T18:03:03.602102+00:00"
   }
 ]
