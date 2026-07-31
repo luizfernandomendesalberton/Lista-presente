@@ -67,6 +67,7 @@ PRODUCT_SYNC_MIN_PRICE = max(1.0, float(os.getenv("PRODUCT_SYNC_MIN_PRICE", "20"
 PRODUCT_SYNC_MAX_PRICE = max(PRODUCT_SYNC_MIN_PRICE, float(os.getenv("PRODUCT_SYNC_MAX_PRICE", "20000")))
 PRODUCT_SYNC_MIN_RATIO = max(0.05, float(os.getenv("PRODUCT_SYNC_MIN_RATIO", "0.60")))
 PRODUCT_SYNC_MAX_RATIO = max(1.0, float(os.getenv("PRODUCT_SYNC_MAX_RATIO", "2.50")))
+PRODUCT_SYNC_UPDATE_IMAGES_DEFAULT = str(os.getenv("PRODUCT_SYNC_UPDATE_IMAGES", "0")).strip().lower() in {"1", "true", "yes", "on"}
 PRODUCT_SYNC_USER_AGENT = os.getenv(
 	"PRODUCT_SYNC_USER_AGENT",
 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
@@ -813,13 +814,16 @@ def fetch_product_metadata(url):
 	}
 
 
-def sync_single_presente_metadata(presente):
+def sync_single_presente_metadata(presente, sync_images_enabled=None):
 	product_urls = normalize_multi_urls(presente.get("produto_url"))
 	if not product_urls:
 		return False
 
+	if sync_images_enabled is None:
+		sync_images_enabled = get_product_sync_images_enabled()
+
 	updated = False
-	collected_images = normalize_multi_urls(presente.get("foto_url"))
+	collected_images = normalize_multi_urls(presente.get("foto_url")) if sync_images_enabled else []
 	collected_prices = []
 
 	for url in product_urls:
@@ -833,9 +837,10 @@ def sync_single_presente_metadata(presente):
 			if PRODUCT_SYNC_MIN_PRICE <= parsed_price <= PRODUCT_SYNC_MAX_PRICE:
 				collected_prices.append(parsed_price)
 
-		for image in metadata.get("images") or []:
-			if image not in collected_images:
-				collected_images.append(image)
+		if sync_images_enabled:
+			for image in metadata.get("images") or []:
+				if image not in collected_images:
+					collected_images.append(image)
 
 	collected_price = None
 	if collected_prices:
@@ -850,7 +855,7 @@ def sync_single_presente_metadata(presente):
 			presente["preco"] = collected_price
 			updated = True
 
-	if collected_images:
+	if sync_images_enabled and collected_images:
 		joined_images = join_multi_urls(collected_images[:4])
 		if joined_images and joined_images != str(presente.get("foto_url") or "").strip():
 			presente["foto_url"] = joined_images
@@ -868,6 +873,7 @@ def sync_presentes_metadata(force=False):
 			presentes = load_presentes()
 			now_dt = utc_now()
 			changed = False
+			sync_images_enabled = get_product_sync_images_enabled()
 
 			for presente in presentes:
 				if presente.get("reservado"):
@@ -878,7 +884,7 @@ def sync_presentes_metadata(force=False):
 					if last_sync and (now_dt - last_sync).total_seconds() < PRODUCT_SYNC_INTERVAL_MINUTES * 60:
 						continue
 
-				if sync_single_presente_metadata(presente):
+				if sync_single_presente_metadata(presente, sync_images_enabled=sync_images_enabled):
 					changed = True
 
 			if changed:
@@ -1254,6 +1260,7 @@ def default_admin_sync_state():
 		"novos_convidados_ack_em": get_latest_created_timestamp(load_convidados()),
 		"ultimo_export_em": "",
 		"ultimo_export_convidados_em": "",
+		"sync_fotos_ativo": PRODUCT_SYNC_UPDATE_IMAGES_DEFAULT,
 	}
 
 
@@ -1266,7 +1273,16 @@ def normalize_admin_sync_state(raw):
 		"novos_convidados_ack_em": str(raw.get("novos_convidados_ack_em") or "").strip(),
 		"ultimo_export_em": str(raw.get("ultimo_export_em") or "").strip(),
 		"ultimo_export_convidados_em": str(raw.get("ultimo_export_convidados_em") or "").strip(),
+		"sync_fotos_ativo": bool(raw.get("sync_fotos_ativo")) if "sync_fotos_ativo" in raw else PRODUCT_SYNC_UPDATE_IMAGES_DEFAULT,
 	}
+
+
+def get_product_sync_images_enabled():
+	try:
+		state = load_admin_sync_state()
+		return bool(state.get("sync_fotos_ativo"))
+	except Exception:
+		return PRODUCT_SYNC_UPDATE_IMAGES_DEFAULT
 
 
 def save_admin_sync_state(state):
@@ -2788,6 +2804,39 @@ def sync_presentes_admin():
 			"mensagem": "Sincronização concluída.",
 			"alterado": bool(changed),
 			"intervalo_minutos": PRODUCT_SYNC_INTERVAL_MINUTES,
+			"sync_fotos_ativo": get_product_sync_images_enabled(),
+		}
+	)
+
+
+@app.route("/api/admin/presentes/sync-fotos", methods=["GET", "PUT", "OPTIONS"])
+def sync_presentes_fotos_config():
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	if request.method == "GET":
+		return jsonify({"sync_fotos_ativo": get_product_sync_images_enabled()})
+
+	payload = request.get_json(silent=True) or {}
+	raw_enabled = payload.get("sync_fotos_ativo")
+
+	if not isinstance(raw_enabled, bool):
+		return jsonify({"erro": "Informe sync_fotos_ativo como booleano (true/false)."}), 400
+
+	with ADMIN_SYNC_LOCK:
+		with ADMIN_SYNC_FILE_LOCK:
+			state = load_admin_sync_state()
+			state["sync_fotos_ativo"] = bool(raw_enabled)
+			save_admin_sync_state(state)
+
+	return jsonify(
+		{
+			"mensagem": "Configuração de sincronização de fotos atualizada.",
+			"sync_fotos_ativo": bool(raw_enabled),
 		}
 	)
 

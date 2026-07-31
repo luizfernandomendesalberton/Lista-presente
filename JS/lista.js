@@ -3,6 +3,8 @@ const statusEl = document.getElementById("statusGeral");
 const template = document.getElementById("presenteTemplate");
 const btnAtualizar = document.getElementById("btnAtualizar");
 const btnSyncProdutos = document.getElementById("btnSyncProdutos");
+const btnToggleSyncFotos = document.getElementById("btnToggleSyncFotos");
+const syncFotosConfigHint = document.getElementById("syncFotosConfigHint");
 const syncProdutosOverlay = document.getElementById("syncProdutosOverlay");
 const syncProdutosMensagem = document.getElementById("syncProdutosMensagem");
 const btnPixDonation = document.getElementById("btnPixDonation");
@@ -106,10 +108,13 @@ const AUTO_REFRESH_INTERVAL_MS = 15000;
 const ONBOARDING_STORAGE_KEY = "lista_casamento_hide_onboarding";
 const ADMIN_TAB_SESSION_KEY = "lista_casamento_admin_tab_session";
 const ONBOARDING_AUTOPLAY_MS = 7000;
+const CARD_SLIDESHOW_INTERVAL_MS = 9000;
+const CARD_SLIDESHOW_FADE_MS = 1200;
 let pixReferenciaAtual = "Contribuicao em dinheiro";
 let pixNomePresenteAtual = "";
 let onboardingStepIndex = 0;
 let onboardingTimerId = null;
+let syncFotosAutoAtivo = false;
 
 const BRL = new Intl.NumberFormat("pt-BR", {
 	style: "currency",
@@ -124,6 +129,7 @@ let cardMediaTimers = [];
 function clearCardMediaTimers() {
 	cardMediaTimers.forEach((timerId) => {
 		window.clearInterval(timerId);
+		window.clearTimeout(timerId);
 	});
 	cardMediaTimers = [];
 }
@@ -131,28 +137,180 @@ function clearCardMediaTimers() {
 
 function startCardPhotoSlideshow(fotoEl, fotoUrls, presenteNome, fallbackImageUrl) {
 	if (!(fotoEl instanceof HTMLImageElement)) {
-		return;
+		return null;
 	}
 
 	if (!Array.isArray(fotoUrls) || fotoUrls.length <= 1) {
+		return null;
+	}
+
+	const totalPhotos = fotoUrls.length;
+	let currentIndex = 0;
+	let transitioning = false;
+
+	const setCurrentPhoto = (targetIndex, useFade = true) => {
+		if (transitioning) {
+			return;
+		}
+
+		const normalizedIndex = ((targetIndex % totalPhotos) + totalPhotos) % totalPhotos;
+		const nextUrl = fotoUrls[normalizedIndex] || fallbackImageUrl;
+		const shouldAnimate = useFade && fotoEl.src !== nextUrl;
+
+		const applyPhoto = () => {
+			currentIndex = normalizedIndex;
+			fotoEl.dataset.photoIndex = String(currentIndex);
+			fotoEl.src = nextUrl;
+			fotoEl.alt = `Foto ${currentIndex + 1} do presente ${presenteNome}`;
+		};
+
+		if (!shouldAnimate) {
+			applyPhoto();
+			return;
+		}
+
+		transitioning = true;
+		const preloadImage = new Image();
+		preloadImage.onload = () => {
+			fotoEl.classList.add("is-fade-out");
+
+			const swapTimeoutId = window.setTimeout(() => {
+				applyPhoto();
+				fotoEl.classList.remove("is-fade-out");
+
+				const unlockTimeoutId = window.setTimeout(() => {
+					transitioning = false;
+				}, CARD_SLIDESHOW_FADE_MS);
+
+				cardMediaTimers.push(unlockTimeoutId);
+			}, Math.round(CARD_SLIDESHOW_FADE_MS * 0.45));
+
+			cardMediaTimers.push(swapTimeoutId);
+		};
+
+		preloadImage.onerror = () => {
+			transitioning = false;
+		};
+
+		preloadImage.src = nextUrl;
+	};
+
+	setCurrentPhoto(0, false);
+
+	const controller = {
+		next() {
+			setCurrentPhoto(currentIndex + 1, true);
+		},
+		prev() {
+			setCurrentPhoto(currentIndex - 1, true);
+		},
+	};
+
+	if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+		return controller;
+	}
+
+	const timerId = window.setInterval(() => {
+		controller.next();
+	}, CARD_SLIDESHOW_INTERVAL_MS);
+
+	cardMediaTimers.push(timerId);
+	return controller;
+}
+
+
+function appendCardPhotoNavigation(mediaWrap, slideshowController, presenteNome) {
+	if (!(mediaWrap instanceof HTMLElement) || !slideshowController) {
 		return;
 	}
 
-	let currentIndex = 0;
-	const setCurrentPhoto = () => {
-		const nextUrl = fotoUrls[currentIndex] || fallbackImageUrl;
-		fotoEl.src = nextUrl;
-		fotoEl.alt = `Foto ${currentIndex + 1} do presente ${presenteNome}`;
-	};
+	const prevBtn = document.createElement("button");
+	prevBtn.type = "button";
+	prevBtn.className = "media-photo-nav media-photo-nav-prev";
+	prevBtn.setAttribute("aria-label", `Foto anterior do presente ${presenteNome}`);
+	prevBtn.title = "Foto anterior";
+	prevBtn.textContent = "<";
 
-	setCurrentPhoto();
+	const nextBtn = document.createElement("button");
+	nextBtn.type = "button";
+	nextBtn.className = "media-photo-nav media-photo-nav-next";
+	nextBtn.setAttribute("aria-label", `Próxima foto do presente ${presenteNome}`);
+	nextBtn.title = "Próxima foto";
+	nextBtn.textContent = ">";
 
-	const timerId = window.setInterval(() => {
-		currentIndex = (currentIndex + 1) % fotoUrls.length;
-		setCurrentPhoto();
-	}, 3000);
+	prevBtn.addEventListener("click", (event) => {
+		event.preventDefault();
+		event.stopPropagation();
+		slideshowController.prev();
+	});
 
-	cardMediaTimers.push(timerId);
+	nextBtn.addEventListener("click", (event) => {
+		event.preventDefault();
+		event.stopPropagation();
+		slideshowController.next();
+	});
+
+	mediaWrap.appendChild(prevBtn);
+	mediaWrap.appendChild(nextBtn);
+}
+
+
+function updateSyncFotosToggleUI() {
+	if (!btnToggleSyncFotos) {
+		return;
+	}
+
+	btnToggleSyncFotos.textContent = syncFotosAutoAtivo ? "Fotos auto: ligado" : "Fotos auto: desligado";
+	btnToggleSyncFotos.setAttribute("aria-pressed", syncFotosAutoAtivo ? "true" : "false");
+
+	if (syncFotosConfigHint) {
+		syncFotosConfigHint.textContent = syncFotosAutoAtivo
+			? "Sincronização automática de fotos ativada. O sync pode atualizar imagens dos links de produto."
+			: "Sincronização automática de fotos desativada. Preços continuam sincronizando normalmente.";
+	}
+}
+
+
+function setSyncFotosToggleLoading(isLoading) {
+	if (!btnToggleSyncFotos) {
+		return;
+	}
+
+	btnToggleSyncFotos.disabled = isLoading || !adminAuthenticated;
+}
+
+
+async function carregarConfigSyncFotosAdmin() {
+	if (!btnToggleSyncFotos || !isAdminPage || !adminAuthenticated) {
+		setSyncFotosToggleLoading(false);
+		updateSyncFotosToggleUI();
+		return;
+	}
+
+	setSyncFotosToggleLoading(true);
+
+	try {
+		const response = await fetch("/api/admin/presentes/sync-fotos", {
+			credentials: "same-origin",
+			headers: {
+				...getAdminHeaders(),
+			},
+		});
+
+		const result = await response.json();
+		if (!response.ok) {
+			throw new Error(result.erro || "Falha ao carregar configuração de sincronização de fotos.");
+		}
+
+		syncFotosAutoAtivo = Boolean(result.sync_fotos_ativo);
+		updateSyncFotosToggleUI();
+	} catch (error) {
+		if (adminStatus) {
+			adminStatus.textContent = error.message;
+		}
+	} finally {
+		setSyncFotosToggleLoading(false);
+	}
 }
 
 
@@ -692,7 +850,11 @@ function setAdminMode(authenticated, email = "") {
 		setConvidadoEditingMode(null);
 		renderAdminConvidados([]);
 		renderAdminMetrics(null);
+		syncFotosAutoAtivo = false;
 	}
+
+	setSyncFotosToggleLoading(false);
+	updateSyncFotosToggleUI();
 }
 
 
@@ -1376,6 +1538,9 @@ async function syncAdminSession() {
 
 		const result = await response.json();
 		setAdminMode(Boolean(result.authenticated), result.email || "");
+		if (Boolean(result.authenticated)) {
+			await carregarConfigSyncFotosAdmin();
+		}
 	} catch (error) {
 		setAdminMode(false);
 		if (adminStatus) {
@@ -1645,6 +1810,7 @@ function renderPresentes() {
 		const fotoUrls = normalizeHttpUrls(presente.foto_url);
 		const fotoUrl = fotoUrls.length ? fotoUrls[0] : "";
 		const youtubeEmbedUrl = getYouTubeEmbedUrl(videoUrl);
+		let slideshowController = null;
 
 		if (mediaWrap) {
 			mediaWrap.classList.toggle("has-link", Boolean(produtoUrls.length));
@@ -1687,7 +1853,10 @@ function renderPresentes() {
 		});
 
 		if (!videoUrl && !youtubeEmbedUrl) {
-			startCardPhotoSlideshow(fotoEl, fotoUrls, presente.nome || "Presente", fallbackImageUrl);
+			slideshowController = startCardPhotoSlideshow(fotoEl, fotoUrls, presente.nome || "Presente", fallbackImageUrl);
+			if (fotoUrls.length > 1) {
+				appendCardPhotoNavigation(mediaWrap, slideshowController, presente.nome || "Presente");
+			}
 		}
 
 		if (embedEl) {
@@ -2036,10 +2205,56 @@ if (isAdminPage) {
 				setAdminMode(true, result.email || payload.email);
 				adminLoginForm.reset();
 				adminStatus.textContent = "Login realizado com sucesso.";
+				await carregarConfigSyncFotosAdmin();
 				await carregarPresentes();
 				await carregarConvidadosAdmin();
 			} catch (error) {
 				adminStatus.textContent = error.message;
+			}
+		});
+	}
+
+	if (btnToggleSyncFotos) {
+		btnToggleSyncFotos.addEventListener("click", async () => {
+			if (!isAdminPage || !adminAuthenticated) {
+				if (adminStatus) {
+					adminStatus.textContent = "Faça login para alterar a sincronização de fotos.";
+				}
+				return;
+			}
+
+			setSyncFotosToggleLoading(true);
+
+			try {
+				const nextValue = !syncFotosAutoAtivo;
+				const response = await fetch("/api/admin/presentes/sync-fotos", {
+					method: "PUT",
+					credentials: "same-origin",
+					headers: {
+						"Content-Type": "application/json",
+						...getAdminHeaders(),
+					},
+					body: JSON.stringify({ sync_fotos_ativo: nextValue }),
+				});
+
+				const result = await response.json();
+				if (!response.ok) {
+					throw new Error(result.erro || "Falha ao atualizar configuração de fotos.");
+				}
+
+				syncFotosAutoAtivo = Boolean(result.sync_fotos_ativo);
+				updateSyncFotosToggleUI();
+				if (adminStatus) {
+					adminStatus.textContent = syncFotosAutoAtivo
+						? "Sincronização automática de fotos ativada."
+						: "Sincronização automática de fotos desativada.";
+				}
+			} catch (error) {
+				if (adminStatus) {
+					adminStatus.textContent = error.message;
+				}
+			} finally {
+				setSyncFotosToggleLoading(false);
 			}
 		});
 	}
@@ -2174,9 +2389,9 @@ if (btnSyncProdutos) {
 			return;
 		}
 
-		setSyncProdutosLoading(true, "Atualizando preços e fotos dos produtos...");
+		setSyncProdutosLoading(true, "Atualizando preços dos produtos...");
 		if (adminStatus) {
-			adminStatus.textContent = "Sincronizando preços e fotos dos links de produto...";
+			adminStatus.textContent = "Sincronizando preços dos links de produto...";
 		}
 
 		let timeoutId = null;
@@ -2201,10 +2416,17 @@ if (btnSyncProdutos) {
 				throw new Error(result.erro || "Falha ao sincronizar produtos.");
 			}
 
+			syncFotosAutoAtivo = Boolean(result.sync_fotos_ativo);
+			updateSyncFotosToggleUI();
+
 			if (adminStatus) {
-				adminStatus.textContent = result.alterado
-					? "Sincronização concluída com atualizações de preço/foto."
-					: "Sincronização concluída sem alterações.";
+				if (result.alterado) {
+					adminStatus.textContent = result.sync_fotos_ativo
+						? "Sincronização concluída com atualizações de preço e foto."
+						: "Sincronização concluída com atualizações de preço.";
+				} else {
+					adminStatus.textContent = "Sincronização concluída sem alterações.";
+				}
 			}
 
 			await carregarPresentes();
@@ -2301,6 +2523,9 @@ document.addEventListener("keydown", (event) => {
 });
 
 async function initPage() {
+	updateSyncFotosToggleUI();
+	setSyncFotosToggleLoading(false);
+
 	await carregarVersaoApp();
 
 	if (isAdminPage) {

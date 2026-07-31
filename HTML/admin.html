@@ -41,9 +41,13 @@
 		<section class="panel admin-panel">
 			<div class="panel-head">
 				<h2 id="adminFormTitle">Cadastro de Presentes</h2>
-				<button id="btnSyncProdutos" type="button">Sincronizar Produtos</button>
-				<button id="btnAtualizar" type="button">Atualizar</button>
+				<div class="panel-head-actions">
+					<button id="btnToggleSyncFotos" type="button" class="btn-secondary">Fotos auto: desligado</button>
+					<button id="btnSyncProdutos" type="button">Sincronizar Produtos</button>
+					<button id="btnAtualizar" type="button">Atualizar</button>
+				</div>
 			</div>
+			<p id="syncFotosConfigHint" class="panel-note">Sincronização automática de fotos desativada. Preços continuam sincronizando normalmente.</p>
 			<p class="panel-note">Use este formulário para cadastrar, editar e revisar presentes. Os campos foram organizados para deixar o fluxo mais direto e intuitivo.</p>
 
 			<div id="adminAuthPanel">

@@ -71,24 +71,6 @@
   },
   {
     "id": 5,
-    "nome": "Jogo Bowl inox",
-    "descricao": "Jogo Bowl Conjunto Bacia Profissional Ke Home 6 Pçs Aço Inox 304 14-30cm",
-    "categoria": "Cozinha",
-    "preco": 190.0,
-    "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_665829-MLA95643543168_102025-F.webp; https://http2.mlstatic.com/frontend-assets/ui-navigation/5.21.22/mercadolibre/logo__small@2x.png",
-    "video_url": "",
-    "produto_url": "https://www.mercadolivre.com.br/jogo-bowl-conjunto-bacia-profissional-ke-home-6-pcs-aco-inox-304-14-30cm/p/MLB26386487?pdp_filters=item_id%3AMLB6233000368&from=gshop&matt_tool=13891073&matt_word=&matt_source=google&matt_campaign_id=22090193717&matt_ad_group_id=174661962604&matt_match_type=&matt_network=g&matt_device=c&matt_creative=727914179503&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735098639&matt_product_id=MLB26386487-product&matt_product_partition_id=2389547296265&matt_target_id=pla-2389547296265&cq_src=google_ads&cq_cmp=22090193717&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=22090193717&gbraid=0AAAAAD93qcDA8ppnE2H9NnF01v49bixmc&gclid=CjwKCAjwrNrQBhBjEiwAoR4VO-KRwr0_ymJJdWeyDz8Qfh5Og4DkhqQWRVOORFouLxP2KESdjF1rWRoCBX0QAvD_BwE",
-    "especificacoes": [
-      "Feito em aço inoxidável de alta qualidade, garantindo durabilidade e resistência.",
-      "Diâmetro de 30 cm, ideal para misturar ingredientes.",
-      "Capacidade de 7.1 L, perfeito para grandes quantidades.",
-      "Apto para lava-louças, facilitando a limpeza.",
-      "Design liso com marcação de medidas, prático e funcional."
-    ],
-    "reservado": false
-  },
-  {
-    "id": 6,
     "nome": "Lavadora de alta pressão",
     "descricao": "Lavadora de Alta Pressão Vonder LAV 1300 – 1300 Libras, Compacta, Potente, Ideal para Carros, Quintais e Limpezas Pesadas",
     "categoria": "Geral",
@@ -109,7 +91,7 @@
     "metadata_synced_at": "2026-07-22T00:13:22.856291+00:00"
   },
   {
-    "id": 7,
+    "id": 6,
     "nome": "Boleira",
     "descricao": "Boleira 5 Em 1 Ruvolo Com Suporte Tampa E Pé De Vidro Mônaco Transparente",
     "categoria": "Cozinha",
@@ -126,7 +108,7 @@
     "metadata_synced_at": "2026-07-29T18:04:34.311526+00:00"
   },
   {
-    "id": 8,
+    "id": 7,
     "nome": "Ferro de passar",
     "descricao": "Passadeira à Vapor Agratto Bravo APAV01I",
     "categoria": "Utilidades Domésticas",
@@ -152,7 +134,7 @@
     "metadata_synced_at": "2026-07-21T23:55:33.713568+00:00"
   },
   {
-    "id": 9,
+    "id": 8,
     "nome": "Forno elétrico",
     "descricao": "Forno Elétrico de Bancada Fischer Gourmet Grill 44 litros Inox",
     "categoria": "Cozinha",
@@ -168,7 +150,7 @@
     "metadata_synced_at": "2026-07-22T00:13:26.860717+00:00"
   },
   {
-    "id": 10,
+    "id": 9,
     "nome": "Micro-ondas",
     "descricao": "Micro-ondas Electrolux 36L cor Inox Efficient com Descongelamento Assistido ME36S",
     "categoria": "Cozinha",
@@ -189,7 +171,7 @@
     "metadata_synced_at": "2026-07-29T18:04:35.730119+00:00"
   },
   {
-    "id": 11,
+    "id": 10,
     "nome": "Mixer",
     "descricao": "Mixer Power Oster Black Inox 3 em 1 - 220V",
     "categoria": "Cozinha",
@@ -205,7 +187,7 @@
     "metadata_synced_at": "2026-07-29T18:04:36.103620+00:00"
   },
   {
-    "id": 12,
+    "id": 11,
     "nome": "Máquina de Lavar Roupas",
     "descricao": "Máquina de Lavar Electrolux 18kg Branca Efficient Cesto inox e Jet&Clean (LEE18) - 220V",
     "categoria": "Utilidades Domésticas",
@@ -220,7 +202,7 @@
     "metadata_synced_at": "2026-07-29T18:04:36.333370+00:00"
   },
   {
-    "id": 13,
+    "id": 12,
     "nome": "Guarda-Roupa",
     "descricao": "Guarda-Roupa Casal 8 Portas Batentes Rustic/Crema/Rustic Venus Madesa",
     "categoria": "Móveis",
@@ -237,7 +219,7 @@
     "metadata_synced_at": "2026-07-22T00:13:29.597039+00:00"
   },
   {
-    "id": 14,
+    "id": 13,
     "nome": "Mesa de Cabeceira",
     "descricao": "Kit 2 Mesinhas De Cabeceiras Verona Retrô Moderno Acabamento Brilhante C/2 Gavetas - Mega Móveis Cor Off/nature",
     "categoria": "Móveis",
@@ -254,7 +236,7 @@
     "metadata_synced_at": "2026-07-22T00:13:29.758656+00:00"
   },
   {
-    "id": 15,
+    "id": 14,
     "nome": "Cômoda",
     "descricao": "Cômoda 4 Gavetas C/ Sapateira Cor Off White Web Home Móveis",
     "categoria": "Móveis",
@@ -271,7 +253,7 @@
     "metadata_synced_at": "2026-07-22T00:13:29.894584+00:00"
   },
   {
-    "id": 16,
+    "id": 15,
     "nome": "Aspirador de Pó",
     "descricao": "Electrolux Aspirador água pó potente função sopro limpeza profunda 1400W 18L total 11L util protetor termico A10N1 220V",
     "categoria": "Utilidades Domésticas",
@@ -291,7 +273,7 @@
     "metadata_synced_at": "2026-07-21T23:55:36.227528+00:00"
   },
   {
-    "id": 17,
+    "id": 16,
     "nome": "Protetor de Colchão",
     "descricao": "Protetor de Colchão Queen Impermeável Essence Branco",
     "categoria": "Cama, Mesa e Banho",
@@ -311,24 +293,7 @@
     "metadata_synced_at": "2026-07-21T23:54:43.338335+00:00"
   },
   {
-    "id": 18,
-    "nome": "Waffle Maker",
-    "descricao": "MONDIAL Waffle Maker, Preto/Inox, 1200W, 220V - GW-01",
-    "categoria": "Cozinha",
-    "preco": 200.0,
-    "foto_url": "https://m.media-amazon.com/images/I/61cbIYs1JDL._AC_SX679_.jpg; https://lojamondial.vtexassets.com/arquivos/ids/157587/GW-01_2.jpg?v=637667524428170000; https://lojamondial.vtexassets.com/assets/vtex/assets-builder/lojamondial.theme/2.5.16/svg/tp-card___4550e369c4035711f70e0096689a5acd.svg; https://lojamondial.vtexassets.com/assets/vtex/assets-builder/lojamondial.theme/2.5.16/svg/tp-sales___4957fb06fcae058c68bb3c146132eb9f.svg",
-    "video_url": "https://www.amazon.com.br/live/video/00325ec247b642d4aba80326b8439017?ref_=dp_vse_ibvc0",
-    "produto_url": "https://www.mondial.com.br/maquina-de-waffle-mondial-pratic-waffle-gw-01/p?skuId=852&srsltid=AfmBOoonubXTfwWO53zZ3OFGobFeLMGkBsCPMLWGYxcn5HQ4RMRpVU0s",
-    "especificacoes": [
-      "WAFFLES DOCES E SALGADOS: Prepara até 4 waffles tradicionais, doces e salgados, além de outras opções para um lanche mais saboroso em pouco tempo.",
-      "REVESTIMENTO ANTIADERENTE"
-    ],
-    "reservado": false,
-    "criado_em": "2026-06-03T20:17:16.548329+00:00",
-    "metadata_synced_at": "2026-07-21T23:53:36.248234+00:00"
-  },
-  {
-    "id": 19,
+    "id": 17,
     "nome": "Fogão",
     "descricao": "Cooktop a Gás Fischer 4 Bocas Fit Line Trempe Esmaltada Aramado",
     "categoria": "Cozinha",
@@ -352,7 +317,7 @@
     "metadata_synced_at": "2026-07-21T23:55:37.051069+00:00"
   },
   {
-    "id": 20,
+    "id": 18,
     "nome": "Panela Elétrica",
     "descricao": "Panela Pressão Elétrica 6 Litros Multifunções Painel Digital Antiaderente Agratto Appd01i",
     "categoria": "Cozinha",
@@ -372,7 +337,7 @@
     "metadata_synced_at": "2026-07-21T23:55:22.250604+00:00"
   },
   {
-    "id": 21,
+    "id": 19,
     "nome": "Jogo de Cama Queen",
     "descricao": "Jogo de cama Harmony branco/cinza 4 peças - Jolitex",
     "categoria": "Cama, Mesa e Banho",
@@ -387,7 +352,7 @@
     "criado_em": "2026-07-01T18:04:24.959247+00:00"
   },
   {
-    "id": 22,
+    "id": 20,
     "nome": "Geladeira",
     "descricao": "Geladeira Electrolux Frost Free Inverter 490L Experience Inverse cor Inox Look (IB51S) - 220V",
     "categoria": "Cozinha",
@@ -405,7 +370,7 @@
     "criado_em": "2026-07-01T18:12:16.440250+00:00"
   },
   {
-    "id": 23,
+    "id": 21,
     "nome": "Jogo de Refratárias",
     "descricao": "Jogo de 3 Refratárias Bake Branca",
     "categoria": "Cozinha",
@@ -426,7 +391,7 @@
     "metadata_synced_at": "2026-07-21T23:55:38.433776+00:00"
   },
   {
-    "id": 24,
+    "id": 22,
     "nome": "Frigideira",
     "descricao": "Frigideira Antiaderente Cerâmica 28cm Aristus Tampa Com Borda De Silicone Cabo Antitérmico Compatível Com Fogão A Gás E Indução Revestimento Premium Linha Luxury Induction - All Black",
     "categoria": "Cozinha",
@@ -448,7 +413,7 @@
     "metadata_synced_at": "2026-07-22T00:13:32.540079+00:00"
   },
   {
-    "id": 25,
+    "id": 23,
     "nome": "Travesseiro",
     "descricao": "Travesseiro Altenburg Antistress 50cm x 70cm",
     "categoria": "Cama, Mesa e Banho",
@@ -466,7 +431,7 @@
     "criado_em": "2026-07-01T18:31:16.660646+00:00"
   },
   {
-    "id": 26,
+    "id": 24,
     "nome": "Air Fryer",
     "descricao": "Air Fryer Oven Electrolux por Rita Lobo 12L Digital Grafite Experience 1700W (EAF85)",
     "categoria": "Cozinha",
@@ -486,7 +451,7 @@
     "metadata_synced_at": "2026-07-29T18:04:39.593659+00:00"
   },
   {
-    "id": 27,
+    "id": 25,
     "nome": "Edredom",
     "descricao": "Edredom 300 Fios Cristal Renda Nadine Buettner",
     "categoria": "Cozinha",
@@ -501,7 +466,7 @@
     "criado_em": "2026-07-19T18:08:11.490455+00:00"
   },
   {
-    "id": 28,
+    "id": 26,
     "nome": "Edredom",
     "descricao": "Edredom dupla-face Altenburg King Azul, branco com estampa floral",
     "categoria": "Cama, Mesa e Banho",
@@ -516,42 +481,7 @@
     "criado_em": "2026-07-19T18:19:51.098009+00:00"
   },
   {
-    "id": 29,
-    "nome": "Toalha de Mesa",
-    "descricao": "Toalha de Mesa Retangular Döhler Clean Linhares 6 lugares",
-    "categoria": "Cozinha",
-    "preco": 150.0,
-    "foto_url": "https://dohler.vtexassets.com/arquivos/ids/177042-1600-auto?v=639178419212070000&width=1600&height=auto&aspect=true; https://dohler.vtexassets.com/arquivos/ids/177042/20874-28956-0009-TOALHA-DE-MESA-DOHLER-CLEAN-LINHARES-LISO-160x220cm-AM-5215-2.jpg?v=639178419212070000; https://dohler.vtexassets.com/arquivos/icon-cupom.svg; https://dohler.vtexassets.com/assets/vtex.file-manager-graphql/images/9474844d-9120-484e-b8ff-65108ecbd1ba___96e03c80a06ba0c9f760fd802d5f3799.svg",
-    "video_url": "",
-    "produto_url": "https://www.dohler.com.br/toalha-de-mesa-retangular-dohler-clean-linhares-160x220cm-6-lugares-20874-28956-0009/p?skuId=1674",
-    "especificacoes": [
-      "A Toalha de Mesa Linhares é a combinação perfeita de elegância e praticidade para a sua cozinha.",
-      "Fabricada com materiais selecionados e contendo linho em sua composição, ela será perfeita para uso em diferentes ocasiões, graças ao seu design clássico e delicado que se adapta a diversos estilos de decoração.",
-      "Este modelo retangular com 160 x 220cm de dimensão é indicado para uso em mesas de 6 lugares."
-    ],
-    "reservado": false,
-    "criado_em": "2026-07-19T18:25:33.883542+00:00"
-  },
-  {
-    "id": 30,
-    "nome": "Jogo de Toalhas",
-    "descricao": "Jogo de Toalhas 5 Peças Algodão Egípcio Platine Color Buettner",
-    "categoria": "Cama, Mesa e Banho",
-    "preco": 316.61,
-    "foto_url": "https://lojabuettner.vtexassets.com/arquivos/ids/2176234/jogo-de-toalhas-5-pecas-algodao-egipcio-platine-color-buettner-bege-marfim-principal.jpg?v=638340139055230000; https://lojabuettner.vtexassets.com/assets/vtex/assets-builder/lojabuettner.original/5.3.3/images/logo-buettner-heart___71d9d422ad71a1836240688977bee1f1.svg; https://lojabuettner.vtexassets.com/assets/vtex/assets-builder/lojabuettner.original/5.3.3/icons/Gift-cbt___b777f5e4de0dd1fd95025835f9521c8c.svg; https://lojabuettner.vtexassets.com/assets/vtex/assets-builder/lojabuettner.original/5.3.3/icons/heart-dark-new-store___53b1e912f7cec02513a419950f7e3489.svg",
-    "video_url": "",
-    "produto_url": "https://www.lojabuettner.com.br/jogo-de-toalhas-5-pecas-algodao-egipcio-platine-color-buettner/p?skuId=7367",
-    "especificacoes": [
-      "Experimente o luxo e o conforto das toalhas da Coleção Platine Color Buettner.",
-      "O Jogo de Toalhas 5 Peças, confeccionado em Algodão Egípcio, é a escolha perfeita para quem busca qualidade superior, durabilidade e um toque incomparável de suavidade.",
-      "Cada peça foi pensada para proporcionar uma experiência de banho única, com alta capacidade de absorção e maciez que duram por muito mais tempo."
-    ],
-    "reservado": false,
-    "criado_em": "2026-07-19T18:30:32.187888+00:00",
-    "metadata_synced_at": "2026-07-29T18:04:44.019180+00:00"
-  },
-  {
-    "id": 31,
+    "id": 27,
     "nome": "Mesa de Jantar",
     "descricao": "Conjunto Sala de Jantar Lousiana Madesa Mesa Tampo de Madeira com 6 Cadeiras Rustic/Crema/Sintético Bege",
     "categoria": "Cozinha",
@@ -566,7 +496,7 @@
     "criado_em": "2026-07-19T18:40:43.108038+00:00"
   },
   {
-    "id": 32,
+    "id": 28,
     "nome": "Jogo de Panelas",
     "descricao": "Jogo de Panelas Tramontina Linz em Alumínio com Revestimento Interno e Externo em Antiaderente Starflon Max Preto 10 Peças",
     "categoria": "Panelas",
@@ -583,7 +513,7 @@
     "criado_em": "2026-07-19T18:47:32.078857+00:00"
   },
   {
-    "id": 33,
+    "id": 29,
     "nome": "Caçarola Tramontina",
     "descricao": "Caçarola Tramontina Paris em Alumínio com Revestimento Interno e Externo em Antiaderente Starflon Max Chumbo com Tampa de Vidro 22 cm 3,8 L",
     "categoria": "Panelas",
@@ -599,7 +529,7 @@
     "criado_em": "2026-07-19T18:51:57.198140+00:00"
   },
   {
-    "id": 34,
+    "id": 30,
     "nome": "Cama e Colchão",
     "descricao": "Guldi Box Joe Linho e Guldi Dream",
     "categoria": "Cama, Mesa e Banho",
@@ -613,7 +543,7 @@
     "metadata_synced_at": "2026-07-29T18:04:55.331624+00:00"
   },
   {
-    "id": 35,
+    "id": 31,
     "nome": "Liquidificador",
     "descricao": "Liquidificador Britânia 3L 1200W 6 lâminas Inox BLQ1380P",
     "categoria": "Cozinha",
@@ -630,7 +560,7 @@
     "criado_em": "2026-07-29T17:57:13.991282+00:00"
   },
   {
-    "id": 36,
+    "id": 32,
     "nome": "Batedeira",
     "descricao": "Batedeira Britânia Pérola 550 500W 4 velocidades + Turbo 4,3L - 220V",
     "categoria": "Cozinha",
@@ -652,7 +582,7 @@
     "criado_em": "2026-07-29T17:59:23.774993+00:00"
   },
   {
-    "id": 37,
+    "id": 33,
     "nome": "Sanduicheira e Grill",
     "descricao": "Sanduicheira e Grill Britânia Inox 2 em 1 750W BGR25B - 220V",
     "categoria": "Cozinha",

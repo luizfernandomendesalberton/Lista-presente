@@ -598,24 +598,25 @@ h1 {
 
 .card.reservado {
 	background: linear-gradient(180deg, #fff9f4, #fbf4ed);
-	border-color: #dcc6b5;
-	box-shadow: 0 14px 38px rgba(125, 93, 72, 0.1);
+	border: 2px solid #b73a51;
+	box-shadow: 0 16px 40px rgba(136, 34, 54, 0.18);
 }
 
 .card.reservado::before {
-	content: "Reservado";
+	content: "RESERVADO";
 	position: absolute;
-	top: 12px;
-	right: 12px;
+	top: 10px;
+	right: 10px;
 	z-index: 2;
-	padding: 6px 10px;
+	padding: 8px 14px;
 	border-radius: 999px;
-	background: linear-gradient(140deg, #b88278, #8a6057);
+	background: linear-gradient(140deg, #c12d47, #8f2033);
+	border: 1px solid rgba(255, 255, 255, 0.36);
 	color: #fff;
-	font-size: 0.72rem;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	box-shadow: 0 8px 16px rgba(112, 83, 65, 0.2);
+	font-size: 0.78rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	box-shadow: 0 10px 24px rgba(116, 26, 43, 0.34);
 }
 
 .card:not(.reservado)::before {
@@ -626,12 +627,12 @@ h1 {
 	z-index: 2;
 	padding: 6px 10px;
 	border-radius: 999px;
-	background: linear-gradient(140deg, #c86882, #944a61);
+	background: linear-gradient(140deg, #b97a8c, #8f5568);
 	color: #fff;
-	font-size: 0.72rem;
+	font-size: 0.7rem;
 	font-weight: 700;
-	letter-spacing: 0.04em;
-	box-shadow: 0 8px 16px rgba(148, 74, 97, 0.26);
+	letter-spacing: 0.03em;
+	box-shadow: 0 6px 14px rgba(118, 73, 90, 0.26);
 }
 
 .media-wrap {
@@ -659,12 +660,53 @@ h1 {
 	background: transparent;
 }
 
+.media-photo-nav {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 4;
+	width: 36px;
+	height: 36px;
+	border-radius: 999px;
+	padding: 0;
+	border: 1px solid rgba(255, 255, 255, 0.7);
+	background: rgba(35, 20, 16, 0.52);
+	color: #fff;
+	font-size: 1.05rem;
+	font-weight: 700;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 1;
+	box-shadow: 0 6px 14px rgba(18, 9, 7, 0.24);
+	backdrop-filter: blur(2px);
+	transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.media-photo-nav:hover {
+	background: rgba(35, 20, 16, 0.72);
+	transform: translateY(-50%) scale(1.03);
+}
+
+.media-photo-nav-prev {
+	left: 10px;
+}
+
+.media-photo-nav-next {
+	right: 10px;
+}
+
 .presente-foto {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 	transform: scale(1.03);
-	transition: transform 0.6s ease;
+	opacity: 1;
+	transition: transform 0.6s ease, opacity 1.2s ease;
+}
+
+.presente-foto.is-fade-out {
+	opacity: 0.28;
 }
 
 .presente-video {
@@ -770,6 +812,13 @@ h1 {
 	border: 1px solid rgba(160, 111, 90, 0.18);
 	border-radius: 999px;
 	padding: 6px 10px;
+}
+
+.card.reservado .presente-status {
+	color: #8f1f34;
+	background: rgba(193, 45, 71, 0.14);
+	border-color: rgba(143, 31, 52, 0.45);
+	font-weight: 800;
 }
 
 .reserve-form {
@@ -1199,6 +1248,12 @@ button:hover {
 .panel-head button,
 .panel-head .btn-secondary {
 	min-width: 132px;
+}
+
+#btnToggleSyncFotos[aria-pressed="true"] {
+	background: linear-gradient(140deg, #d8f0d6, #bde2bb);
+	border-color: rgba(80, 133, 77, 0.45);
+	color: #2f5f2d;
 }
 
 .reveal-up {
