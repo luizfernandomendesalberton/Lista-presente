@@ -3,7 +3,9 @@ const statusEl = document.getElementById("statusGeral");
 const template = document.getElementById("presenteTemplate");
 const btnAtualizar = document.getElementById("btnAtualizar");
 const btnSyncProdutos = document.getElementById("btnSyncProdutos");
+const btnToggleSyncPrecos = document.getElementById("btnToggleSyncPrecos");
 const btnToggleSyncFotos = document.getElementById("btnToggleSyncFotos");
+const syncPrecosConfigHint = document.getElementById("syncPrecosConfigHint");
 const syncFotosConfigHint = document.getElementById("syncFotosConfigHint");
 const syncProdutosOverlay = document.getElementById("syncProdutosOverlay");
 const syncProdutosMensagem = document.getElementById("syncProdutosMensagem");
@@ -114,6 +116,7 @@ let pixReferenciaAtual = "Contribuicao em dinheiro";
 let pixNomePresenteAtual = "";
 let onboardingStepIndex = 0;
 let onboardingTimerId = null;
+let syncPrecosAutoAtivo = true;
 let syncFotosAutoAtivo = false;
 
 const BRL = new Intl.NumberFormat("pt-BR", {
@@ -266,7 +269,23 @@ function updateSyncFotosToggleUI() {
 	if (syncFotosConfigHint) {
 		syncFotosConfigHint.textContent = syncFotosAutoAtivo
 			? "Sincronização automática de fotos ativada. O sync pode atualizar imagens dos links de produto."
-			: "Sincronização automática de fotos desativada. Preços continuam sincronizando normalmente.";
+			: "Sincronização automática de fotos desativada.";
+	}
+}
+
+
+function updateSyncPrecosToggleUI() {
+	if (!btnToggleSyncPrecos) {
+		return;
+	}
+
+	btnToggleSyncPrecos.textContent = syncPrecosAutoAtivo ? "Preços auto: ligado" : "Preços auto: desligado";
+	btnToggleSyncPrecos.setAttribute("aria-pressed", syncPrecosAutoAtivo ? "true" : "false");
+
+	if (syncPrecosConfigHint) {
+		syncPrecosConfigHint.textContent = syncPrecosAutoAtivo
+			? "Sincronização automática de preços ativada. Os valores podem ser atualizados ao salvar presentes com link de produto."
+			: "Sincronização automática de preços desativada. Você pode definir qualquer preço manualmente sem sobrescrita automática.";
 	}
 }
 
@@ -277,6 +296,15 @@ function setSyncFotosToggleLoading(isLoading) {
 	}
 
 	btnToggleSyncFotos.disabled = isLoading || !adminAuthenticated;
+}
+
+
+function setSyncPrecosToggleLoading(isLoading) {
+	if (!btnToggleSyncPrecos) {
+		return;
+	}
+
+	btnToggleSyncPrecos.disabled = isLoading || !adminAuthenticated;
 }
 
 
@@ -310,6 +338,40 @@ async function carregarConfigSyncFotosAdmin() {
 		}
 	} finally {
 		setSyncFotosToggleLoading(false);
+	}
+}
+
+
+async function carregarConfigSyncPrecosAdmin() {
+	if (!btnToggleSyncPrecos || !isAdminPage || !adminAuthenticated) {
+		setSyncPrecosToggleLoading(false);
+		updateSyncPrecosToggleUI();
+		return;
+	}
+
+	setSyncPrecosToggleLoading(true);
+
+	try {
+		const response = await fetch("/api/admin/presentes/sync-precos", {
+			credentials: "same-origin",
+			headers: {
+				...getAdminHeaders(),
+			},
+		});
+
+		const result = await response.json();
+		if (!response.ok) {
+			throw new Error(result.erro || "Falha ao carregar configuração de sincronização de preços.");
+		}
+
+		syncPrecosAutoAtivo = Boolean(result.sync_precos_ativo);
+		updateSyncPrecosToggleUI();
+	} catch (error) {
+		if (adminStatus) {
+			adminStatus.textContent = error.message;
+		}
+	} finally {
+		setSyncPrecosToggleLoading(false);
 	}
 }
 
@@ -850,10 +912,13 @@ function setAdminMode(authenticated, email = "") {
 		setConvidadoEditingMode(null);
 		renderAdminConvidados([]);
 		renderAdminMetrics(null);
+		syncPrecosAutoAtivo = true;
 		syncFotosAutoAtivo = false;
 	}
 
+	setSyncPrecosToggleLoading(false);
 	setSyncFotosToggleLoading(false);
+	updateSyncPrecosToggleUI();
 	updateSyncFotosToggleUI();
 }
 
@@ -1539,6 +1604,7 @@ async function syncAdminSession() {
 		const result = await response.json();
 		setAdminMode(Boolean(result.authenticated), result.email || "");
 		if (Boolean(result.authenticated)) {
+			await carregarConfigSyncPrecosAdmin();
 			await carregarConfigSyncFotosAdmin();
 		}
 	} catch (error) {
@@ -2205,6 +2271,7 @@ if (isAdminPage) {
 				setAdminMode(true, result.email || payload.email);
 				adminLoginForm.reset();
 				adminStatus.textContent = "Login realizado com sucesso.";
+				await carregarConfigSyncPrecosAdmin();
 				await carregarConfigSyncFotosAdmin();
 				await carregarPresentes();
 				await carregarConvidadosAdmin();
@@ -2255,6 +2322,51 @@ if (isAdminPage) {
 				}
 			} finally {
 				setSyncFotosToggleLoading(false);
+			}
+		});
+	}
+
+	if (btnToggleSyncPrecos) {
+		btnToggleSyncPrecos.addEventListener("click", async () => {
+			if (!isAdminPage || !adminAuthenticated) {
+				if (adminStatus) {
+					adminStatus.textContent = "Faça login para alterar a sincronização de preços.";
+				}
+				return;
+			}
+
+			setSyncPrecosToggleLoading(true);
+
+			try {
+				const nextValue = !syncPrecosAutoAtivo;
+				const response = await fetch("/api/admin/presentes/sync-precos", {
+					method: "PUT",
+					credentials: "same-origin",
+					headers: {
+						"Content-Type": "application/json",
+						...getAdminHeaders(),
+					},
+					body: JSON.stringify({ sync_precos_ativo: nextValue }),
+				});
+
+				const result = await response.json();
+				if (!response.ok) {
+					throw new Error(result.erro || "Falha ao atualizar configuração de preços.");
+				}
+
+				syncPrecosAutoAtivo = Boolean(result.sync_precos_ativo);
+				updateSyncPrecosToggleUI();
+				if (adminStatus) {
+					adminStatus.textContent = syncPrecosAutoAtivo
+						? "Sincronização automática de preços ativada."
+						: "Sincronização automática de preços desativada. Edição manual liberada.";
+				}
+			} catch (error) {
+				if (adminStatus) {
+					adminStatus.textContent = error.message;
+				}
+			} finally {
+				setSyncPrecosToggleLoading(false);
 			}
 		});
 	}
@@ -2416,14 +2528,16 @@ if (btnSyncProdutos) {
 				throw new Error(result.erro || "Falha ao sincronizar produtos.");
 			}
 
+			syncPrecosAutoAtivo = Boolean(result.sync_precos_ativo);
 			syncFotosAutoAtivo = Boolean(result.sync_fotos_ativo);
+			updateSyncPrecosToggleUI();
 			updateSyncFotosToggleUI();
 
 			if (adminStatus) {
 				if (result.alterado) {
 					adminStatus.textContent = result.sync_fotos_ativo
-						? "Sincronização concluída com atualizações de preço e foto."
-						: "Sincronização concluída com atualizações de preço.";
+						? "Sincronização manual concluída com atualizações de preço e foto."
+						: "Sincronização manual concluída com atualizações de preço.";
 				} else {
 					adminStatus.textContent = "Sincronização concluída sem alterações.";
 				}
@@ -2523,7 +2637,9 @@ document.addEventListener("keydown", (event) => {
 });
 
 async function initPage() {
+	updateSyncPrecosToggleUI();
 	updateSyncFotosToggleUI();
+	setSyncPrecosToggleLoading(false);
 	setSyncFotosToggleLoading(false);
 
 	await carregarVersaoApp();

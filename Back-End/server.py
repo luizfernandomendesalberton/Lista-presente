@@ -68,6 +68,7 @@ PRODUCT_SYNC_MAX_PRICE = max(PRODUCT_SYNC_MIN_PRICE, float(os.getenv("PRODUCT_SY
 PRODUCT_SYNC_MIN_RATIO = max(0.05, float(os.getenv("PRODUCT_SYNC_MIN_RATIO", "0.60")))
 PRODUCT_SYNC_MAX_RATIO = max(1.0, float(os.getenv("PRODUCT_SYNC_MAX_RATIO", "2.50")))
 PRODUCT_SYNC_UPDATE_IMAGES_DEFAULT = str(os.getenv("PRODUCT_SYNC_UPDATE_IMAGES", "0")).strip().lower() in {"1", "true", "yes", "on"}
+PRODUCT_SYNC_UPDATE_PRICES_DEFAULT = str(os.getenv("PRODUCT_SYNC_UPDATE_PRICES", "1")).strip().lower() in {"1", "true", "yes", "on"}
 PRODUCT_SYNC_USER_AGENT = os.getenv(
 	"PRODUCT_SYNC_USER_AGENT",
 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
@@ -814,13 +815,15 @@ def fetch_product_metadata(url):
 	}
 
 
-def sync_single_presente_metadata(presente, sync_images_enabled=None):
+def sync_single_presente_metadata(presente, sync_images_enabled=None, sync_prices_enabled=None):
 	product_urls = normalize_multi_urls(presente.get("produto_url"))
 	if not product_urls:
 		return False
 
 	if sync_images_enabled is None:
 		sync_images_enabled = get_product_sync_images_enabled()
+	if sync_prices_enabled is None:
+		sync_prices_enabled = get_product_sync_prices_enabled()
 
 	updated = False
 	collected_images = normalize_multi_urls(presente.get("foto_url")) if sync_images_enabled else []
@@ -849,7 +852,7 @@ def sync_single_presente_metadata(presente, sync_images_enabled=None):
 		elif len(collected_prices) == len(product_urls):
 			collected_price = round(sum(collected_prices), 2)
 
-	if collected_price is not None and round(float(presente.get("preco") or 0), 2) != collected_price:
+	if sync_prices_enabled and collected_price is not None and round(float(presente.get("preco") or 0), 2) != collected_price:
 		current_price = round(float(presente.get("preco") or 0), 2)
 		if is_reasonable_price_transition(current_price, collected_price):
 			presente["preco"] = collected_price
@@ -867,13 +870,15 @@ def sync_single_presente_metadata(presente, sync_images_enabled=None):
 	return updated
 
 
-def sync_presentes_metadata(force=False):
+def sync_presentes_metadata(force=False, sync_prices_enabled=None):
 	with PRESENTES_LOCK:
 		with PRESENTES_FILE_LOCK:
 			presentes = load_presentes()
 			now_dt = utc_now()
 			changed = False
 			sync_images_enabled = get_product_sync_images_enabled()
+			if sync_prices_enabled is None:
+				sync_prices_enabled = get_product_sync_prices_enabled()
 
 			for presente in presentes:
 				if presente.get("reservado"):
@@ -884,7 +889,11 @@ def sync_presentes_metadata(force=False):
 					if last_sync and (now_dt - last_sync).total_seconds() < PRODUCT_SYNC_INTERVAL_MINUTES * 60:
 						continue
 
-				if sync_single_presente_metadata(presente, sync_images_enabled=sync_images_enabled):
+				if sync_single_presente_metadata(
+					presente,
+					sync_images_enabled=sync_images_enabled,
+					sync_prices_enabled=sync_prices_enabled,
+				):
 					changed = True
 
 			if changed:
@@ -1260,6 +1269,7 @@ def default_admin_sync_state():
 		"novos_convidados_ack_em": get_latest_created_timestamp(load_convidados()),
 		"ultimo_export_em": "",
 		"ultimo_export_convidados_em": "",
+		"sync_precos_ativo": PRODUCT_SYNC_UPDATE_PRICES_DEFAULT,
 		"sync_fotos_ativo": PRODUCT_SYNC_UPDATE_IMAGES_DEFAULT,
 	}
 
@@ -1273,8 +1283,17 @@ def normalize_admin_sync_state(raw):
 		"novos_convidados_ack_em": str(raw.get("novos_convidados_ack_em") or "").strip(),
 		"ultimo_export_em": str(raw.get("ultimo_export_em") or "").strip(),
 		"ultimo_export_convidados_em": str(raw.get("ultimo_export_convidados_em") or "").strip(),
+		"sync_precos_ativo": bool(raw.get("sync_precos_ativo")) if "sync_precos_ativo" in raw else PRODUCT_SYNC_UPDATE_PRICES_DEFAULT,
 		"sync_fotos_ativo": bool(raw.get("sync_fotos_ativo")) if "sync_fotos_ativo" in raw else PRODUCT_SYNC_UPDATE_IMAGES_DEFAULT,
 	}
+
+
+def get_product_sync_prices_enabled():
+	try:
+		state = load_admin_sync_state()
+		return bool(state.get("sync_precos_ativo"))
+	except Exception:
+		return PRODUCT_SYNC_UPDATE_PRICES_DEFAULT
 
 
 def get_product_sync_images_enabled():
@@ -2607,8 +2626,15 @@ def criar_presente():
 				}
 			)
 
+			sync_images_enabled = get_product_sync_images_enabled()
+			sync_prices_enabled = get_product_sync_prices_enabled()
 			try:
-				sync_single_presente_metadata(novo)
+				if sync_images_enabled or sync_prices_enabled:
+					sync_single_presente_metadata(
+						novo,
+						sync_images_enabled=sync_images_enabled,
+						sync_prices_enabled=sync_prices_enabled,
+					)
 			except Exception:
 				app.logger.exception("Falha ao sincronizar metadados do produto durante cadastro")
 
@@ -2656,8 +2682,15 @@ def atualizar_presente(presente_id):
 			presente["especificacoes"] = normalize_especificacoes(payload.get("especificacoes") or [])
 			presente["metadata_synced_at"] = ""
 
+			sync_images_enabled = get_product_sync_images_enabled()
+			sync_prices_enabled = get_product_sync_prices_enabled()
 			try:
-				sync_single_presente_metadata(presente)
+				if sync_images_enabled or sync_prices_enabled:
+					sync_single_presente_metadata(
+						presente,
+						sync_images_enabled=sync_images_enabled,
+						sync_prices_enabled=sync_prices_enabled,
+					)
 			except Exception:
 				app.logger.exception("Falha ao sincronizar metadados do produto durante atualização")
 
@@ -2798,13 +2831,46 @@ def sync_presentes_admin():
 	if admin_error:
 		return admin_error
 
-	changed = sync_presentes_metadata(force=True)
+	changed = sync_presentes_metadata(force=True, sync_prices_enabled=True)
 	return jsonify(
 		{
 			"mensagem": "Sincronização concluída.",
 			"alterado": bool(changed),
 			"intervalo_minutos": PRODUCT_SYNC_INTERVAL_MINUTES,
+			"sync_precos_ativo": get_product_sync_prices_enabled(),
 			"sync_fotos_ativo": get_product_sync_images_enabled(),
+		}
+	)
+
+
+@app.route("/api/admin/presentes/sync-precos", methods=["GET", "PUT", "OPTIONS"])
+def sync_presentes_precos_config():
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	if request.method == "GET":
+		return jsonify({"sync_precos_ativo": get_product_sync_prices_enabled()})
+
+	payload = request.get_json(silent=True) or {}
+	raw_enabled = payload.get("sync_precos_ativo")
+
+	if not isinstance(raw_enabled, bool):
+		return jsonify({"erro": "Informe sync_precos_ativo como booleano (true/false)."}), 400
+
+	with ADMIN_SYNC_LOCK:
+		with ADMIN_SYNC_FILE_LOCK:
+			state = load_admin_sync_state()
+			state["sync_precos_ativo"] = bool(raw_enabled)
+			save_admin_sync_state(state)
+
+	return jsonify(
+		{
+			"mensagem": "Configuração de sincronização de preços atualizada.",
+			"sync_precos_ativo": bool(raw_enabled),
 		}
 	)
 
