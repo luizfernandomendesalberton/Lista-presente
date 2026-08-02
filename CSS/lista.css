@@ -597,9 +597,14 @@ h1 {
 }
 
 .card.reservado {
-	background: linear-gradient(180deg, #fff9f4, #fbf4ed);
+	background:
+		linear-gradient(180deg, rgba(255, 250, 246, 0.98), rgba(250, 239, 233, 0.98)),
+		repeating-linear-gradient(135deg, rgba(183, 58, 81, 0.04) 0 12px, rgba(183, 58, 81, 0.09) 12px 24px);
 	border: 2px solid #b73a51;
-	box-shadow: 0 16px 40px rgba(136, 34, 54, 0.18);
+	box-shadow:
+		0 24px 52px rgba(136, 34, 54, 0.28),
+		0 0 0 2px rgba(183, 58, 81, 0.15) inset,
+		0 0 0 7px rgba(183, 58, 81, 0.08);
 }
 
 .card.reservado::before {
@@ -616,7 +621,54 @@ h1 {
 	font-size: 0.78rem;
 	font-weight: 800;
 	letter-spacing: 0.08em;
-	box-shadow: 0 10px 24px rgba(116, 26, 43, 0.34);
+	box-shadow: 0 12px 28px rgba(116, 26, 43, 0.4);
+	animation: reservadoPulse 1.9s ease-in-out infinite;
+}
+
+.card.reservado .media-wrap::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(180deg, rgba(78, 18, 30, 0.14), rgba(78, 18, 30, 0.02) 44%, rgba(78, 18, 30, 0.18));
+	pointer-events: none;
+	z-index: 1;
+}
+
+.card.reservado .presente-nome {
+	color: #6d2435;
+}
+
+.card.reservado .presente-preco {
+	color: #8c2e46;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.card.reservado .card-main {
+	gap: 10px;
+}
+
+.reservado-por-banner {
+	margin: 0;
+	padding: 9px 12px;
+	border-radius: 12px;
+	background: linear-gradient(120deg, #8f2033, #c12d47);
+	color: #fff;
+	font-size: 0.8rem;
+	font-weight: 900;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	line-height: 1.2;
+	border: 1px solid rgba(255, 255, 255, 0.38);
+	box-shadow:
+		0 10px 24px rgba(116, 26, 43, 0.32),
+		0 0 0 2px rgba(143, 31, 52, 0.2);
+	word-break: break-word;
+}
+
+.reservado-por-banner::before {
+	content: "[RESERVA CONFIRMADA] ";
+	font-weight: 700;
+	opacity: 0.94;
 }
 
 .card:not(.reservado)::before {
@@ -815,10 +867,44 @@ h1 {
 }
 
 .card.reservado .presente-status {
-	color: #8f1f34;
-	background: rgba(193, 45, 71, 0.14);
-	border-color: rgba(143, 31, 52, 0.45);
+	color: #7b152c;
+	background: linear-gradient(90deg, rgba(193, 45, 71, 0.2), rgba(193, 45, 71, 0.1));
+	border-color: rgba(143, 31, 52, 0.55);
 	font-weight: 800;
+	box-shadow: 0 0 0 1px rgba(143, 31, 52, 0.16) inset;
+	font-size: 0.92rem;
+}
+
+.card.reservado .reserve-form {
+	position: relative;
+	border-color: rgba(183, 58, 81, 0.42);
+	background: linear-gradient(180deg, rgba(255, 246, 247, 0.9), rgba(255, 241, 243, 0.96));
+	box-shadow:
+		0 10px 22px rgba(114, 31, 46, 0.12),
+		0 0 0 1px rgba(183, 58, 81, 0.12) inset;
+}
+
+.card.reservado .reserve-form::before {
+	content: "Item reservado. Confira o nome abaixo antes de tentar reservar.";
+	display: block;
+	margin: -2px 0 4px;
+	padding: 6px 10px;
+	border-radius: 10px;
+	font-size: 0.77rem;
+	font-weight: 700;
+	color: #7b152c;
+	background: rgba(183, 58, 81, 0.12);
+	border: 1px dashed rgba(143, 31, 52, 0.38);
+}
+
+@keyframes reservadoPulse {
+	0%,
+	100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.03);
+	}
 }
 
 .reserve-form {

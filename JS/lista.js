@@ -1997,8 +1997,17 @@ function renderPresentes() {
 		}
 
 		if (presente.reservado) {
+			const reservadoPorNome = String(presente.reservado_por_nome || "outra pessoa").trim() || "outra pessoa";
 			card.classList.add("reservado");
-			statusPresenteEl.textContent = `Reservado por ${presente.reservado_por_nome || "outra pessoa"}`;
+			statusPresenteEl.textContent = `Reservado por ${reservadoPorNome}`;
+
+			if (cardMain) {
+				const reservadoPorBanner = document.createElement("p");
+				reservadoPorBanner.className = "reservado-por-banner";
+				reservadoPorBanner.textContent = `RESERVADO POR: ${reservadoPorNome}`;
+				cardMain.insertBefore(reservadoPorBanner, cardMain.firstChild);
+			}
+
 			inputNome.value = presente.reservado_por_nome || "";
 			inputEmail.value = presente.reservado_por_email || "";
 			inputCheck.checked = true;

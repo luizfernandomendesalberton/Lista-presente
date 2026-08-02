@@ -38,7 +38,7 @@
     "nome": "Faqueiro Tramontina",
     "descricao": "Faqueiro Tramontina Laguna Inox Facas De Churrasco 91 Peças Cor Prateado",
     "categoria": "Cozinha",
-    "preco": 925.5,
+    "preco": 590.0,
     "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_991866-MLA99531216166_122025-F.webp; https://assets.tramontina.com.br/upload/tramon/imagens/FAR/66906890PDM001G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/FAR/66906840PRM002G.jpg; https://assets.tramontina.com.br/upload/tramon/imagens/FAR/63906300PRM001G.jpg",
     "video_url": "",
     "produto_url": "https://www.tramontina.com.br/faqueiro-tramontina-laguna-em-aco-inox-com-facas-de-churrasco-acabamento-em-brilho-com-detalhes-no-cabo-91-pecas/66906890.html",
@@ -47,8 +47,7 @@
       "Material da lâmina: aço inoxidável.",
       "É apto para lava-louça."
     ],
-    "reservado": false,
-    "metadata_synced_at": "2026-08-01T17:47:55.101498+00:00"
+    "reservado": false
   },
   {
     "id": 4,
@@ -73,7 +72,7 @@
     "nome": "Lavadora de alta pressão",
     "descricao": "Lavadora de Alta Pressão Vonder LAV 1300 – 1300 Libras, Compacta, Potente, Ideal para Carros, Quintais e Limpezas Pesadas",
     "categoria": "Geral",
-    "preco": 550.0,
+    "preco": 420.0,
     "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_637522-MLA99502265756_112025-F.webp",
     "video_url": "",
     "produto_url": "https://www.mercadolivre.com.br/lavadora-alta-presso-lav1300-1300-lbfpol-220-v-vonder-amarelo-60-hz/p/MLB63481764?product_trigger_id=MLB28530537&attributes=COLOR%3AAmarelo%2CVOLTAGE%3AMLB63481764&pdp_filters=item_id%3AMLB4290332992&applied_product_filters=MLB28530537&from=gshop&picker=true&matt_tool=56938998&matt_word=&matt_source=google&matt_campaign_id=22090193672&matt_ad_group_id=174661944364&matt_match_type=&matt_network=g&matt_device=c&matt_creative=727914178231&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735098639&matt_product_id=MLB28530537-product&matt_product_partition_id=2417612878284&matt_target_id=pla-2417612878284&cq_src=google_ads&cq_cmp=22090193672&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=22090193672&gbraid=0AAAAAD93qcAuONiVpNB9Y3XszhzlXczb9&gclid=CjwKCAjwrNrQBhBjEiwAoR4VO4IlHMvw4B6Q5Uo8IXrj1_QlpDHX7ISyUceVue5vvF4ZHeZLQ9BLWhoCvzQQAvD_BwE&offer_type=OFFICIAL_STORE&quantity=1",
@@ -150,7 +149,7 @@
     "nome": "Micro-ondas",
     "descricao": "Micro-ondas Electrolux 36L cor Inox Efficient com Descongelamento Assistido ME36S",
     "categoria": "Cozinha",
-    "preco": 949.0,
+    "preco": 1050.0,
     "foto_url": "https://http2.mlstatic.com/D_NQ_NP_2X_953193-MLA100186644785_122025-F.webp",
     "video_url": "",
     "produto_url": "https://loja.electrolux.com.br/micro-ondas-electrolux-prata-36l-efficient-me36s/p?skuId=310119203",
@@ -163,8 +162,7 @@
       "Com descongelamento automático por peso.",
       "Possui luz no interior."
     ],
-    "reservado": false,
-    "metadata_synced_at": "2026-08-01T17:24:32.498742+00:00"
+    "reservado": false
   },
   {
     "id": 10,
@@ -250,7 +248,7 @@
     "nome": "Aspirador de Pó",
     "descricao": "Electrolux Aspirador água pó potente função sopro limpeza profunda 1400W 18L total 11L util protetor termico A10N1 220V",
     "categoria": "Utilidades Domésticas",
-    "preco": 359.9,
+    "preco": 420.0,
     "foto_url": "https://m.media-amazon.com/images/I/71zOYFOSMqL._AC_SX679_.jpg",
     "video_url": "",
     "produto_url": "https://loja.electrolux.com.br/aspirador-agua-e-po-smart--a10n1-/p?skuId=2000548",
@@ -262,8 +260,7 @@
       "Com alcance total de 6,2 metros, cabo elétrico de 3,4m e mangueira de 1,5m"
     ],
     "reservado": false,
-    "criado_em": "2026-06-01T18:56:43.803883+00:00",
-    "metadata_synced_at": "2026-08-01T17:18:05.126892+00:00"
+    "criado_em": "2026-06-01T18:56:43.803883+00:00"
   },
   {
     "id": 16,
