@@ -28,9 +28,9 @@
     "grupo": "Grupo 01",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:15:31.559016+00:00"
   },
   {
     "id": 4,
@@ -39,9 +39,9 @@
     "grupo": "Grupo 01",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:15:34.331253+00:00"
   },
   {
     "id": 5,
@@ -50,9 +50,9 @@
     "grupo": "Grupo 02",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:12:38.730352+00:00"
   },
   {
     "id": 6,
@@ -61,9 +61,9 @@
     "grupo": "Grupo 02",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:12:42.550777+00:00"
   },
   {
     "id": 7,
@@ -72,9 +72,9 @@
     "grupo": "Grupo 02",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:12:45.533819+00:00"
   },
   {
     "id": 8,
@@ -83,9 +83,9 @@
     "grupo": "Grupo 02",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:12:48.247339+00:00"
   },
   {
     "id": 9,
@@ -94,9 +94,9 @@
     "grupo": "Grupo 02",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:12:51.176401+00:00"
   },
   {
     "id": 10,
@@ -105,9 +105,9 @@
     "grupo": "Grupo 03",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:15:11.760922+00:00"
   },
   {
     "id": 11,
@@ -270,9 +270,9 @@
     "grupo": "Grupo 11",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:16:10.898990+00:00"
   },
   {
     "id": 26,
@@ -281,9 +281,9 @@
     "grupo": "Grupo 11",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:16:13.402713+00:00"
   },
   {
     "id": 27,
@@ -292,9 +292,9 @@
     "grupo": "Grupo 12",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:16:52.984680+00:00"
   },
   {
     "id": 28,
@@ -303,9 +303,9 @@
     "grupo": "Grupo 12",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:16:55.421893+00:00"
   },
   {
     "id": 29,
@@ -688,9 +688,9 @@
     "grupo": "Grupo 12",
     "tipo": "convidado",
     "criado_em": "2026-06-05T15:10:12.628100+00:00",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-02T14:16:58.297351+00:00"
   },
   {
     "id": 64,
