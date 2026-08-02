@@ -116,7 +116,7 @@ let pixReferenciaAtual = "Contribuicao em dinheiro";
 let pixNomePresenteAtual = "";
 let onboardingStepIndex = 0;
 let onboardingTimerId = null;
-let syncPrecosAutoAtivo = true;
+let syncPrecosAutoAtivo = false;
 let syncFotosAutoAtivo = false;
 
 const BRL = new Intl.NumberFormat("pt-BR", {

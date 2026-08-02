@@ -68,7 +68,7 @@ PRODUCT_SYNC_MAX_PRICE = max(PRODUCT_SYNC_MIN_PRICE, float(os.getenv("PRODUCT_SY
 PRODUCT_SYNC_MIN_RATIO = max(0.05, float(os.getenv("PRODUCT_SYNC_MIN_RATIO", "0.60")))
 PRODUCT_SYNC_MAX_RATIO = max(1.0, float(os.getenv("PRODUCT_SYNC_MAX_RATIO", "2.50")))
 PRODUCT_SYNC_UPDATE_IMAGES_DEFAULT = str(os.getenv("PRODUCT_SYNC_UPDATE_IMAGES", "0")).strip().lower() in {"1", "true", "yes", "on"}
-PRODUCT_SYNC_UPDATE_PRICES_DEFAULT = str(os.getenv("PRODUCT_SYNC_UPDATE_PRICES", "1")).strip().lower() in {"1", "true", "yes", "on"}
+PRODUCT_SYNC_UPDATE_PRICES_DEFAULT = str(os.getenv("PRODUCT_SYNC_UPDATE_PRICES", "0")).strip().lower() in {"1", "true", "yes", "on"}
 PRODUCT_SYNC_USER_AGENT = os.getenv(
 	"PRODUCT_SYNC_USER_AGENT",
 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
