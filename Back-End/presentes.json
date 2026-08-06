@@ -468,21 +468,6 @@
   },
   {
     "id": 27,
-    "nome": "Mesa de Jantar",
-    "descricao": "Conjunto Sala de Jantar Lousiana Madesa Mesa Tampo de Madeira com 6 Cadeiras Rustic/Crema/Sintético Bege",
-    "categoria": "Cozinha",
-    "preco": 2000.0,
-    "foto_url": "https://www.madesa.com/cdn/shop/files/01-044185ZXPE-ambientado.png?v=1783616229&width=1000; http://www.madesa.com/cdn/shop/files/01-044185ZXPE-ambientado.png?v=1783616229; https://www.madesa.com/cdn/shop/files/01-044185ZXPE-ambientado.png?v=1783616229&width=1920",
-    "video_url": "",
-    "produto_url": "https://www.madesa.com/products/conjunto-sala-de-jantar-lousiana-madesa-mesa-tampo-de-madeira-com-6-cadeiras-rustic-crema-perola",
-    "especificacoes": [],
-    "reservado": true,
-    "reservado_por_nome": "Alessandra e Eli",
-    "reservado_em": "2026-07-29T17:54:31.420204+00:00",
-    "criado_em": "2026-07-19T18:40:43.108038+00:00"
-  },
-  {
-    "id": 28,
     "nome": "Jogo de Panelas",
     "descricao": "Jogo de Panelas Tramontina Linz em Alumínio com Revestimento Interno e Externo em Antiaderente Starflon Max Preto 10 Peças",
     "categoria": "Panelas",
@@ -499,7 +484,7 @@
     "criado_em": "2026-07-19T18:47:32.078857+00:00"
   },
   {
-    "id": 29,
+    "id": 28,
     "nome": "Caçarola Tramontina",
     "descricao": "Caçarola Tramontina Paris em Alumínio com Revestimento Interno e Externo em Antiaderente Starflon Max Chumbo com Tampa de Vidro 22 cm 3,8 L",
     "categoria": "Panelas",
@@ -515,20 +500,7 @@
     "criado_em": "2026-07-19T18:51:57.198140+00:00"
   },
   {
-    "id": 30,
-    "nome": "Cama e Colchão",
-    "descricao": "Guldi Box Joe Linho e Guldi Dream",
-    "categoria": "Cama, Mesa e Banho",
-    "preco": 3534.54,
-    "foto_url": "https://www.guldi.com.br/wp-content/uploads/2026/05/Mobly-Base-para-Cama-Box-Queen-Joe-Linho-2836x158x19829-Bege-4956-908308-2.jpg",
-    "video_url": "",
-    "produto_url": "https://www.guldi.com.br/produto/base-para-cama-box-joe-linho/?attribute_pa_tamanho=queen&attribute_pa_cor=bege; https://www.guldi.com.br/produto/guldi-dream/?attribute_pa_tamanho=queen",
-    "especificacoes": [],
-    "reservado": false,
-    "criado_em": "2026-07-22T18:48:08.179137+00:00"
-  },
-  {
-    "id": 31,
+    "id": 29,
     "nome": "Liquidificador",
     "descricao": "Liquidificador Britânia 3L 1200W 6 lâminas Inox BLQ1380P",
     "categoria": "Cozinha",
@@ -545,7 +517,7 @@
     "criado_em": "2026-07-29T17:57:13.991282+00:00"
   },
   {
-    "id": 32,
+    "id": 30,
     "nome": "Batedeira",
     "descricao": "Batedeira Britânia Pérola 550 500W 4 velocidades + Turbo 4,3L - 220V",
     "categoria": "Cozinha",
@@ -567,7 +539,7 @@
     "criado_em": "2026-07-29T17:59:23.774993+00:00"
   },
   {
-    "id": 33,
+    "id": 31,
     "nome": "Sanduicheira e Grill",
     "descricao": "Sanduicheira e Grill Britânia Inox 2 em 1 750W BGR25B - 220V",
     "categoria": "Cozinha",
@@ -586,5 +558,76 @@
     "reservado_por_nome": "Cartório 2ª Vara Orleans",
     "reservado_em": "2026-07-29T18:03:26.943363+00:00",
     "criado_em": "2026-07-29T18:03:03.602102+00:00"
+  },
+  {
+    "id": 32,
+    "nome": "Cama",
+    "descricao": "MODELO BASE BOX JOE - QUEEN",
+    "categoria": "Cama, Mesa e Banho",
+    "preco": 1600.0,
+    "foto_url": "https://www.guldi.com.br/wp-content/uploads/2026/05/Mobly-Base-para-Cama-Box-Queen-Joe-Linho-2836x158x19829-Bege-4956-908308-2.jpg",
+    "video_url": "",
+    "produto_url": "https://www.guldi.com.br/produto/base-para-cama-box-joe-linho/?attribute_pa_tamanho=queen&attribute_pa_cor=bege",
+    "especificacoes": [
+      "COR BEGE",
+      "TIPO DE BASE DUPLO",
+      "PESO SUPORTADO MÁX (KG) 240KG",
+      "DIMENSÕES (CM) 158 X 198 X 45",
+      "GARANTIA 3 MESES",
+      "PERÍODO DE TESTE 7 NOITES",
+      "MATERIAL EUCALIPTO"
+    ],
+    "reservado": false,
+    "criado_em": "2026-08-05T22:31:23.047240+00:00"
+  },
+  {
+    "id": 33,
+    "nome": "Colchão",
+    "descricao": "COLCHÃO GULDI ORIGINAL - QUEEN",
+    "categoria": "Cama, Mesa e Banho",
+    "preco": 5000.0,
+    "foto_url": "https://www.guldi.com.br/wp-content/uploads/2019/01/Guldi-PDP-Original-2-still-casal.png",
+    "video_url": "",
+    "produto_url": "https://www.guldi.com.br/produto/colchao-guldi/",
+    "especificacoes": [
+      "TIPO DE COLCHÃO HÍBRIDO (ESPUMA E MOLAS ENSACADAS)",
+      "DENSIDADE FIRME D33",
+      "COR AZUL E BRANCO",
+      "PESO SUPORTADO MÁX (KG) 120 KG POR PESSOA",
+      "DIMENSÕES (CM) 158 X 198 X 25 CM",
+      "GARANTIA 5 ANOS",
+      "PERÍODO DE TESTE 100 NOITES",
+      "MATERIAL: MOLAS ENSACADAS INDIVIDUALMENTE E ESPUMA DE 5 CM + 2 CM DE ESPUMA D33 COM ALTA RESILIÊNCIA EM 100% POLIURETANO"
+    ],
+    "reservado": false,
+    "criado_em": "2026-08-05T22:38:12.849609+00:00"
+  },
+  {
+    "id": 34,
+    "nome": "Mesa de Jantar, 6 cadeiras",
+    "descricao": "Conjunto Sala de Jantar Mesa Tampo de Vidro 6 Cadeiras Rustic/Crema/Imperial Marissa Madesa",
+    "categoria": "Móveis",
+    "preco": 3000.0,
+    "foto_url": "https://www.madesa.com/cdn/shop/files/01-MDJA060173J8SM-ambientada-perspectiva.jpg?v=1770062498&width=1000",
+    "video_url": "",
+    "produto_url": "https://www.madesa.com/products/conjunto-sala-jantar-mesa-tampo-vidro-6-cadeiras-rustic-crema-imperial-marissa-madesa",
+    "especificacoes": [
+      "Garantia 12 meses",
+      "Material do Tampo Madeira + Vidro",
+      "Formato do Tampo Retangular",
+      "Lugares 6",
+      "Estofamento das Cadeiras Totalmente Estofada",
+      "Modelo de Cadeira Premium",
+      "Estofamento Suede Imperial",
+      "Modelo MDJA060173J8SM",
+      "Material MDP/MDF",
+      "Largura 180 cm",
+      "Altura\t78 cm",
+      "Profundidade\t90 cm"
+    ],
+    "reservado": true,
+    "reservado_por_nome": "Alessandra e Eli",
+    "reservado_em": "2026-08-05T23:06:55.307774+00:00",
+    "criado_em": "2026-08-05T23:06:10.243020+00:00"
   }
 ]
