@@ -141,7 +141,10 @@
       "até 120 minutos com aviso sonoro",
       "temperatura de 50 a 320ºC"
     ],
-    "reservado": false,
+    "reservado": true,
+    "reservado_por_nome": "Hélio e Santina",
+    "reservado_por_email": "morgsalberton@gmail.com",
+    "reservado_em": "2026-08-10T15:26:13.640355+00:00",
     "metadata_synced_at": "2026-07-22T00:13:26.860717+00:00"
   },
   {
@@ -162,7 +165,9 @@
       "Com descongelamento automático por peso.",
       "Possui luz no interior."
     ],
-    "reservado": false
+    "reservado": true,
+    "reservado_por_nome": "Levi e familia",
+    "reservado_em": "2026-08-08T20:17:02.875926+00:00"
   },
   {
     "id": 10,
@@ -375,7 +380,10 @@
       "Porcelana",
       "Refratária"
     ],
-    "reservado": false,
+    "reservado": true,
+    "reservado_por_nome": "Ramires Delfino cardoso",
+    "reservado_por_email": "helenamendescardoso790@gmail.com",
+    "reservado_em": "2026-08-10T16:49:05.167481+00:00",
     "criado_em": "2026-07-01T18:22:12.351206+00:00"
   },
   {
