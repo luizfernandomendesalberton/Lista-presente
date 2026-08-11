@@ -97,6 +97,7 @@ const adminConvidadoFormTitle = document.getElementById("adminConvidadoFormTitle
 const adminConvidadoStatus = document.getElementById("adminConvidadoStatus");
 const adminConvidadosList = document.getElementById("adminConvidadosList");
 const adminConvidadosExportBtn = document.getElementById("adminConvidadosExportBtn");
+const adminPixExportBtn = document.getElementById("adminPixExportBtn");
 const adminNewGuestsHint = document.getElementById("adminNewGuestsHint");
 const hasGiftListUI = Boolean(listaEl && statusEl && template && filtroBusca && filtroCategoria && filtroOrdem);
 const hasAdminMetricsUI = Boolean(adminMetricTotal || adminRecentList || adminPresenceHint || adminPixRecentList || adminUnreserveRecentList);
@@ -2245,6 +2246,61 @@ if (isAdminPage) {
 			} catch (error) {
 				if (adminConvidadoStatus) {
 					adminConvidadoStatus.textContent = error.message;
+				}
+			}
+		});
+	}
+
+	if (adminPixExportBtn) {
+		adminPixExportBtn.addEventListener("click", async () => {
+			if (!adminAuthenticated) {
+				if (adminStatus) {
+					adminStatus.textContent = "Faça login para baixar o JSON de contribuições PIX.";
+				}
+				return;
+			}
+
+			try {
+				const response = await fetch(`/api/admin/pix/export?t=${Date.now()}`, {
+					method: "GET",
+					cache: "no-store",
+					credentials: "same-origin",
+					headers: {
+						...getAdminHeaders(),
+					},
+				});
+
+				if (!response.ok) {
+					let message = "Falha ao exportar JSON de contribuições PIX.";
+					try {
+						const body = await response.json();
+						message = body.erro || message;
+					} catch (_error) {
+						// Keep fallback message when response body is not JSON.
+					}
+					throw new Error(message);
+				}
+
+				const blob = await response.blob();
+				const contentDisposition = response.headers.get("Content-Disposition") || "";
+				const match = contentDisposition.match(/filename=\"?([^\";]+)\"?/i);
+				const fileName = match ? match[1] : "pix-contribuicoes-export.json";
+
+				const fileUrl = window.URL.createObjectURL(blob);
+				const link = document.createElement("a");
+				link.href = fileUrl;
+				link.download = fileName;
+				document.body.appendChild(link);
+				link.click();
+				link.remove();
+				window.URL.revokeObjectURL(fileUrl);
+
+				if (adminStatus) {
+					adminStatus.textContent = "Arquivo JSON de contribuições PIX exportado com sucesso.";
+				}
+			} catch (error) {
+				if (adminStatus) {
+					adminStatus.textContent = error.message;
 				}
 			}
 		});

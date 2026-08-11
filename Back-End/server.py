@@ -57,6 +57,7 @@ PRESENTES_SEED_FILE = BACKEND_DIR / "presentes.json"
 DATA_FILE = Path(os.getenv("DATA_FILE_PATH", str(RUNTIME_DATA_DIR / "presentes.json")))
 CONVIDADOS_SEED_FILE = BACKEND_DIR / "convidados.json"
 CONVIDADOS_FILE = Path(os.getenv("CONVIDADOS_FILE_PATH", str(RUNTIME_DATA_DIR / "convidados.json")))
+PIX_CONTRIB_SEED_FILE = BACKEND_DIR / "pix_contribuicoes.json"
 PIX_CONTRIB_FILE = Path(os.getenv("PIX_CONTRIB_FILE_PATH", str(RUNTIME_DATA_DIR / "pix_contribuicoes.json")))
 UNRESERVE_LOG_FILE = Path(os.getenv("UNRESERVE_LOG_FILE_PATH", str(RUNTIME_DATA_DIR / "desmarcacoes_reserva.json")))
 ADMIN_SYNC_FILE = Path(os.getenv("ADMIN_SYNC_FILE_PATH", str(RUNTIME_DATA_DIR / "admin_sync_state.json")))
@@ -1216,7 +1217,17 @@ def save_pix_contributions(contributions):
 def load_pix_contributions():
 	data_file = PIX_CONTRIB_FILE
 	if not data_file.exists():
-		return []
+		seed_data = []
+		if PIX_CONTRIB_SEED_FILE.exists():
+			with PIX_CONTRIB_SEED_FILE.open("r", encoding="utf-8") as file:
+				loaded_seed = json.load(file)
+			if isinstance(loaded_seed, list):
+				seed_data = loaded_seed
+
+		normalized_seed = normalize_all_pix_contributions(seed_data)
+		if normalized_seed:
+			save_pix_contributions(normalized_seed)
+		return normalized_seed
 
 	with data_file.open("r", encoding="utf-8") as file:
 		loaded = json.load(file)
@@ -2204,6 +2215,32 @@ def exportar_presentes():
 		headers={
 			"Content-Disposition": f'attachment; filename="{filename}"',
 			"X-New-Products-Ack-At": sync_state["novos_produtos_ack_em"],
+			"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+			"Pragma": "no-cache",
+		},
+	)
+
+
+@app.route("/api/admin/pix/export", methods=["GET"])
+def exportar_pix_admin():
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	owner_error = require_json_export_owner()
+	if owner_error:
+		return owner_error
+
+	pix_contributions = load_pix_contributions()
+	content = json.dumps(pix_contributions, ensure_ascii=False, indent=2)
+	filename = f"pix-contribuicoes-export-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
+
+	return Response(
+		content,
+		status=200,
+		mimetype="application/json",
+		headers={
+			"Content-Disposition": f'attachment; filename="{filename}"',
 			"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
 			"Pragma": "no-cache",
 		},
