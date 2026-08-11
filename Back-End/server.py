@@ -184,13 +184,25 @@ def save_convidados(convidados):
 	_atomic_dump(CONVIDADOS_FILE)
 
 
+def _load_json_file_safely(path, fallback=None):
+	if not path.exists():
+		return fallback
+
+	try:
+		with path.open("r", encoding="utf-8") as file:
+			loaded = json.load(file)
+	except (json.JSONDecodeError, OSError, ValueError):
+		return fallback
+
+	return loaded
+
+
 def load_convidados():
 	data_file = CONVIDADOS_FILE
 	if not data_file.exists():
 		base = default_convidados()
 		if CONVIDADOS_SEED_FILE.exists():
-			with CONVIDADOS_SEED_FILE.open("r", encoding="utf-8") as file:
-				loaded = json.load(file)
+			loaded = _load_json_file_safely(CONVIDADOS_SEED_FILE, [])
 			if isinstance(loaded, list):
 				base = loaded
 
@@ -198,9 +210,7 @@ def load_convidados():
 		save_convidados(normalized)
 		return normalized
 
-	with data_file.open("r", encoding="utf-8") as file:
-		loaded = json.load(file)
-
+	loaded = _load_json_file_safely(data_file, default_convidados())
 	if not isinstance(loaded, list):
 		loaded = default_convidados()
 
@@ -1219,8 +1229,7 @@ def load_pix_contributions():
 	if not data_file.exists():
 		seed_data = []
 		if PIX_CONTRIB_SEED_FILE.exists():
-			with PIX_CONTRIB_SEED_FILE.open("r", encoding="utf-8") as file:
-				loaded_seed = json.load(file)
+			loaded_seed = _load_json_file_safely(PIX_CONTRIB_SEED_FILE, [])
 			if isinstance(loaded_seed, list):
 				seed_data = loaded_seed
 
@@ -1229,9 +1238,7 @@ def load_pix_contributions():
 			save_pix_contributions(normalized_seed)
 		return normalized_seed
 
-	with data_file.open("r", encoding="utf-8") as file:
-		loaded = json.load(file)
-
+	loaded = _load_json_file_safely(data_file, [])
 	if not isinstance(loaded, list):
 		return []
 
