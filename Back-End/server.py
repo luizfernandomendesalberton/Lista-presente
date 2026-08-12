@@ -1194,6 +1194,10 @@ def normalize_pix_contribution(raw, forced_id=None):
 	if valor is None:
 		valor = 0.0
 
+	raw_status = str(raw.get("status") or "pendente").strip().lower()
+	if raw_status not in ("pendente", "confirmado", "cancelado"):
+		raw_status = "pendente"
+
 	return {
 		"id": int(contrib_id),
 		"nome": str(raw.get("nome") or "Não informado").strip(),
@@ -1202,6 +1206,7 @@ def normalize_pix_contribution(raw, forced_id=None):
 		"txid": str(raw.get("txid") or "").strip(),
 		"criado_em": str(raw.get("criado_em") or "").strip(),
 		"email_status": str(raw.get("email_status") or "").strip(),
+		"status": raw_status,
 	}
 
 
@@ -2254,6 +2259,33 @@ def exportar_pix_admin():
 	)
 
 
+@app.route("/api/admin/pix/<int:contrib_id>/status", methods=["PATCH", "OPTIONS"])
+def atualizar_status_pix(contrib_id):
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	payload = request.get_json(silent=True) or {}
+	novo_status = str(payload.get("status") or "").strip().lower()
+
+	if novo_status not in ("pendente", "confirmado", "cancelado"):
+		return jsonify({"erro": "Status inválido. Use: pendente, confirmado ou cancelado."}), 400
+
+	with PIX_CONTRIB_LOCK:
+		with PIX_CONTRIB_FILE_LOCK:
+			contributions = load_pix_contributions()
+			contrib = next((c for c in contributions if c.get("id") == contrib_id), None)
+			if not contrib:
+				return jsonify({"erro": f"Contribuição #{contrib_id} não encontrada."}), 404
+			contrib["status"] = novo_status
+			save_pix_contributions(contributions)
+
+	return jsonify({"mensagem": f"Status atualizado para '{novo_status}'.", "contribuicao": contrib})
+
+
 @app.route("/api/admin/metrics", methods=["GET"])
 def admin_metrics():
 	admin_error = require_admin_auth(request)
@@ -2295,7 +2327,10 @@ def admin_metrics():
 	pending_new_guests = get_pending_new_guests(convidados, sync_state.get("novos_convidados_ack_em"))
 	pix_contributions = load_pix_contributions()
 	pix_total = len(pix_contributions)
-	pix_valor_total = round(sum(float(item.get("valor", 0) or 0) for item in pix_contributions), 2)
+	pix_confirmados = [c for c in pix_contributions if c.get("status") == "confirmado"]
+	pix_pendentes = [c for c in pix_contributions if c.get("status") == "pendente"]
+	pix_cancelados = [c for c in pix_contributions if c.get("status") == "cancelado"]
+	pix_valor_total = round(sum(float(item.get("valor", 0) or 0) for item in pix_confirmados), 2)
 	ultimas_pix = sorted(
 		pix_contributions,
 		key=lambda item: item.get("criado_em", ""),
@@ -2310,6 +2345,7 @@ def admin_metrics():
 			"txid": item.get("txid") or "",
 			"criado_em": item.get("criado_em") or "",
 			"email_status": item.get("email_status") or "",
+			"status": item.get("status") or "pendente",
 		}
 		for item in ultimas_pix
 	]
@@ -2354,6 +2390,9 @@ def admin_metrics():
 			"ultimo_export_em": sync_state.get("ultimo_export_em") or "",
 			"ultimo_export_convidados_em": sync_state.get("ultimo_export_convidados_em") or "",
 			"pix_contribuicoes_total": pix_total,
+			"pix_contribuicoes_confirmadas_total": len(pix_confirmados),
+			"pix_contribuicoes_pendentes_total": len(pix_pendentes),
+			"pix_contribuicoes_canceladas_total": len(pix_cancelados),
 			"pix_contribuicoes_valor_total": pix_valor_total,
 			"ultimas_contribuicoes_pix": ultimas_pix_payload,
 			"ultimas_desmarcacoes_reserva": ultimas_desmarcacoes_payload,

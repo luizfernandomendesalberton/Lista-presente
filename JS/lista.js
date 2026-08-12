@@ -98,6 +98,7 @@ const adminConvidadoStatus = document.getElementById("adminConvidadoStatus");
 const adminConvidadosList = document.getElementById("adminConvidadosList");
 const adminConvidadosExportBtn = document.getElementById("adminConvidadosExportBtn");
 const adminPixExportBtn = document.getElementById("adminPixExportBtn");
+const adminMetricPixPendentes = document.getElementById("adminMetricPixPendentes");
 const adminNewGuestsHint = document.getElementById("adminNewGuestsHint");
 const hasGiftListUI = Boolean(listaEl && statusEl && template && filtroBusca && filtroCategoria && filtroOrdem);
 const hasAdminMetricsUI = Boolean(adminMetricTotal || adminRecentList || adminPresenceHint || adminPixRecentList || adminUnreserveRecentList);
@@ -1348,6 +1349,9 @@ function renderAdminMetrics(metrics) {
 	if (adminMetricPixValorTotal) {
 		adminMetricPixValorTotal.textContent = BRL.format(Number(metrics.pix_contribuicoes_valor_total || 0));
 	}
+	if (adminMetricPixPendentes) {
+		adminMetricPixPendentes.textContent = String(metrics.pix_contribuicoes_pendentes_total || 0);
+	}
 	if (adminMetricNovosPendentes) {
 		adminMetricNovosPendentes.textContent = String(metrics.novos_produtos_pendentes_total || 0);
 	}
@@ -1460,6 +1464,25 @@ function renderAdminMetrics(metrics) {
 	}
 }
 
+
+async function atualizarStatusPix(id, status) {
+	try {
+		const res = await fetch(`/api/admin/pix/${id}/status`, {
+			method: "PATCH",
+			headers: { "Content-Type": "application/json", ...getAdminHeaders() },
+			credentials: "same-origin",
+			body: JSON.stringify({ status }),
+		});
+		const data = await res.json();
+		if (!res.ok) {
+			alert(data.erro || "Erro ao atualizar status do PIX.");
+			return;
+		}
+		await carregarMetricasAdmin();
+	} catch {
+		alert("Erro de rede ao atualizar status do PIX.");
+	}
+}
 
 async function carregarMetricasAdmin() {
 	if (!isAdminPage || !adminAuthenticated || !hasAdminMetricsUI) {
