@@ -441,7 +441,9 @@
       "Desidratar",
       "Assar"
     ],
-    "reservado": false,
+    "reservado": true,
+    "reservado_por_nome": "Rodrigo e família",
+    "reservado_em": "2026-08-12T21:30:33.197539+00:00",
     "criado_em": "2026-07-01T18:53:19.058064+00:00"
   },
   {

@@ -556,9 +556,9 @@
     "grupo": "Grupo 22",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-12T21:18:02.110976+00:00"
   },
   {
     "id": 52,
@@ -567,9 +567,9 @@
     "grupo": "Grupo 22",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-12T21:18:09.809459+00:00"
   },
   {
     "id": 53,
@@ -578,9 +578,9 @@
     "grupo": "Grupo 22",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-12T21:18:17.776569+00:00"
   },
   {
     "id": 54,
