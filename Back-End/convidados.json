@@ -375,8 +375,8 @@
   },
   {
     "id": 35,
-    "nome": "Preto",
-    "nome_key": "preto",
+    "nome": "Emir",
+    "nome_key": "emir",
     "grupo": "Grupo 16",
     "tipo": "convidado",
     "criado_em": "",
@@ -441,8 +441,8 @@
   },
   {
     "id": 41,
-    "nome": "Engenheiro",
-    "nome_key": "engenheiro",
+    "nome": "Denis",
+    "nome_key": "denis",
     "grupo": "Grupo 18",
     "tipo": "convidado",
     "criado_em": "",
@@ -452,8 +452,8 @@
   },
   {
     "id": 42,
-    "nome": "Namorada Engenheiro",
-    "nome_key": "namorada engenheiro",
+    "nome": "Lara",
+    "nome_key": "lara",
     "grupo": "Grupo 18",
     "tipo": "convidado",
     "criado_em": "",
@@ -584,28 +584,6 @@
   },
   {
     "id": 54,
-    "nome": "Fotografa",
-    "nome_key": "fotografa",
-    "grupo": "Grupo 23",
-    "tipo": "convidado",
-    "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
-  },
-  {
-    "id": 55,
-    "nome": "Assistente",
-    "nome_key": "assistente",
-    "grupo": "Grupo 23",
-    "tipo": "convidado",
-    "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
-  },
-  {
-    "id": 56,
     "nome": "Davi",
     "nome_key": "davi",
     "grupo": "Grupo 24",
@@ -616,7 +594,7 @@
     "presenca_confirmada_em": ""
   },
   {
-    "id": 57,
+    "id": 55,
     "nome": "Carla",
     "nome_key": "carla",
     "grupo": "Grupo 24",
@@ -627,7 +605,7 @@
     "presenca_confirmada_em": ""
   },
   {
-    "id": 58,
+    "id": 56,
     "nome": "Eric",
     "nome_key": "eric",
     "grupo": "Grupo 24",
@@ -638,7 +616,7 @@
     "presenca_confirmada_em": ""
   },
   {
-    "id": 59,
+    "id": 57,
     "nome": "Levi",
     "nome_key": "levi",
     "grupo": "Grupo 25",
@@ -649,7 +627,7 @@
     "presenca_confirmada_em": "2026-08-08T19:42:14.071842+00:00"
   },
   {
-    "id": 60,
+    "id": 58,
     "nome": "Grasi",
     "nome_key": "grasi",
     "grupo": "Grupo 25",
@@ -660,7 +638,7 @@
     "presenca_confirmada_em": "2026-08-08T19:42:22.998480+00:00"
   },
   {
-    "id": 61,
+    "id": 59,
     "nome": "Isabela",
     "nome_key": "isabela",
     "grupo": "Grupo 25",
@@ -671,7 +649,7 @@
     "presenca_confirmada_em": "2026-08-08T19:42:30.504908+00:00"
   },
   {
-    "id": 62,
+    "id": 60,
     "nome": "Alice",
     "nome_key": "alice",
     "grupo": "Grupo 25",
@@ -682,7 +660,7 @@
     "presenca_confirmada_em": "2026-08-08T19:42:36.758752+00:00"
   },
   {
-    "id": 63,
+    "id": 61,
     "nome": "Ravi",
     "nome_key": "ravi",
     "grupo": "Grupo 12",
@@ -693,7 +671,7 @@
     "presenca_confirmada_em": "2026-08-02T14:16:58.297351+00:00"
   },
   {
-    "id": 64,
+    "id": 62,
     "nome": "Emily",
     "nome_key": "emily",
     "grupo": "Grupo 24",
@@ -704,7 +682,7 @@
     "presenca_confirmada_em": ""
   },
   {
-    "id": 65,
+    "id": 63,
     "nome": "Helena",
     "nome_key": "helena",
     "grupo": "Grupo 26",
@@ -715,7 +693,7 @@
     "presenca_confirmada_em": "2026-08-10T16:39:48.984139+00:00"
   },
   {
-    "id": 66,
+    "id": 64,
     "nome": "Ramires",
     "nome_key": "ramires",
     "grupo": "Grupo 26",
@@ -724,5 +702,148 @@
     "presenca_confirmada": true,
     "vai_ao_evento": true,
     "presenca_confirmada_em": "2026-08-10T16:39:56.701973+00:00"
+  },
+  {
+    "id": 65,
+    "nome": "Aguita",
+    "nome_key": "aguita",
+    "grupo": "27",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:26:28.067541+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 66,
+    "nome": "Carlos",
+    "nome_key": "carlos",
+    "grupo": "27",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:26:36.664168+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 67,
+    "nome": "Ana Lúcia",
+    "nome_key": "ana lucia",
+    "grupo": "28",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:27:17.730100+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 68,
+    "nome": "Fabiano",
+    "nome_key": "fabiano",
+    "grupo": "28",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:27:25.791143+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 69,
+    "nome": "Beatriz",
+    "nome_key": "beatriz",
+    "grupo": "29",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:27:33.969088+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 70,
+    "nome": "Letícia",
+    "nome_key": "leticia",
+    "grupo": "30",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:28:17.817113+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 71,
+    "nome": "Saimon",
+    "nome_key": "saimon",
+    "grupo": "30",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:28:24.787508+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 72,
+    "nome": "Helena",
+    "nome_key": "helena",
+    "grupo": "31",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:28:32.594670+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 73,
+    "nome": "Andreza",
+    "nome_key": "andreza",
+    "grupo": "32",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:30:56.324508+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 74,
+    "nome": "Felipe",
+    "nome_key": "felipe",
+    "grupo": "32",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:31:11.194637+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 75,
+    "nome": "Levi",
+    "nome_key": "levi",
+    "grupo": "32",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:31:17.956343+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 76,
+    "nome": "Aline",
+    "nome_key": "aline",
+    "grupo": "33",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:35:43.118230+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 77,
+    "nome": "Ademar",
+    "nome_key": "ademar",
+    "grupo": "33",
+    "tipo": "convidado",
+    "criado_em": "2026-08-13T14:35:51.567369+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
   }
 ]
