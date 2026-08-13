@@ -1,6 +1,7 @@
 (function () {
   const PROMPT_HIDE_UNTIL_KEY = "lista_casamento_pwa_hide_until";
   const HIDE_FOR_DAYS = 3;
+  const REINSTALL_NOTICE_KEY = "lista_casamento_reinstall_notice_v4";
 
   let deferredPromptEvent = null;
   let installCard = null;
@@ -21,7 +22,55 @@
 
   registerServiceWorker();
 
-  if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) {
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(window.navigator.userAgent);
+
+  function showReinstallNotice() {
+    if (!isStandalone || !isMobile) {
+      return;
+    }
+
+    try {
+      if (window.localStorage.getItem(REINSTALL_NOTICE_KEY) === "shown") {
+        return;
+      }
+    } catch (_error) {
+      return;
+    }
+
+    const notice = document.createElement("section");
+    notice.className = "install-pwa-card";
+    notice.setAttribute("aria-label", "Atualizacao do aplicativo");
+
+    const title = document.createElement("h2");
+    title.className = "install-pwa-title";
+    title.textContent = "Atualizacao do aplicativo";
+
+    const message = document.createElement("p");
+    message.className = "install-pwa-text";
+    message.textContent = "Para trocar o icone, remova este aplicativo da tela inicial e instale-o novamente pelo navegador.";
+
+    const closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.className = "btn-secondary";
+    closeButton.textContent = "Entendi";
+    closeButton.addEventListener("click", () => {
+      try {
+        window.localStorage.setItem(REINSTALL_NOTICE_KEY, "shown");
+      } catch (_error) {
+        // Ignore storage failures.
+      }
+      notice.remove();
+    });
+
+    notice.appendChild(title);
+    notice.appendChild(message);
+    notice.appendChild(closeButton);
+    document.body.appendChild(notice);
+  }
+
+  if (isStandalone) {
+    window.addEventListener("load", showReinstallNotice);
     return;
   }
 
