@@ -1,4 +1,4 @@
-const CACHE_NAME = "lista-casamento-pwa-v2";
+const CACHE_NAME = "lista-casamento-pwa-v3";
 const OFFLINE_URL = "/offline.html";
 
 const CORE_ASSETS = [
@@ -9,9 +9,10 @@ const CORE_ASSETS = [
   "/JS/pwa-install.js",
   "/JS/acesso-presenca.js",
   "/JS/lista.js",
-  "/image/icon-192.png",
-  "/image/icon-512.png",
-  "/image/icon-180.png"
+  "/image/android/mipmap-xxxhdpi/ic_launcher.png",
+  "/image/playstore.png",
+  "/image/appstore.png",
+  "/image/Assets.xcassets/AppIcon.appiconset/_/180.png"
 ];
 
 self.addEventListener("install", (event) => {
