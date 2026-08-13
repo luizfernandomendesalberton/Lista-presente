@@ -2,14 +2,28 @@
   const PROMPT_HIDE_UNTIL_KEY = "lista_casamento_pwa_hide_until";
   const HIDE_FOR_DAYS = 3;
 
-  if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) {
-    return;
-  }
-
   let deferredPromptEvent = null;
   let installCard = null;
   let installText = null;
   let installButton = null;
+
+  function registerServiceWorker() {
+    if (!("serviceWorker" in navigator)) {
+      return;
+    }
+
+    navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" })
+      .then((registration) => registration.update())
+      .catch(() => {
+        // Ignore registration errors to avoid breaking app flows.
+      });
+  }
+
+  registerServiceWorker();
+
+  if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) {
+    return;
+  }
 
   function hidePromptTemporarily() {
     const hideUntil = Date.now() + HIDE_FOR_DAYS * 24 * 60 * 60 * 1000;
@@ -127,10 +141,6 @@
   });
 
   window.addEventListener("load", () => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" }).catch(() => {
-        // Ignore registration errors to avoid breaking app flows.
-      });
-    }
+    registerServiceWorker();
   });
 })();
