@@ -113,8 +113,9 @@ const ONBOARDING_STORAGE_KEY = "lista_casamento_hide_onboarding";
 const ADMIN_TAB_SESSION_KEY = "lista_casamento_admin_tab_session";
 const ONBOARDING_AUTOPLAY_MS = 7000;
 const CARD_SLIDESHOW_INTERVAL_MS = 9000;
-const WHEEL_SCROLL_SMOOTHNESS = 0.12;
-const WHEEL_SCROLL_STRENGTH = 0.82;
+// Lower values create a longer, more fluid inertia after the wheel stops.
+const WHEEL_SCROLL_SMOOTHNESS = 0.055;
+const WHEEL_SCROLL_STRENGTH = 0.9;
 
 function isScrollableElement(element) {
 	const styles = window.getComputedStyle(element);
