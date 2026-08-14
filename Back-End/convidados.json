@@ -710,9 +710,9 @@
     "grupo": "27",
     "tipo": "convidado",
     "criado_em": "2026-08-13T14:26:28.067541+00:00",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-14T00:25:54.620194+00:00"
   },
   {
     "id": 66,
@@ -721,9 +721,9 @@
     "grupo": "27",
     "tipo": "convidado",
     "criado_em": "2026-08-13T14:26:36.664168+00:00",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-14T00:25:57.900755+00:00"
   },
   {
     "id": 67,
@@ -754,9 +754,9 @@
     "grupo": "29",
     "tipo": "convidado",
     "criado_em": "2026-08-13T14:27:33.969088+00:00",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-08-14T00:29:11.424882+00:00"
   },
   {
     "id": 70,
