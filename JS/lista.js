@@ -113,6 +113,89 @@ const ONBOARDING_STORAGE_KEY = "lista_casamento_hide_onboarding";
 const ADMIN_TAB_SESSION_KEY = "lista_casamento_admin_tab_session";
 const ONBOARDING_AUTOPLAY_MS = 7000;
 const CARD_SLIDESHOW_INTERVAL_MS = 9000;
+const WHEEL_SCROLL_SMOOTHNESS = 0.12;
+const WHEEL_SCROLL_STRENGTH = 0.82;
+
+function isScrollableElement(element) {
+	const styles = window.getComputedStyle(element);
+	const canScrollVertically = styles.overflowY === "auto" || styles.overflowY === "scroll";
+	return canScrollVertically && element.scrollHeight > element.clientHeight;
+}
+
+function hasScrollableParent(target) {
+	let element = target instanceof Element ? target : null;
+
+	while (element && element !== document.body) {
+		if (isScrollableElement(element)) {
+			return true;
+		}
+		element = element.parentElement;
+	}
+
+	return false;
+}
+
+function enableSmoothWheelScrolling() {
+	let targetScroll = window.scrollY;
+	let currentScroll = window.scrollY;
+	let animationFrameId = null;
+
+	function getMaxScroll() {
+		return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+	}
+
+	function clampScroll(position) {
+		return Math.max(0, Math.min(position, getMaxScroll()));
+	}
+
+	function animate() {
+		const distance = targetScroll - currentScroll;
+		currentScroll += distance * WHEEL_SCROLL_SMOOTHNESS;
+
+		if (Math.abs(distance) < 0.35) {
+			currentScroll = targetScroll;
+			animationFrameId = null;
+		}
+
+		window.scrollTo(0, currentScroll);
+
+		if (animationFrameId !== null) {
+			animationFrameId = window.requestAnimationFrame(animate);
+		}
+	}
+
+	window.addEventListener("wheel", (event) => {
+		if (event.ctrlKey || event.metaKey || hasScrollableParent(event.target)) {
+			return;
+		}
+
+		event.preventDefault();
+		const delta = event.deltaMode === WheelEvent.DOM_DELTA_LINE
+			? event.deltaY * 16
+			: event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+				? event.deltaY * window.innerHeight
+				: event.deltaY;
+
+		targetScroll = clampScroll(targetScroll + delta * WHEEL_SCROLL_STRENGTH);
+
+		if (animationFrameId === null) {
+			currentScroll = window.scrollY;
+			animationFrameId = window.requestAnimationFrame(animate);
+		}
+	}, { passive: false });
+
+	window.addEventListener("resize", () => {
+		targetScroll = clampScroll(targetScroll);
+		currentScroll = window.scrollY;
+	});
+
+	window.addEventListener("scroll", () => {
+		if (animationFrameId === null) {
+			targetScroll = window.scrollY;
+			currentScroll = window.scrollY;
+		}
+	}, { passive: true });
+}
 const CARD_SLIDESHOW_FADE_MS = 1200;
 let pixReferenciaAtual = "Contribuicao em dinheiro";
 let pixNomePresenteAtual = "";
@@ -2729,6 +2812,10 @@ async function initPage() {
 	updateSyncFotosToggleUI();
 	setSyncPrecosToggleLoading(false);
 	setSyncFotosToggleLoading(false);
+
+	if (hasGiftListUI && !isAdminPage) {
+		enableSmoothWheelScrolling();
+	}
 
 	await carregarVersaoApp();
 
