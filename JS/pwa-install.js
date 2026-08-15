@@ -2,6 +2,8 @@
   const PROMPT_HIDE_UNTIL_KEY = "lista_casamento_pwa_hide_until";
   const HIDE_FOR_DAYS = 3;
   const REINSTALL_NOTICE_KEY = "lista_casamento_reinstall_notice_v4";
+  const WHEEL_SCROLL_SMOOTHNESS = 0.11;
+  const WHEEL_SCROLL_STRENGTH = 0.85;
 
   let deferredPromptEvent = null;
   let installCard = null;
@@ -21,6 +23,80 @@
   }
 
   registerServiceWorker();
+
+  function hasScrollableParent(target) {
+    let element = target instanceof Element ? target : null;
+
+    while (element && element !== document.body) {
+      const styles = window.getComputedStyle(element);
+      const canScrollVertically = styles.overflowY === "auto" || styles.overflowY === "scroll";
+      if (canScrollVertically && element.scrollHeight > element.clientHeight) {
+        return true;
+      }
+      element = element.parentElement;
+    }
+
+    return false;
+  }
+
+  function enableSmoothWheelScrolling() {
+    let targetScroll = window.scrollY;
+    let currentScroll = window.scrollY;
+    let animationFrameId = null;
+
+    function clampScroll(position) {
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      return Math.max(0, Math.min(position, maxScroll));
+    }
+
+    function animate() {
+      const distance = targetScroll - currentScroll;
+      currentScroll += distance * WHEEL_SCROLL_SMOOTHNESS;
+
+      if (Math.abs(distance) < 0.35) {
+        currentScroll = targetScroll;
+        animationFrameId = null;
+      }
+
+      window.scrollTo(0, currentScroll);
+      if (animationFrameId !== null) {
+        animationFrameId = window.requestAnimationFrame(animate);
+      }
+    }
+
+    window.addEventListener("wheel", (event) => {
+      if (event.ctrlKey || event.metaKey || hasScrollableParent(event.target)) {
+        return;
+      }
+
+      event.preventDefault();
+      const delta = event.deltaMode === WheelEvent.DOM_DELTA_LINE
+        ? event.deltaY * 16
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+          ? event.deltaY * window.innerHeight
+          : event.deltaY;
+      targetScroll = clampScroll(targetScroll + delta * WHEEL_SCROLL_STRENGTH);
+
+      if (animationFrameId === null) {
+        currentScroll = window.scrollY;
+        animationFrameId = window.requestAnimationFrame(animate);
+      }
+    }, { passive: false });
+
+    window.addEventListener("resize", () => {
+      targetScroll = clampScroll(targetScroll);
+      currentScroll = window.scrollY;
+    });
+
+    window.addEventListener("scroll", () => {
+      if (animationFrameId === null) {
+        targetScroll = window.scrollY;
+        currentScroll = window.scrollY;
+      }
+    }, { passive: true });
+  }
+
+  enableSmoothWheelScrolling();
 
   const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
   const isMobile = /Android|iPhone|iPad|iPod/i.test(window.navigator.userAgent);
