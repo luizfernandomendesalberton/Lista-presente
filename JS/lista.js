@@ -1442,7 +1442,25 @@ function renderAdminMetrics(metrics) {
 		} else {
 			ultimasPix.forEach((contribuicao) => {
 				const li = document.createElement("li");
-				li.textContent = `${contribuicao.nome} - ${BRL.format(Number(contribuicao.valor || 0))} - ${contribuicao.referencia} (${formatReservationTime(contribuicao.criado_em)})`;
+				li.className = "pix-contrib-item";
+				const details = document.createElement("span");
+				const status = contribuicao.status || "pendente";
+				details.textContent = `${contribuicao.nome} - ${BRL.format(Number(contribuicao.valor || 0))} - ${contribuicao.referencia} (${formatReservationTime(contribuicao.criado_em)}) - ${status}`;
+				li.appendChild(details);
+
+				const actions = document.createElement("span");
+				actions.className = "admin-pix-actions";
+				["confirmado", "pendente", "cancelado"].forEach((nextStatus) => {
+					if (nextStatus === status) {
+						return;
+					}
+					const button = document.createElement("button");
+					button.type = "button";
+					button.textContent = nextStatus === "confirmado" ? "Confirmar" : nextStatus === "cancelado" ? "Cancelar" : "Reabrir";
+					button.addEventListener("click", () => atualizarStatusPix(contribuicao.id, nextStatus));
+					actions.appendChild(button);
+				});
+				li.appendChild(actions);
 				adminPixRecentList.appendChild(li);
 			});
 		}
