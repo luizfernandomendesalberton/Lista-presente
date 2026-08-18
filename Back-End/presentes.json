@@ -326,7 +326,10 @@
       "Desligamento automático para maior segurança durante o cozimento.",
       "Função de manter aquecido preserva o sabor e qualidade dos alimentos."
     ],
-    "reservado": false,
+    "reservado": true,
+    "reservado_por_nome": "Aguita, Ana Lucia e Beatriz",
+    "reservado_por_email": "aguitawassem@gmail.com",
+    "reservado_em": "2026-08-17T21:23:04.107185+00:00",
     "criado_em": "2026-07-01T17:10:59.512058+00:00",
     "metadata_synced_at": "2026-08-01T17:44:04.235622+00:00"
   },
