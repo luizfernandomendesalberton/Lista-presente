@@ -126,7 +126,9 @@
       "​​​​​​​Especificações do produto montado:",
       "Comprimento: 25,2cm"
     ],
-    "reservado": false
+    "reservado": true,
+    "reservado_por_nome": "Letícia e Saimon",
+    "reservado_em": "2026-09-03T18:38:00.185188+00:00"
   },
   {
     "id": 8,
@@ -345,7 +347,10 @@
     "especificacoes": [
       "Produto disponível na loja Casa Jeovane"
     ],
-    "reservado": false,
+    "reservado": true,
+    "reservado_por_nome": "Davi & Carla",
+    "reservado_por_email": "davi.persona@gmail.com",
+    "reservado_em": "2026-09-07T22:33:22.701477+00:00",
     "criado_em": "2026-07-01T18:04:24.959247+00:00"
   },
   {

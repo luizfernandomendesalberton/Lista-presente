@@ -589,9 +589,9 @@
     "grupo": "Grupo 24",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-09-07T22:16:53.818233+00:00"
   },
   {
     "id": 55,
@@ -600,9 +600,9 @@
     "grupo": "Grupo 24",
     "tipo": "convidado",
     "criado_em": "",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-09-07T22:17:02.516402+00:00"
   },
   {
     "id": 56,
@@ -842,6 +842,17 @@
     "grupo": "33",
     "tipo": "convidado",
     "criado_em": "2026-08-13T14:35:51.567369+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": ""
+  },
+  {
+    "id": 78,
+    "nome": "Maickely",
+    "nome_key": "maickely",
+    "grupo": "28",
+    "tipo": "convidado",
+    "criado_em": "2026-08-29T19:45:50.311364+00:00",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
     "presenca_confirmada_em": ""
