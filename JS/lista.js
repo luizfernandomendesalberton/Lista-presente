@@ -98,6 +98,9 @@ const adminConvidadoStatus = document.getElementById("adminConvidadoStatus");
 const adminConvidadosList = document.getElementById("adminConvidadosList");
 const adminConvidadosExportBtn = document.getElementById("adminConvidadosExportBtn");
 const adminPixExportBtn = document.getElementById("adminPixExportBtn");
+const adminConvidadosPrintBtn = document.getElementById("adminConvidadosPrintBtn");
+const listaEntradaTabela = document.getElementById("listaEntradaTabela");
+const listaEntradaResumo = document.getElementById("listaEntradaResumo");
 const adminMetricPixPendentes = document.getElementById("adminMetricPixPendentes");
 const adminNewGuestsHint = document.getElementById("adminNewGuestsHint");
 const hasGiftListUI = Boolean(listaEl && statusEl && template && filtroBusca && filtroCategoria && filtroOrdem);
@@ -1007,6 +1010,7 @@ function renderAdminConvidados(convidados) {
 	}
 
 	adminConvidadosList.innerHTML = "";
+	renderListaEntrada(convidados);
 
 	if (!Array.isArray(convidados) || !convidados.length) {
 		adminConvidadosList.innerHTML = "<p>Nenhum convidado cadastrado.</p>";
@@ -1086,6 +1090,86 @@ function renderAdminConvidados(convidados) {
 		card.appendChild(actions);
 		adminConvidadosList.appendChild(card);
 	});
+}
+
+function renderListaEntrada(convidados) {
+	if (!listaEntradaTabela) {
+		return;
+	}
+
+	const convidadosElegiveis = (Array.isArray(convidados) ? convidados : [])
+		.filter((convidado) => convidado.status_presenca !== "nao_vai");
+	const confirmados = convidadosElegiveis.filter((convidado) => convidado.chegada_confirmada).length;
+	if (listaEntradaResumo) {
+		listaEntradaResumo.textContent = `${confirmados}/${convidadosElegiveis.length} presentes`;
+	}
+
+	listaEntradaTabela.innerHTML = "";
+	if (!convidadosElegiveis.length) {
+		listaEntradaTabela.innerHTML = "<p>Nenhum convidado confirmado para a entrada.</p>";
+		return;
+	}
+
+	const tabela = document.createElement("table");
+	tabela.className = "lista-entrada-grid";
+	tabela.innerHTML = "<thead><tr><th>Presente?</th><th>Convidado</th><th>Grupo/Família</th><th>RSVP</th></tr></thead>";
+	const corpo = document.createElement("tbody");
+
+	convidadosElegiveis.forEach((convidado) => {
+		const linha = document.createElement("tr");
+		if (convidado.chegada_confirmada) {
+			linha.classList.add("is-arrived");
+		}
+
+		const checkCell = document.createElement("td");
+		const check = document.createElement("input");
+		check.type = "checkbox";
+		check.className = "lista-entrada-check";
+		check.checked = Boolean(convidado.chegada_confirmada);
+		check.setAttribute("aria-label", `Marcar chegada de ${convidado.nome}`);
+		check.addEventListener("change", async () => {
+			check.disabled = true;
+			try {
+				const response = await fetch(`/api/admin/convidados/${convidado.id}/checkin`, {
+					method: "PATCH",
+					credentials: "same-origin",
+					headers: { "Content-Type": "application/json", ...getAdminHeaders() },
+					body: JSON.stringify({ chegada_confirmada: check.checked }),
+				});
+				const result = await response.json();
+				if (!response.ok) {
+					throw new Error(result.erro || "Falha ao atualizar chegada.");
+				}
+				const index = convidadosState.findIndex((item) => item.id === convidado.id);
+				if (index >= 0) {
+					convidadosState[index] = result.convidado;
+				}
+				renderListaEntrada(convidadosState);
+			} catch (error) {
+				check.checked = !check.checked;
+				check.disabled = false;
+				if (adminConvidadoStatus) {
+					adminConvidadoStatus.textContent = error.message;
+				}
+			}
+		});
+		checkCell.appendChild(check);
+		linha.appendChild(checkCell);
+
+		const nomeCell = document.createElement("td");
+		nomeCell.textContent = convidado.nome || "Convidado";
+		linha.appendChild(nomeCell);
+		const grupoCell = document.createElement("td");
+		grupoCell.textContent = convidado.grupo || "Sem grupo";
+		linha.appendChild(grupoCell);
+		const statusCell = document.createElement("td");
+		statusCell.textContent = getConvidadoStatusLabel(convidado.status_presenca);
+		linha.appendChild(statusCell);
+		corpo.appendChild(linha);
+	});
+
+	tabela.appendChild(corpo);
+	listaEntradaTabela.appendChild(tabela);
 }
 
 
@@ -2289,6 +2373,12 @@ if (isAdminPage) {
 					adminConvidadoStatus.textContent = error.message;
 				}
 			}
+		});
+	}
+
+	if (adminConvidadosPrintBtn) {
+		adminConvidadosPrintBtn.addEventListener("click", () => {
+			window.print();
 		});
 	}
 

@@ -2134,6 +2134,149 @@ button:hover {
 	font-size: 0.82rem;
 }
 
+.lista-entrada-panel {
+	margin-bottom: 18px;
+	padding: 16px;
+	border: 1px solid rgba(162, 63, 90, 0.22);
+	background: rgba(255, 252, 248, 0.82);
+}
+
+.lista-entrada-panel .panel-head {
+	margin-bottom: 4px;
+}
+
+.lista-entrada-panel .panel-head h2 {
+	margin: 0;
+}
+
+.lista-entrada-panel .panel-head strong {
+	color: var(--wine-dark);
+}
+
+.lista-entrada-tabela {
+	overflow-x: auto;
+}
+
+.lista-entrada-grid {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.92rem;
+}
+
+.lista-entrada-grid th,
+.lista-entrada-grid td {
+	padding: 10px 8px;
+	border-bottom: 1px solid rgba(228, 217, 202, 0.9);
+	text-align: left;
+	vertical-align: middle;
+}
+
+.lista-entrada-grid th {
+	font-size: 0.76rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.lista-entrada-grid th:first-child,
+.lista-entrada-grid td:first-child {
+	width: 82px;
+	text-align: center;
+}
+
+.lista-entrada-check {
+	width: 24px;
+	height: 24px;
+	accent-color: var(--wine);
+	cursor: pointer;
+}
+
+.lista-entrada-grid tr.is-arrived td:not(:first-child) {
+	color: var(--muted);
+	text-decoration: line-through;
+}
+
+@media print {
+	body {
+		padding: 0;
+		background: #fff;
+	}
+
+	.bg-shape,
+	.admin-quick-nav,
+	.hero,
+	#adminAuthPanel,
+	#adminConvidadoForm,
+	#adminConvidadosList,
+	#adminNewGuestsHint,
+	#adminConvidadosPanel > .panel-note,
+	#adminStatus,
+	#adminConvidadosExportBtn,
+	#adminConvidadosPrintBtn,
+	#adminLogoutBtn,
+	#adminManagerPanel > .admin-tip {
+		display: none !important;
+	}
+
+	.container,
+	.panel,
+	#adminManagerPanel,
+	#adminConvidadosPanel,
+	.lista-entrada-panel {
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		box-shadow: none;
+		background: #fff;
+	}
+
+	.lista-entrada-panel {
+		display: block;
+	}
+
+	.lista-entrada-panel::before {
+		content: "Lista de entrada - Casamento Luiz Fernando e Ana Paula";
+		display: block;
+		margin-bottom: 14px;
+		font-family: Prata, Georgia, serif;
+		font-size: 20pt;
+		color: #7d2944;
+	}
+
+	.lista-entrada-panel .panel-head {
+		margin-bottom: 8px;
+	}
+
+	.lista-entrada-panel .panel-head .tag {
+		display: none;
+	}
+
+	.lista-entrada-grid th,
+	.lista-entrada-grid td {
+		padding: 8px 6px;
+		color: #222;
+		text-decoration: none !important;
+	}
+
+	.lista-entrada-grid {
+		font-size: 11pt;
+	}
+
+	.lista-entrada-check {
+		-webkit-appearance: none;
+		appearance: none;
+		border: 2px solid #333;
+		border-radius: 2px;
+		background: #fff;
+	}
+
+	.lista-entrada-check:checked {
+		background: #333;
+	}
+}
+
 @keyframes revealUp {
 	from {
 		opacity: 0;

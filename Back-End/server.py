@@ -162,6 +162,8 @@ def normalize_convidado(raw, forced_id=None):
 		"presenca_confirmada": bool(raw.get("presenca_confirmada", False)),
 		"vai_ao_evento": bool(raw.get("vai_ao_evento", False)),
 		"presenca_confirmada_em": str(raw.get("presenca_confirmada_em") or "").strip(),
+		"chegada_confirmada": bool(raw.get("chegada_confirmada", False)),
+		"chegada_confirmada_em": str(raw.get("chegada_confirmada_em") or "").strip(),
 	}
 
 
@@ -370,6 +372,8 @@ def build_convidado_payload(convidado):
 		"presenca_confirmada": bool(convidado.get("presenca_confirmada")),
 		"vai_ao_evento": bool(convidado.get("vai_ao_evento")),
 		"presenca_confirmada_em": str(convidado.get("presenca_confirmada_em") or "").strip(),
+		"chegada_confirmada": bool(convidado.get("chegada_confirmada")),
+		"chegada_confirmada_em": str(convidado.get("chegada_confirmada_em") or "").strip(),
 	}
 
 
@@ -2640,6 +2644,33 @@ def atualizar_convidado_admin(convidado_id):
 			save_convidados(convidados)
 
 	return jsonify({"mensagem": "Convidado atualizado com sucesso.", "convidado": build_convidado_payload(convidado)})
+
+
+@app.route("/api/admin/convidados/<int:convidado_id>/checkin", methods=["PATCH", "OPTIONS"])
+def atualizar_checkin_convidado_admin(convidado_id):
+	if request.method == "OPTIONS":
+		return ("", 204)
+
+	admin_error = require_admin_auth(request)
+	if admin_error:
+		return admin_error
+
+	payload = request.get_json(silent=True) or {}
+	chegada_confirmada = bool(payload.get("chegada_confirmada", False))
+
+	with CONVIDADOS_LOCK:
+		with CONVIDADOS_FILE_LOCK:
+			convidados = load_convidados()
+			convidado = next((item for item in convidados if int(item.get("id", 0)) == convidado_id), None)
+
+			if not convidado:
+				return jsonify({"erro": "Convidado não encontrado."}), 404
+
+			convidado["chegada_confirmada"] = chegada_confirmada
+			convidado["chegada_confirmada_em"] = utc_now().isoformat() if chegada_confirmada else ""
+			save_convidados(convidados)
+
+	return jsonify({"mensagem": "Check-in atualizado.", "convidado": build_convidado_payload(convidado)})
 
 
 @app.route("/api/admin/convidados/<int:convidado_id>", methods=["DELETE", "OPTIONS"])

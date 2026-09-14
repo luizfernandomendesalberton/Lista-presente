@@ -62,12 +62,25 @@
 				<div class="admin-actions" style="margin-bottom: 1rem;">
 					<a class="btn-secondary" href="/admin">Gerenciar presentes</a>
 					<a class="btn-secondary" href="/admin/metricas">Ver métricas</a>
+						<button id="adminConvidadosPrintBtn" type="button">Imprimir lista de entrada</button>
 					<button id="adminConvidadosExportBtn" type="button">Baixar JSON Convidados</button>
 					<button id="adminLogoutBtn" type="button">Sair</button>
 				</div>
 				<p id="adminNewGuestsHint" class="admin-tip admin-new-products-hint">Nenhum novo convidado pendente de backup.</p>
 
 				<section class="panel" id="adminConvidadosPanel">
+					<section id="listaEntradaPanel" class="lista-entrada-panel" aria-labelledby="listaEntradaTitle">
+						<div class="panel-head">
+							<div>
+								<p class="tag">Conferência no evento</p>
+								<h2 id="listaEntradaTitle">Lista de entrada</h2>
+							</div>
+							<strong id="listaEntradaResumo">0 presentes</strong>
+						</div>
+						<p class="panel-note">Marque cada pessoa quando ela chegar. Use o botão acima para imprimir ou escolher “Salvar como PDF”.</p>
+						<div id="listaEntradaTabela" class="lista-entrada-tabela"></div>
+					</section>
+
 					<form id="adminConvidadoForm" class="admin-form">
 						<div class="admin-grid-two">
 							<label>
