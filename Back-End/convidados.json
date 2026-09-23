@@ -8,7 +8,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-06-21T20:26:12.136824+00:00"
+    "presenca_confirmada_em": "2026-06-21T20:26:12.136824+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 2,
@@ -19,7 +21,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-06-21T20:26:19.035222+00:00"
+    "presenca_confirmada_em": "2026-06-21T20:26:19.035222+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 3,
@@ -30,7 +34,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:15:31.559016+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:15:31.559016+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 4,
@@ -41,7 +47,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:15:34.331253+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:15:34.331253+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 5,
@@ -52,7 +60,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:12:38.730352+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:12:38.730352+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 6,
@@ -63,7 +73,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:12:42.550777+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:12:42.550777+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 7,
@@ -74,7 +86,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:12:45.533819+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:12:45.533819+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 8,
@@ -85,7 +99,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:12:48.247339+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:12:48.247339+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 9,
@@ -96,7 +112,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:12:51.176401+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:12:51.176401+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 10,
@@ -107,7 +125,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:15:11.760922+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:15:11.760922+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 11,
@@ -118,7 +138,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-06-30T14:03:22.407520+00:00"
+    "presenca_confirmada_em": "2026-06-30T14:03:22.407520+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 12,
@@ -129,7 +151,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 13,
@@ -140,7 +164,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 14,
@@ -151,7 +177,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 15,
@@ -162,7 +190,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 16,
@@ -173,7 +203,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 17,
@@ -184,7 +216,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 18,
@@ -195,7 +229,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 19,
@@ -206,7 +242,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 20,
@@ -217,7 +255,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 21,
@@ -228,7 +268,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 22,
@@ -239,7 +281,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 23,
@@ -250,7 +294,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 24,
@@ -261,7 +307,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-10T23:42:38.839163+00:00"
+    "presenca_confirmada_em": "2026-08-10T23:42:38.839163+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 25,
@@ -272,7 +320,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:16:10.898990+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:16:10.898990+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 26,
@@ -283,7 +333,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:16:13.402713+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:16:13.402713+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 27,
@@ -294,7 +346,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:16:52.984680+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:16:52.984680+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 28,
@@ -305,7 +359,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:16:55.421893+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:16:55.421893+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 29,
@@ -316,7 +372,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-09-13T16:30:13.134043+00:00"
+    "presenca_confirmada_em": "2026-09-13T16:30:13.134043+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 30,
@@ -327,7 +385,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-09-13T16:30:19.870745+00:00"
+    "presenca_confirmada_em": "2026-09-13T16:30:19.870745+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 31,
@@ -338,7 +398,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-09-13T16:30:27.042121+00:00"
+    "presenca_confirmada_em": "2026-09-13T16:30:27.042121+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 32,
@@ -349,7 +411,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 33,
@@ -360,7 +424,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-08T16:27:18.474527+00:00"
+    "presenca_confirmada_em": "2026-08-08T16:27:18.474527+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 34,
@@ -371,7 +437,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 35,
@@ -382,7 +450,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 36,
@@ -393,7 +463,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 37,
@@ -404,7 +476,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 38,
@@ -415,7 +489,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 39,
@@ -426,7 +502,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-09T19:16:33.865784+00:00"
+    "presenca_confirmada_em": "2026-08-09T19:16:33.865784+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 40,
@@ -437,7 +515,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-09T19:17:24.212260+00:00"
+    "presenca_confirmada_em": "2026-08-09T19:17:24.212260+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 41,
@@ -448,7 +528,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 42,
@@ -459,7 +541,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 43,
@@ -470,7 +554,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 44,
@@ -481,7 +567,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 45,
@@ -492,7 +580,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 46,
@@ -503,7 +593,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 47,
@@ -514,7 +606,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 48,
@@ -525,7 +619,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 49,
@@ -536,7 +632,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 50,
@@ -547,7 +645,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 51,
@@ -558,7 +658,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-12T21:18:02.110976+00:00"
+    "presenca_confirmada_em": "2026-08-12T21:18:02.110976+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 52,
@@ -569,7 +671,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-12T21:18:09.809459+00:00"
+    "presenca_confirmada_em": "2026-08-12T21:18:09.809459+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 53,
@@ -580,7 +684,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-12T21:18:17.776569+00:00"
+    "presenca_confirmada_em": "2026-08-12T21:18:17.776569+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 54,
@@ -591,7 +697,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-09-07T22:16:53.818233+00:00"
+    "presenca_confirmada_em": "2026-09-07T22:16:53.818233+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 55,
@@ -602,7 +710,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-09-07T22:17:02.516402+00:00"
+    "presenca_confirmada_em": "2026-09-07T22:17:02.516402+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 56,
@@ -613,7 +723,9 @@
     "criado_em": "",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 57,
@@ -624,7 +736,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-08T19:42:14.071842+00:00"
+    "presenca_confirmada_em": "2026-08-08T19:42:14.071842+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 58,
@@ -635,7 +749,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-08T19:42:22.998480+00:00"
+    "presenca_confirmada_em": "2026-08-08T19:42:22.998480+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 59,
@@ -646,7 +762,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-08T19:42:30.504908+00:00"
+    "presenca_confirmada_em": "2026-08-08T19:42:30.504908+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 60,
@@ -657,7 +775,9 @@
     "criado_em": "",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-08T19:42:36.758752+00:00"
+    "presenca_confirmada_em": "2026-08-08T19:42:36.758752+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 61,
@@ -668,7 +788,9 @@
     "criado_em": "2026-06-05T15:10:12.628100+00:00",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-02T14:16:58.297351+00:00"
+    "presenca_confirmada_em": "2026-08-02T14:16:58.297351+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 62,
@@ -679,7 +801,9 @@
     "criado_em": "2026-07-19T15:12:48.307212+00:00",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 63,
@@ -690,7 +814,9 @@
     "criado_em": "2026-07-20T21:35:39.745450+00:00",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-10T16:39:48.984139+00:00"
+    "presenca_confirmada_em": "2026-08-10T16:39:48.984139+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 64,
@@ -701,7 +827,9 @@
     "criado_em": "2026-07-20T21:35:56.567698+00:00",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-10T16:39:56.701973+00:00"
+    "presenca_confirmada_em": "2026-08-10T16:39:56.701973+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 65,
@@ -712,7 +840,9 @@
     "criado_em": "2026-08-13T14:26:28.067541+00:00",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-14T00:25:54.620194+00:00"
+    "presenca_confirmada_em": "2026-08-14T00:25:54.620194+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 66,
@@ -723,7 +853,9 @@
     "criado_em": "2026-08-13T14:26:36.664168+00:00",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-14T00:25:57.900755+00:00"
+    "presenca_confirmada_em": "2026-08-14T00:25:57.900755+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 67,
@@ -734,7 +866,9 @@
     "criado_em": "2026-08-13T14:27:17.730100+00:00",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 68,
@@ -745,7 +879,9 @@
     "criado_em": "2026-08-13T14:27:25.791143+00:00",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 69,
@@ -756,7 +892,9 @@
     "criado_em": "2026-08-13T14:27:33.969088+00:00",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-14T00:29:11.424882+00:00"
+    "presenca_confirmada_em": "2026-08-14T00:29:11.424882+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 70,
@@ -767,7 +905,9 @@
     "criado_em": "2026-08-13T14:28:17.817113+00:00",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-22T23:10:53.079462+00:00"
+    "presenca_confirmada_em": "2026-08-22T23:10:53.079462+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 71,
@@ -778,7 +918,9 @@
     "criado_em": "2026-08-13T14:28:24.787508+00:00",
     "presenca_confirmada": true,
     "vai_ao_evento": true,
-    "presenca_confirmada_em": "2026-08-22T23:11:05.208303+00:00"
+    "presenca_confirmada_em": "2026-08-22T23:11:05.208303+00:00",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 72,
@@ -789,7 +931,9 @@
     "criado_em": "2026-08-13T14:28:32.594670+00:00",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 73,
@@ -800,7 +944,9 @@
     "criado_em": "2026-08-13T14:30:56.324508+00:00",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 74,
@@ -811,7 +957,9 @@
     "criado_em": "2026-08-13T14:31:11.194637+00:00",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 75,
@@ -822,7 +970,9 @@
     "criado_em": "2026-08-13T14:31:17.956343+00:00",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 76,
@@ -833,7 +983,9 @@
     "criado_em": "2026-08-13T14:35:43.118230+00:00",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 77,
@@ -844,7 +996,9 @@
     "criado_em": "2026-08-13T14:35:51.567369+00:00",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   },
   {
     "id": 78,
@@ -855,6 +1009,34 @@
     "criado_em": "2026-08-29T19:45:50.311364+00:00",
     "presenca_confirmada": false,
     "vai_ao_evento": false,
-    "presenca_confirmada_em": ""
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
+  },
+  {
+    "id": 79,
+    "nome": "Valberto Alves Agostinho",
+    "nome_key": "valberto alves agostinho",
+    "grupo": "Grupo 34",
+    "tipo": "convidado",
+    "criado_em": "2026-09-23T23:00:35.547444+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
+  },
+  {
+    "id": 80,
+    "nome": "Patrícia(esposa Valberto)",
+    "nome_key": "patricia(esposa valberto)",
+    "grupo": "Grupo 34",
+    "tipo": "convidado",
+    "criado_em": "2026-09-23T23:03:24.851100+00:00",
+    "presenca_confirmada": false,
+    "vai_ao_evento": false,
+    "presenca_confirmada_em": "",
+    "chegada_confirmada": false,
+    "chegada_confirmada_em": ""
   }
 ]
