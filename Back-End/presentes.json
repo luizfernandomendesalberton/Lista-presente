@@ -65,7 +65,10 @@
       "Podem ser lavadas na lava-louças, facilitando significativamente o processo de limpeza e economizando tempo.",
       "O conjunto inclui diferentes formatos como retangular e oval, permitindo adaptações a qualquer tipo de receita."
     ],
-    "reservado": false
+    "reservado": true,
+    "reservado_por_nome": "Alexandre",
+    "reservado_por_email": "alexandrescheppers@gmail.com",
+    "reservado_em": "2026-10-04T16:15:37.167624+00:00"
   },
   {
     "id": 5,
