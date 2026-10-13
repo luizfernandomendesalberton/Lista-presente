@@ -1,4 +1,4 @@
-const CACHE_NAME = "lista-casamento-pwa-v5";
+const CACHE_NAME = "lista-casamento-pwa-v6";
 const OFFLINE_URL = "/offline.html";
 
 const CORE_ASSETS = [

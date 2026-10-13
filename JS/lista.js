@@ -1032,12 +1032,27 @@ function renderAdminConvidados(convidados) {
 		const main = document.createElement("div");
 		main.className = "convidado-admin-main";
 
+		const heading = document.createElement("div");
+		heading.className = "convidado-admin-heading";
+
 		const title = document.createElement("h4");
 		title.textContent = convidado.nome || "Convidado";
-		main.appendChild(title);
+
+		const status = document.createElement("span");
+		status.className = "convidado-admin-status";
+		status.textContent = getConvidadoStatusLabel(convidado.status_presenca);
+		if (convidado.status_presenca === "confirmado") {
+			status.classList.add("is-confirmed");
+		} else if (convidado.status_presenca === "nao_vai") {
+			status.classList.add("is-declined");
+		} else {
+			status.classList.add("is-pending");
+		}
+		heading.append(title, status);
+		main.appendChild(heading);
 
 		const info = document.createElement("p");
-		info.textContent = `Grupo: ${convidado.grupo || "Sem grupo"} | Tipo: ${convidado.tipo || "convidado"} | Presença: ${getConvidadoStatusLabel(convidado.status_presenca)}`;
+		info.textContent = `Grupo: ${convidado.grupo || "Sem grupo"} | Tipo: ${convidado.tipo || "convidado"}`;
 		main.appendChild(info);
 
 		const groupName = String(convidado.grupo || "Sem grupo").trim() || "Sem grupo";

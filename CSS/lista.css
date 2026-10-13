@@ -2088,14 +2088,17 @@ button:hover {
 }
 
 .convidado-admin-card.is-confirmed {
-	border-color: rgba(138, 109, 92, 0.46);
-	background: linear-gradient(180deg, rgba(248, 243, 236, 0.98), rgba(241, 232, 222, 0.96));
-	box-shadow: inset 0 0 0 1px rgba(138, 109, 92, 0.08);
+	border-color: rgba(54, 126, 75, 0.58);
+	border-left: 5px solid #367e4b;
+	background: linear-gradient(110deg, rgba(236, 249, 237, 0.98), rgba(248, 255, 247, 0.96));
+	box-shadow: inset 0 0 0 1px rgba(54, 126, 75, 0.1);
 }
 
 .convidado-admin-card.is-declined {
-	border-color: rgba(166, 84, 91, 0.28);
-	background: linear-gradient(180deg, rgba(255, 248, 248, 0.98), rgba(249, 236, 238, 0.96));
+	border-color: rgba(166, 54, 74, 0.56);
+	border-left: 5px solid #a6364a;
+	background: linear-gradient(110deg, rgba(255, 232, 235, 0.98), rgba(255, 246, 247, 0.96));
+	box-shadow: inset 0 0 0 1px rgba(166, 54, 74, 0.1);
 }
 
 .convidado-admin-main {
@@ -2103,9 +2106,48 @@ button:hover {
 	gap: 5px;
 }
 
+.convidado-admin-heading {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
 .convidado-admin-main h4 {
 	margin: 0;
 	font-size: 1rem;
+}
+
+.convidado-admin-status {
+	display: inline-flex;
+	align-items: center;
+	min-height: 26px;
+	padding: 4px 10px;
+	border: 1px solid transparent;
+	border-radius: 999px;
+	font-size: 0.76rem;
+	font-weight: 700;
+	line-height: 1.1;
+	letter-spacing: 0.035em;
+	text-transform: uppercase;
+}
+
+.convidado-admin-status.is-confirmed {
+	border-color: #28663b;
+	background: #28663b;
+	color: #fff;
+}
+
+.convidado-admin-status.is-declined {
+	border-color: #8b263d;
+	background: #8b263d;
+	color: #fff;
+}
+
+.convidado-admin-status.is-pending {
+	border-color: rgba(133, 92, 34, 0.42);
+	background: #f5e8c9;
+	color: #654517;
 }
 
 .convidado-admin-main p {

@@ -31,7 +31,10 @@
       "Punho de polipropileno.",
       "Comprimento da lâmina de 17,8 cm."
     ],
-    "reservado": false
+    "reservado": true,
+    "reservado_por_nome": "Zenir",
+    "reservado_por_email": "zenirorleans@gmail.com",
+    "reservado_em": "2026-10-07T18:08:07.563251+00:00"
   },
   {
     "id": 3,
@@ -104,7 +107,9 @@
       "Altura total de 22 cm, perfeita para destacar suas delícias.",
       "Material em vidro transparente que permite admirar a beleza dos doces."
     ],
-    "reservado": false
+    "reservado": true,
+    "reservado_por_nome": "Tita e Zé",
+    "reservado_em": "2026-10-07T18:07:31.306555+00:00"
   },
   {
     "id": 7,
@@ -501,7 +506,9 @@
       "Assadeiras com 0,8 mm de espessura e fervedor com 1,4 mm de espessura.",
       "Revestimento interno e externo de antiaderente Starflon Max que não gruda, é fácil de limpar, mais durável e não é prejudicial à saúde, pois é livre de PFOA."
     ],
-    "reservado": false,
+    "reservado": true,
+    "reservado_por_nome": "Adriano e Daiane",
+    "reservado_em": "2026-10-13T22:05:33.565606+00:00",
     "criado_em": "2026-07-19T18:47:32.078857+00:00"
   },
   {
