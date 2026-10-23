@@ -929,9 +929,9 @@
     "grupo": "31",
     "tipo": "convidado",
     "criado_em": "2026-08-13T14:28:32.594670+00:00",
-    "presenca_confirmada": false,
-    "vai_ao_evento": false,
-    "presenca_confirmada_em": "",
+    "presenca_confirmada": true,
+    "vai_ao_evento": true,
+    "presenca_confirmada_em": "2026-10-22T20:04:20.600461+00:00",
     "chegada_confirmada": false,
     "chegada_confirmada_em": ""
   },
