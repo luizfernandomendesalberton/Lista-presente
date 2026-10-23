@@ -657,5 +657,24 @@
     "reservado_por_nome": "Alessandra e Eli",
     "reservado_em": "2026-08-05T23:06:55.307774+00:00",
     "criado_em": "2026-08-05T23:06:10.243020+00:00"
+  },
+  {
+    "id": 35,
+    "nome": "Máquina de Lavar Roupas",
+    "descricao": "Máquina de Lavar Electrolux 18kg Branca Efficient Cesto inox e Jet&Clean (LEE18) - 220V",
+    "categoria": "Eletrodomésticos",
+    "preco": 2500.0,
+    "foto_url": "https://electrolux.vtexassets.com/arquivos/ids/297481-1000-1000?v=639256769738100000&width=1000&height=1000&aspect=true&format=auto",
+    "video_url": "",
+    "produto_url": "https://loja.electrolux.com.br/maquina-de-lavar-electrolux-18-kg-branca-efficient-cesto-inox-e-jet---clean-lee18/p?skuId=310128227",
+    "especificacoes": [
+      "Cesto em Inox",
+      "Jet&Clean",
+      "Lava Edredom: Queen Size",
+      "Ultra Filter Pega Fiapos",
+      "Lavagem Inteligente"
+    ],
+    "reservado": false,
+    "criado_em": "2026-10-19T00:40:52.606775+00:00"
   }
 ]
