@@ -1995,16 +1995,33 @@ def confirmar_presenca():
 			grupo_nome = get_convidado_group_name(convidado)
 			membros_grupo = get_convidados_in_group(convidados, grupo_nome)
 
-			if bool(convidado.get("presenca_confirmada")):
-				return jsonify({"erro": "Este convidado já confirmou presença. Para alterar, fale com os noivos (admin)."}), 409
-
-			convidado["presenca_confirmada"] = True
-			convidado["vai_ao_evento"] = vai_ao_evento
-			convidado["presenca_confirmada_em"] = confirmation_time
-
 			total_no_grupo = len(membros_grupo)
+			ja_confirmado = bool(convidado.get("presenca_confirmada"))
+
+			if ja_confirmado and bool(convidado.get("vai_ao_evento")) != vai_ao_evento:
+				return jsonify({"erro": "Este convidado já respondeu com outra resposta. Para alterar, fale com os noivos (admin)."}), 409
+
+			if not ja_confirmado:
+				convidado["presenca_confirmada"] = True
+				convidado["vai_ao_evento"] = vai_ao_evento
+				convidado["presenca_confirmada_em"] = confirmation_time
+				save_convidados(convidados)
+
 			confirmados_no_grupo = sum(1 for membro in membros_grupo if bool(membro.get("presenca_confirmada")))
-			save_convidados(convidados)
+
+	if ja_confirmado:
+		# Reenvio (duplo clique, tela desatualizada ou outro membro do grupo): resposta idêntica, trata como sucesso.
+		return jsonify(
+			{
+				"mensagem": f"Presença de '{convidado.get('nome')}' já estava registrada.",
+				"convidado": convidado,
+				"grupo": grupo_nome,
+				"grupo_total": total_no_grupo,
+				"grupo_confirmados": confirmados_no_grupo,
+				"email_status": "ja_confirmado",
+				"can_access_presentes": can_access_presentes(),
+			}
+		)
 
 	try:
 		send_presence_notification_email(

@@ -614,6 +614,9 @@ async function confirmPresence(nome, vaiAoEvento) {
 
 		const data = await response.json();
 		if (!response.ok) {
+			if (response.status === 409) {
+				await loadGroups();
+			}
 			throw new Error(data.erro || "Nao foi possivel confirmar.");
 		}
 
